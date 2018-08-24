@@ -4,28 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UsernameActivity">
+    tools:context=".MainActivity">
 
-
-    <EditText
-        android:id="@+id/edittext_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text=""
-        android:hint="Nutzername"
-        tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="231dp" />
 
     <Button
-        android:id="@+id/username_confirm_button"
+        android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="OK"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_username"
-        tools:layout_editor_absoluteX="147dp" />
+        android:text="login"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <Button
+        android:id="@+id/signup_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/login_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="registrieren" />
+
 
 
 </android.support.constraint.ConstraintLayout>

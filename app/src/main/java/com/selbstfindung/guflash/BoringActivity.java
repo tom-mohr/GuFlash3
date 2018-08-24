@@ -27,6 +27,8 @@ public class BoringActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
 
+    public static final String EXTRA_MESSAGE_USERNAME_TAG = "USERNAME_MESSAGE";
+
     private EditText usernameTextInput;
     private TextView chat;
     private EditText chatTextInput;
@@ -45,7 +47,7 @@ public class BoringActivity extends AppCompatActivity {
 
         // get intent message (username)
         Intent intent = getIntent();
-        username = intent.getStringExtra(UsernameActivity.EXTRA_MESSAGE_TAG);
+        username = intent.getStringExtra(EXTRA_MESSAGE_USERNAME_TAG);
 
         // get views
 
