@@ -1,5 +1,6 @@
 package com.selbstfindung.guflash;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,8 @@ public class BoringActivity extends AppCompatActivity {
     private TextView chat;
     private EditText chatTextInput;
 
+    private String username = "anonym";
+
     /// for dev:
     private int counter;
 
@@ -40,8 +43,12 @@ public class BoringActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boring);
 
+        // get intent message (username)
+        Intent intent = getIntent();
+        username = intent.getStringExtra(UsernameActivity.EXTRA_MESSAGE_TAG);
+
         // get views
-        usernameTextInput = (EditText) findViewById(R.id.edittext_username);
+
         chat = (TextView) findViewById(R.id.chat_message_list);
         chatTextInput = (EditText) findViewById(R.id.edittext_chatbox);
 
@@ -100,12 +107,6 @@ public class BoringActivity extends AppCompatActivity {
 
                     // input feld leermachen
                     chatTextInput.setText("");
-
-                    String username = usernameTextInput.getText().toString();
-
-                    if (username.equals("")) {
-                        username = "anonym";
-                    }
 
                     // send message
                     writeNewMessage(username, text);
