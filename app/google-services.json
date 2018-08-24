@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "486301563640",
+    "firebase_url": "https://selbstfindung-coding.firebaseio.com",
+    "project_id": "selbstfindung-coding",
+    "storage_bucket": "selbstfindung-coding.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486301563640:android:4d8126e6cf8a74c7",
+        "android_client_info": {
+          "package_name": "com.selbstfindung.guflash"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486301563640-f6qgvivsi40vepii6b6n32ft2rq3m1dt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.selbstfindung.guflash",
+            "certificate_hash": "ca80e1d3288c8100bda83d1798af707072f483ad"
+          }
+        },
+        {
+          "client_id": "486301563640-26uugorbig3sdao9vm56ss3oe1j2hhem.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlrLMmfq_rwcZkObkpgE53MsEjsR1cUuE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "486301563640-26uugorbig3sdao9vm56ss3oe1j2hhem.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
