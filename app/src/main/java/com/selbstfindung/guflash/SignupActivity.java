@@ -1,5 +1,6 @@
 package com.selbstfindung.guflash;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,68 +22,135 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
-    private DatabaseReference databaseRef;
 
+    private Context mContext;
+    private String username, password;
+
+    private DatabaseReference databaseRef;
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseMethods firebaseMethods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+        mContext = SignupActivity.this;
+        firebaseMethods = new FirebaseMethods(mContext);
 
-        mAuth = FirebaseAuth.getInstance();
+        setupFirebase();
+        init();
+    }
 
-        databaseRef = FirebaseDatabase.getInstance().getReference();
-
-
-        ((Button) findViewById(R.id.signup_ok_button)).setOnClickListener(new View.OnClickListener() {
+    private void init()
+    {
+        ((Button) findViewById(R.id.signup_ok_button)).setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
 
                 EditText usernameEditText = (EditText) findViewById(R.id.signup_username);
                 EditText passwordEditText = (EditText) findViewById(R.id.signup_password);
 
-                final String username = usernameEditText.getText().toString();
-                final String password = passwordEditText.getText().toString();
+                username = usernameEditText.getText().toString();
+                password = passwordEditText.getText().toString();
 
-                // neuen nutzer registieren:
+                if(!(username.equals("")||password.equals("")))
+                    mAuth.createUserWithEmailAndPassword(username, password)
+                            .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task< AuthResult > task)
+                                {
+                                    Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-                User newUser = new User(username, password);
+                                    if (!task.isSuccessful()) {
+                                        // If sign in fails, display a message to the user.
+                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                        Toast.makeText(SignupActivity.this, "Registrierung fehlgeschlagen.",
+                                                Toast.LENGTH_SHORT).show();
 
-                mAuth.createUserWithEmailAndPassword(username, password)
-                        .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG, "createUserWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-
-
-                                    Intent intent = new Intent(SignupActivity.this, BoringActivity.class);
-                                    intent.putExtra(BoringActivity.EXTRA_MESSAGE_USERNAME_TAG, username);
-                                    startActivity(intent);
+                                    } else if(task.isSuccessful()){
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Log.d(TAG, "createUserWithEmail:success");
+                                    }
+                                }});
 
 
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(SignupActivity.this, "Registrierung fehlgeschlagen.",
-                                            Toast.LENGTH_SHORT).show();
-                                }
 
-                                // ...
-                            }
-                        });
-
-                //databaseRef.child("users").child(username).setValue(newUser);
 
 
             }
         });
+    }
+    private void setupFirebase()
+    {
+        mAuth = FirebaseAuth.getInstance();
+        databaseRef = FirebaseDatabase.getInstance().getReference();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener()
+        {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
+            {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                //if(user !=null)
+                //{
+                    //User ist eingeloggt
+                    databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange (DataSnapshot dataSnapshot)
+                    {
+                        //User existiert bereits -> wird nicht weitergeleitet
+                        if (FirebaseMethods.UsernameExists(username, dataSnapshot))
+                        {
+
+                        }
+                        //User gibt es nicht -> Eintrag wird in Datenbank erstellt und wird weitergeleitet
+                        else
+                        {
+                            //databaseRef.child("users").child(username).setValue(newUser);
+                            firebaseMethods.addUserToDatabase(username, password);
+
+                            Intent intent = new Intent(SignupActivity.this, BoringActivity.class);
+                            intent.putExtra(BoringActivity.EXTRA_MESSAGE_USERNAME_TAG, username);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled (DatabaseError databaseError)
+                    {
+                        
+                    }
+                    });
+                //}
+                //else
+                //{
+                    //User ist ausgeloggt
+                //}
+            }
+        };
+
+
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null)
+        {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 }
