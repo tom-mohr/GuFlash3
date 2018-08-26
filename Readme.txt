@@ -1,6 +1,9 @@
 Änderungen vom 26.08.18 19:30
 - BoringActivity heißt jetzt ChatActivity
-- Chat-Design verbessert
+- Chat-Design verbessert (benutzt jetzt RecyclerView)
+- "Chat löschen"-Button entfernt
+- Eine Leiste wird über dem Chat angezeigt
+  -> Später wird hier mal der Event-Name angezeigt
 
 Änderungen vom 26.08.18 18:30
 - viele Log.d/w-Statements hinzugefügt oder verändert
