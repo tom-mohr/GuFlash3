@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,15 +31,15 @@ public class BoringActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE_USERNAME_TAG = "USERNAME_MESSAGE";
 
-    private EditText usernameTextInput;
     private TextView chat;
     private EditText chatTextInput;
 
-    private String username = "anonym";
-
-    /// for dev:
+    /// für dev.:
     private int counter;
 
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser user;
     private DatabaseReference databaseRef;
 
     @Override
@@ -45,12 +47,12 @@ public class BoringActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boring);
 
-        // get intent message (username)
-        Intent intent = getIntent();
-        username = intent.getStringExtra(EXTRA_MESSAGE_USERNAME_TAG);
+        setupFirebase();
+        init();
+    }
 
-        // get views
-
+    private void init() {
+        // get views (youtube money)
         chat = (TextView) findViewById(R.id.chat_message_list);
         chatTextInput = (EditText) findViewById(R.id.edittext_chatbox);
 
@@ -67,9 +69,11 @@ public class BoringActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Message msg = dataSnapshot.getValue(Message.class);
 
-                // update UI
+                Log.d(TAG, "Message added: "+msg.senderUsername+": "+msg.text);
+
+                // add message (update UI)
                 chat.setText(chat.getText().toString() + msg.senderUsername + ": " + msg.text + "\n");
-                Log.d(TAG, chat.getText().toString());
+
 
                 int id = Integer.valueOf(dataSnapshot.getKey());
                 if (id >= counter) {
@@ -95,10 +99,9 @@ public class BoringActivity extends AppCompatActivity {
             }
         });
 
-        // den buttons funktionen hinzufügen
 
-        Button sendButton =  (Button) findViewById(R.id.button_chatbox_send);
-        sendButton.setOnClickListener(new View.OnClickListener() {
+        // onclick für "senden" button
+        ((Button) findViewById(R.id.chat_send_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -111,16 +114,16 @@ public class BoringActivity extends AppCompatActivity {
                     chatTextInput.setText("");
 
                     // send message
-                    writeNewMessage(username, text);
+                    writeNewMessage(user.getEmail(), text);
                 }
             }
         });
 
-        Button deleteButton =  (Button) findViewById(R.id.button_delete_chat);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
+        /// für dev:
+        // onclick für "Chat löschen" button
+        ((Button) findViewById(R.id.button_delete_chat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 databaseRef.child("messages").removeValue(null);
             }
         });
@@ -137,9 +140,48 @@ public class BoringActivity extends AppCompatActivity {
         counter++;
     }
 
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(name, email);
 
-        databaseRef.child("users").child(userId).setValue(user);
+    private void setupFirebase() {
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener()
+        {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
+            {
+
+                user = firebaseAuth.getCurrentUser();
+
+                if (user == null) {
+                    // User ist ausgeloggt, obwohl er noch im Chat ist!
+                    // Das ist falsch
+
+                    Log.w(TAG, "User ist in der Chat-Activity, obwohl er nicht angemeldet ist.");
+
+                    // umleiten zur Login-Activity
+                    startActivity(new Intent(BoringActivity.this, LoginActivity.class));
+
+                    finish();// user soll nicht mehr zurück in den chat kommen, bis er sich wieder angemeldet hat
+                }
+
+            }
+
+        };
+    }
+
+    @Override
+    public void onBackPressed() {
+        // zurück-knopf am handy beendet die ganze app
+        finish();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 }

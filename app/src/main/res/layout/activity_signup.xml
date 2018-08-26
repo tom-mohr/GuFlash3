@@ -14,19 +14,27 @@
         android:gravity="center">
 
         <EditText
-            android:id="@+id/signup_username"
+            android:id="@+id/signup_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName"
+            android:inputType="textEmailAddress"
             android:text=""
-            android:hint="wähle einen Nutzernamen"/>
+            android:hint="E-Mail"/>
 
         <EditText
             android:id="@+id/signup_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="wähle ein sicheres Passwort"
+            android:hint="Passwort"
+            android:ems="10"
+            android:inputType="textPassword"/>
+
+        <EditText
+            android:id="@+id/signup_password_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Passwort bestätigen"
             android:ems="10"
             android:inputType="textPassword"/>
 
@@ -35,6 +43,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Registrieren"/>
+
+        <Button
+            android:id="@+id/signup_goto_login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Du hast schon einen Account?\nMelde dich hier wieder an."/>
 
 
 

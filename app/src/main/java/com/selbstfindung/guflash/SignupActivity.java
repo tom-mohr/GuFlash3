@@ -1,9 +1,7 @@
 package com.selbstfindung.guflash;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,72 +15,105 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
 
-    private Context mContext;
-    private String username, password;
-
-    private DatabaseReference databaseRef;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseMethods firebaseMethods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        mContext = SignupActivity.this;
-        firebaseMethods = new FirebaseMethods(mContext);
 
         setupFirebase();
         init();
     }
 
-    private void init()
-    {
-        ((Button) findViewById(R.id.signup_ok_button)).setOnClickListener(new View.OnClickListener()
-        {
+    @Override
+    public void onStart() {
+        Log.d(TAG, "Firebase auth. is running");
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    private void init() {
+
+
+        // onclick für Button "Du hast schon einen Account? Melde dich hier wieder an."
+        ((Button) findViewById(R.id.signup_goto_login_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // weiterleiten zu Login-Activity
+                startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+            }
+        });
+
+
+        // onclick für Button "Registrieren"
+        ((Button) findViewById(R.id.signup_ok_button)).setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
-                EditText usernameEditText = (EditText) findViewById(R.id.signup_username);
-                EditText passwordEditText = (EditText) findViewById(R.id.signup_password);
+                EditText editTextEmail = (EditText) findViewById(R.id.signup_email);
+                EditText editTextPassword = (EditText) findViewById(R.id.signup_password);
+                EditText editTextPasswordConfirm = (EditText) findViewById(R.id.signup_password_confirm);
 
-                username = usernameEditText.getText().toString();
-                password = passwordEditText.getText().toString();
+                // frage die Werte in den Feldern ab
+                String email = editTextEmail.getText().toString();
+                String password = editTextPassword.getText().toString();
+                String passwordConfirm = editTextPasswordConfirm.getText().toString();
 
-                if(!(username.equals("")||password.equals("")))
-                    mAuth.createUserWithEmailAndPassword(username, password)
+                if(email.equals("") || password.equals("") || passwordConfirm.equals("")) {
+                    // Nutzer hat "Registrieren" gedrückt, obwohl nicht alle Felder ausgefüllt sind
+
+                    Toast.makeText(SignupActivity.this, "Bitte füll alle Felder aus", Toast.LENGTH_SHORT).show();
+
+                } else if (passwordConfirm.equals(password)) {
+                    // Nutzer hat alle Felder ausgefüllt UND die beiden Passwörter sind gleich
+
+                    // signalisiere dem Nutzer, dass jetzt versucht wird, ihn zu registrieren
+                    Toast.makeText(SignupActivity.this, "Registrierung...", Toast.LENGTH_SHORT);
+
+
+                    // sage Firebase-Authentication, dass es einen neuen Nutzer erstellen soll
+                    // außerdem: gib mir feedback, ob das erfolgreich war
+                    mAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task< AuthResult > task)
                                 {
-                                    Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-                                    if (!task.isSuccessful()) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success
+
+                                        Log.d(TAG, "Neuer User wurde erstellt.");
+
+                                        Toast.makeText(SignupActivity.this, "Registrierung erfolgreich.", Toast.LENGTH_SHORT).show();
+
+
+                                    } else {
                                         // If sign in fails, display a message to the user.
-                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                        Toast.makeText(SignupActivity.this, "Registrierung fehlgeschlagen.",
-                                                Toast.LENGTH_SHORT).show();
 
-                                    } else if(task.isSuccessful()){
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "createUserWithEmail:success" + username + password);
+                                        // TODO: Verschiedene Errors unterscheiden (zu kurzes Passwort? email bereits registriert?)
+
+                                        Log.w(TAG, "Registrierung fehlgeschlagen.", task.getException());
+
+                                        Toast.makeText(SignupActivity.this, "Registrierung fehlgeschlagen.", Toast.LENGTH_SHORT).show();
                                     }
                                 }});
 
-                else
-                {
-                    Toast.makeText(mContext, "You must fill out all the fields", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    // alle Felder sind ausgefüllt, aber das Bestätigungs-Passwort ist falsch.
+
+                    Toast.makeText(SignupActivity.this, "Passwort falsch bestätigt.", Toast.LENGTH_SHORT).show();
+
+                    // lösche den Inhalt des Passwort-bestätigen-Feldes
+                    editTextPasswordConfirm.setText("");
                 }
 
 
@@ -90,12 +121,12 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
+
     private void setupFirebase()
     {
         Log.d(TAG, "setting up Firebase auth.");
 
         mAuth = FirebaseAuth.getInstance();
-        databaseRef = FirebaseDatabase.getInstance().getReference();
 
         mAuthListener = new FirebaseAuth.AuthStateListener()
         {
@@ -104,55 +135,20 @@ public class SignupActivity extends AppCompatActivity {
             {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                if(user !=null)
-                {
-                    //User ist eingeloggt
-                    databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange (DataSnapshot dataSnapshot)
-                    {
-                        Log.d(TAG, "Auth reagiert");
-                        //User existiert bereits -> wird nicht weitergeleitet
-                        if (FirebaseMethods.UsernameExists(username, dataSnapshot))
-                        {
-                            Log.d(TAG, "Username existiert bereits");
-                        }
-                        //User gibt es nicht -> Eintrag wird in Datenbank erstellt und wird weitergeleitet
-                        else
-                        {
-                            Log.d(TAG, "neuer User wird erstellt");
+                if(user !=null) {
+                    //User ist jetzt eingeloggt (-> Registrierung war also erfolgreich)
 
-                            //databaseRef.child("users").child(username).setValue(username, password);
-                            firebaseMethods.addUserToDatabase(username, password);
+                    Log.d(TAG, "User ist jetzt eingeloggt.");
 
-                            Log.d(TAG, "wechsel auf Boring Activity");
-                            Intent intent = new Intent(SignupActivity.this, BoringActivity.class);
-                            intent.putExtra(BoringActivity.EXTRA_MESSAGE_USERNAME_TAG, username);
-                            startActivity(intent);
-                        }
-                    }
+                    // weiterleiten zur Chat-Activity
+                    startActivity(new Intent(SignupActivity.this, BoringActivity.class));
 
-                    @Override
-                    public void onCancelled (DatabaseError databaseError)
-                    {
-                        Log.w(TAG, "auth wurde abgebrochen");
-                    }
-                    });
-                }
-                else
-                {
-                    //User ist ausgeloggt
+                    finish();// user soll nicht mehr hierher zurück können
                 }
             }
         };
 
 
-    }
-    @Override
-    public void onStart() {
-        Log.d(TAG, "Firebase auth. is running");
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override

@@ -22,20 +22,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
 
-    private Context mContext;
-    private String username, password;
-
-    private DatabaseReference databaseRef;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseMethods firebaseMethods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mContext = LoginActivity.this;
-        firebaseMethods = new FirebaseMethods(mContext);
 
         setupFirebase();
         init();
@@ -43,48 +36,62 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public void init() {
+
+        // onclick für "zurück" button (zurück zur Registrierung)
+        ((Button) findViewById(R.id.login_back_to_signup_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // finish this Activity
+                // -> geht zurück zu parent activtiy (in diesem Fall: SignupActivity)
+                finish();
+            }
+        });
+
+
+        // onclick für "Login" button
         ((Button) findViewById(R.id.login_ok_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                EditText usernameEditText = (EditText) findViewById(R.id.login_username);
-                EditText passwordEditText = (EditText) findViewById(R.id.login_password);
+                EditText editTextEmail = (EditText) findViewById(R.id.login_email);
+                EditText editTextPassword = (EditText) findViewById(R.id.login_password);
 
-                username = usernameEditText.getText().toString();
-                password = passwordEditText.getText().toString();
+                // frage die Werte in den Feldern ab
+                String email = editTextEmail.getText().toString();
+                String password = editTextPassword.getText().toString();
 
-                if (!(username.equals("") || password.equals(""))) {
-                    mAuth.signInWithEmailAndPassword(username, password)
+                if(email.equals("") || password.equals("")) {
+                    // Nutzer hat "Login" gedrückt, obwohl nicht alle Felder ausgefüllt sind
+
+                    Toast.makeText(LoginActivity.this, "Bitte füll alle Felder aus", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // Nutzer hat alle Felder ausgefüllt UND die beiden Passwörter sind gleich
+
+                    // sage Firebase-Authentication, dass es den Nutzer anmelden soll
+                    // außerdem: gib mir feedback, ob das erfolgreich war
+                    mAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
-                                    if (!task.isSuccessful()) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success
+
+                                        Log.d(TAG, "Login erfolgreich.");
+
+                                        Toast.makeText(LoginActivity.this, "Login erfolgreich.", Toast.LENGTH_SHORT).show();
+
+                                    } else {
                                         // If sign in fails, display a message to the user.
-                                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                        Toast.makeText(LoginActivity.this, "Einloggen fehlgeschlagen.",
-                                                Toast.LENGTH_SHORT).show();
 
-                                    } else if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "Login:success");
-                                        Toast.makeText(LoginActivity.this, "Einloggen erfolgreich",
-                                                Toast.LENGTH_SHORT).show();
+                                        Log.w(TAG, "Login fehlgeschlagen.", task.getException());
+
+                                        Toast.makeText(LoginActivity.this, "Login fehlgeschlagen.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
-                } else {
-                    Toast.makeText(mContext, "You must fill out all the fields", Toast.LENGTH_SHORT).show();
-                }
-
-                // Wenn User eingeloggt ist soll er zur Boring Activity weitergeleitet werden
-
-                if (mAuth.getCurrentUser() != null) {
-                    Intent intent = new Intent(LoginActivity.this, BoringActivity.class);
-                    intent.putExtra(BoringActivity.EXTRA_MESSAGE_USERNAME_TAG, username);
-                    startActivity(intent);
-                    finish();
                 }
 
             }
@@ -109,17 +116,16 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (user != null)
                 {
-                    //User ist eingeloggt
-                    Log.d(TAG, "onAuthStateChanged:signed_in:");
-                }
-                else
-                {
-                    //User ist ausgeloogt
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
+                    //User ist jetzt eingeloggt
+                    Log.d(TAG, "User ist jetzt eingeloggt: "+user.getEmail());
 
+
+                    // weiterleiten zur Chat-Activity
+                    startActivity(new Intent(LoginActivity.this, BoringActivity.class));
+
+                    finish();// user soll nicht mehr hierher zurück können
+                }
             }
-
         };
     }
 
