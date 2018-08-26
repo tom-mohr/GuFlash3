@@ -20,22 +20,25 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 
-public class BoringActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
 
     public static final String EXTRA_MESSAGE_USERNAME_TAG = "USERNAME_MESSAGE";
 
-    private TextView chat;
     private EditText chatTextInput;
 
-    /// für dev.:
-    private int counter;
+    private ArrayList<String> messageUsernames = new ArrayList<>();
+    private ArrayList<String> messageTexts = new ArrayList<>();
+
+    RecyclerViewAdapter recyclerViewAdapter;// need instance for newly added messages
+
+    /// for dev
+    private int counter = 0;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -45,20 +48,18 @@ public class BoringActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_boring);
+        setContentView(R.layout.activity_chat);
+
+        Log.d(TAG, "ChatActivity onCreate()");
 
         setupFirebase();
         init();
     }
 
     private void init() {
+
         // get views (youtube money)
-        chat = (TextView) findViewById(R.id.chat_message_list);
         chatTextInput = (EditText) findViewById(R.id.edittext_chatbox);
-
-
-        chat.setText("");
-        counter = 0;
 
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
@@ -69,26 +70,33 @@ public class BoringActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Message msg = dataSnapshot.getValue(Message.class);
 
-                Log.d(TAG, "Message added: "+msg.senderUsername+": "+msg.text);
+                // absender und inhalt den arrays hinzufügen
+                messageUsernames.add(msg.senderUsername);
+                messageTexts.add(msg.text);
 
-                // add message (update UI)
-                chat.setText(chat.getText().toString() + msg.senderUsername + ": " + msg.text + "\n");
+                Log.d(TAG, "Message added: "+msg.senderUsername+": "+msg.text);
 
 
                 int id = Integer.valueOf(dataSnapshot.getKey());
                 if (id >= counter) {
                     counter = id+1;
                 }
+
+
+                // notify recyclerViewAdapter that new message was added
+                // but only, if it was already initialized
+                // see: https://stackoverflow.com/questions/27845069/add-a-new-item-to-recyclerview-programmatically
+                if (recyclerViewAdapter != null) {
+
+                    int position = messageTexts.size() - 1;// last index in list
+                    recyclerViewAdapter.notifyItemInserted(position);
+                }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                chat.setText("");
-            }
-
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
@@ -98,6 +106,8 @@ public class BoringActivity extends AppCompatActivity {
                 Log.w(TAG, "Failed to read value.", databaseError.toException());
             }
         });
+
+        initRecyclerView();
 
 
         // onclick für "senden" button
@@ -119,15 +129,17 @@ public class BoringActivity extends AppCompatActivity {
             }
         });
 
-        /// für dev:
-        // onclick für "Chat löschen" button
-        ((Button) findViewById(R.id.button_delete_chat)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                databaseRef.child("messages").removeValue(null);
-            }
-        });
+    }
 
+
+    private void initRecyclerView() {
+
+        RecyclerView recyclerView = findViewById(R.id.chat_recycler_view);
+
+        recyclerViewAdapter = new RecyclerViewAdapter(this, messageUsernames, messageTexts);
+
+        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void writeNewMessage(String senderUsername, String text) {
@@ -161,7 +173,7 @@ public class BoringActivity extends AppCompatActivity {
                     Log.w(TAG, "User ist in der Chat-Activity, obwohl er nicht angemeldet ist.");
 
                     // umleiten zur Login-Activity
-                    startActivity(new Intent(BoringActivity.this, LoginActivity.class));
+                    startActivity(new Intent(ChatActivity.this, LoginActivity.class));
 
                     finish();// user soll nicht mehr zurück in den chat kommen, bis er sich wieder angemeldet hat
                 }
