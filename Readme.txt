@@ -1,3 +1,21 @@
+Änderungen vom 26.08.18 19:30
+- BoringActivity heißt jetzt ChatActivity
+- Chat-Design verbessert
+
+Änderungen vom 26.08.18 18:30
+- viele Log.d/w-Statements hinzugefügt oder verändert
+- In den "Daten" der App wird der FirebaseUser gespeichert;
+  Man bleibt also angemeldet, selbst wenn man das Handy aus- und wieder anschaltet
+- MainActivity hat keine Buttons mehr.
+  Sie hat die einzige Funktion, den User etweder zur Chat-Activtiy oder zur Signup-Activity umzuleiten,
+  je nachdem, ob der User bereits am Gerät angemeldet ist, oder nicht.
+  -> Man sieht also die MainActivity maximal GANZ kurz (ich sehe sie nicht).
+
+- Das "users" Child in der Database ist jetzt nutzlos, da nur noch FirebaseUser verwendet wird.
+  Sämtlicher Code, der damit zu tun hatte, wurde entfernt (außer die Klasse FirebaseMethods - wird aber nicht verwendet)
+- Die Methoden von FirebaseMethods werden nicht verwendet
+
+
 Änderungen vom 26.08.18 13:30
 
 -Abstürze wurden größtenteils gefixt, App ist jetzt wieder benutzbar
