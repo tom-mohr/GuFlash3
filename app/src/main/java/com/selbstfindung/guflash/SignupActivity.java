@@ -76,11 +76,14 @@ public class SignupActivity extends AppCompatActivity {
 
                                     } else if(task.isSuccessful()){
                                         // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "createUserWithEmail:success");
+                                        Log.d(TAG, "createUserWithEmail:success" + username + password);
                                     }
                                 }});
 
-
+                else
+                {
+                    Toast.makeText(mContext, "You must fill out all the fields", Toast.LENGTH_SHORT).show();
+                }
 
 
 
@@ -89,6 +92,8 @@ public class SignupActivity extends AppCompatActivity {
     }
     private void setupFirebase()
     {
+        Log.d(TAG, "setting up Firebase auth.");
+
         mAuth = FirebaseAuth.getInstance();
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
@@ -99,24 +104,28 @@ public class SignupActivity extends AppCompatActivity {
             {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                //if(user !=null)
-                //{
+                if(user !=null)
+                {
                     //User ist eingeloggt
                     databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange (DataSnapshot dataSnapshot)
                     {
+                        Log.d(TAG, "Auth reagiert");
                         //User existiert bereits -> wird nicht weitergeleitet
                         if (FirebaseMethods.UsernameExists(username, dataSnapshot))
                         {
-
+                            Log.d(TAG, "Username existiert bereits");
                         }
                         //User gibt es nicht -> Eintrag wird in Datenbank erstellt und wird weitergeleitet
                         else
                         {
-                            //databaseRef.child("users").child(username).setValue(newUser);
+                            Log.d(TAG, "neuer User wird erstellt");
+
+                            //databaseRef.child("users").child(username).setValue(username, password);
                             firebaseMethods.addUserToDatabase(username, password);
 
+                            Log.d(TAG, "wechsel auf Boring Activity");
                             Intent intent = new Intent(SignupActivity.this, BoringActivity.class);
                             intent.putExtra(BoringActivity.EXTRA_MESSAGE_USERNAME_TAG, username);
                             startActivity(intent);
@@ -126,14 +135,14 @@ public class SignupActivity extends AppCompatActivity {
                     @Override
                     public void onCancelled (DatabaseError databaseError)
                     {
-                        
+                        Log.w(TAG, "auth wurde abgebrochen");
                     }
                     });
-                //}
-                //else
-                //{
+                }
+                else
+                {
                     //User ist ausgeloggt
-                //}
+                }
             }
         };
 
@@ -141,12 +150,14 @@ public class SignupActivity extends AppCompatActivity {
     }
     @Override
     public void onStart() {
+        Log.d(TAG, "Firebase auth. is running");
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
+        Log.d(TAG, "Firebase auth. stopped");
         super.onStop();
         if (mAuthListener != null)
         {

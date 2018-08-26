@@ -47,25 +47,32 @@ public class FirebaseMethods
 
     public static boolean UsernameExists(String username, DataSnapshot dataSnapshot)
     {
-        User user = new User();
+        Log.d(TAG, "checkIfUsernameExists: checking if " + username + " already exists.");
 
-        //Schleife die durch alle Children durchgeht
-        for(DataSnapshot ds: dataSnapshot.getChildren())
+        User user = new User();
+        long maximum = dataSnapshot.getChildrenCount();
+        Log.d(TAG, "schleife läuft " + maximum + " mal");
+        //Schleife die durch alle Children der Node "Users" durchgeht
+        for(DataSnapshot ds: dataSnapshot.child("users").getChildren())
         {
             user.setUsername(ds.getValue(User.class).getUsername());
             //wenn der Username Vorhanden ist wird true ausgegeben
             if(user.getUsername().equals(username))
             {
+                Log.d(TAG, "checkIfUsernameExists: FOUND A MATCH: " + user.getUsername());
                 return true;
             }
         }
+        Log.d(TAG, "checkIfUsernameExists: DIDN'T FIND A MATCH for : " + user.getUsername());
         return false;
     }
     //fügt User zur Datenbank hinzu
     public void addUserToDatabase(String username, String password)
     {
+        Log.d(TAG, "User wird Datenbank hinzugefügt: "+username+" "+username.substring(0,username.indexOf('@')) );
         User user = new User(username, password);
 
-        mRef.child("users").child(username).setValue(user);
+        mRef.child("users").child(username.substring(0,username.indexOf('@'))).setValue(user);
+        Log.d(TAG, "User wurde Datenbank hinzugefügt: "+password);
     }
 }
