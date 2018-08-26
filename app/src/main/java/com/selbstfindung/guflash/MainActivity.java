@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d(TAG, "Mainactivity onCreate()");
+
         setupFirebase();
     }
 
@@ -46,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "User ist bereits an diesem Gerät eingeloggt: "+user.getEmail());
 
                     // direkt weiterleiten zu Chat-Activity
-                    startActivity(new Intent(MainActivity.this, BoringActivity.class));
+                    startActivity(new Intent(MainActivity.this, ChatActivity.class));
+                    finish();// user soll nicht mehr hierher zurück können
 
                 } else {
                     //User ist ausgeloggt
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // weiterleiten zu Signup-Activity
                     startActivity(new Intent(MainActivity.this, SignupActivity.class));
-
+                    Log.d(TAG, "finish main activity");
                     finish();// user soll nicht mehr hierher zurück können
                 }
 

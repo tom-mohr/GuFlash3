@@ -141,7 +141,7 @@ public class SignupActivity extends AppCompatActivity {
                     Log.d(TAG, "User ist jetzt eingeloggt.");
 
                     // weiterleiten zur Chat-Activity
-                    startActivity(new Intent(SignupActivity.this, BoringActivity.class));
+                    startActivity(new Intent(SignupActivity.this, ChatActivity.class));
 
                     finish();// user soll nicht mehr hierher zurück können
                 }
