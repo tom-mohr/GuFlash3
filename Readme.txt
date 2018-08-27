@@ -1,3 +1,12 @@
+Änderungen vom 27.08.18 14:30
+
+-GroupActivity hinzugefügt
+-GroupActivity ist der eigentliche Home-Screen zu dem man nach dem login gebracht wird
+-Es gibt jetzt mehrere Chaträume
+-Es wurde ein zweiter RecyclerViewAdapter für die Gruppen hinzugefügt
+-Gruppenscreen lässt sich nur durch refresh button aktualisieren
+
+
 Änderungen vom 26.08.18 19:30
 - BoringActivity heißt jetzt ChatActivity
 - Chat-Design verbessert (benutzt jetzt RecyclerView)
