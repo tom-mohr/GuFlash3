@@ -28,7 +28,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
 
-    public static final String EXTRA_MESSAGE_USERNAME_TAG = "USERNAME_MESSAGE";
+    public static final String EXTRA_MESSAGE_GRUPPEN_NAME = "GRUPPEN_NAME";
 
     private EditText chatTextInput;
 
@@ -39,6 +39,7 @@ public class ChatActivity extends AppCompatActivity {
 
     /// for dev
     private int counter = 0;
+    private String Gruppenname;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -51,6 +52,9 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         Log.d(TAG, "ChatActivity onCreate()");
+
+        Intent intent = getIntent();
+        Gruppenname = intent.getStringExtra(EXTRA_MESSAGE_GRUPPEN_NAME);
 
         setupFirebase();
         init();
@@ -65,7 +69,7 @@ public class ChatActivity extends AppCompatActivity {
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
         // listen to database changes (new messages)
-        databaseRef.child("messages").addChildEventListener(new ChildEventListener() {
+        databaseRef.child("Gruppen").child(Gruppenname).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Message msg = dataSnapshot.getValue(Message.class);
@@ -147,7 +151,7 @@ public class ChatActivity extends AppCompatActivity {
 
         String messageId = String.valueOf(counter);
 
-        databaseRef.child("messages").child(messageId).setValue(msg);
+        databaseRef.child("Gruppen").child(Gruppenname).child(messageId).setValue(msg);
 
         counter++;
     }
