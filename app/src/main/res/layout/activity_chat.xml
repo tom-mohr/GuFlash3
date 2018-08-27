@@ -9,27 +9,10 @@
 
 
     <LinearLayout
+        android:paddingTop="12dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Event-Name"
-                android:textSize="20sp"
-                android:textAlignment="center"
-                android:padding="12sp"/>
-
-        </LinearLayout>
-
-
 
         <ScrollView
             android:layout_width="match_parent"
@@ -57,24 +40,25 @@
                         android:hint="Nachricht"
                         android:background="@android:color/transparent"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
+                        android:layout_marginEnd="16dp"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
                         android:maxLines="6"/>
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/chat_send_button"
-                        android:text="SEND"
-                        android:textSize="14dp"
-                        android:background="#64dd17"
+                        android:contentDescription="senden"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:layout_marginEnd="16dp"
+                        android:backgroundTint="#64dd17"
                         android:clickable="true"
-                        android:layout_width="64dp"
-                        android:layout_height="48dp"
-                        android:gravity="center"
-                        android:layout_gravity="bottom" />
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:src="@android:drawable/ic_menu_send" />
 
 
                 </LinearLayout>

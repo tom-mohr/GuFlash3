@@ -18,11 +18,13 @@ public class RecyclerViewAdapterGroup extends RecyclerView.Adapter<RecyclerViewA
 {
     private static final String TAG = "MONTAG";
 
+    private ArrayList<String> mGroupIDs = new ArrayList<>();
     private ArrayList<String> mGroupNames = new ArrayList<>();
     private Context mContext;
 
-    public RecyclerViewAdapterGroup(ArrayList<String> groupNames, Context context)
+    public RecyclerViewAdapterGroup(ArrayList<String> groupIDs, ArrayList<String> groupNames, Context context)
     {
+        mGroupIDs = groupIDs;
         mGroupNames = groupNames;
         mContext = context;
     }
@@ -51,9 +53,8 @@ public class RecyclerViewAdapterGroup extends RecyclerView.Adapter<RecyclerViewA
 
                 //weiterleiten an den Chat
                 Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_NAME, mGroupNames.get(position));
+                intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mGroupIDs.get(position));
                 mContext.startActivity(intent);
-                //finish();
             }
         });
 

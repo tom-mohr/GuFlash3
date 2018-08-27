@@ -1,5 +1,6 @@
 package com.selbstfindung.guflash;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -28,23 +31,21 @@ public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
 
-    public static final String EXTRA_MESSAGE_GRUPPEN_NAME = "GRUPPEN_NAME";
+    public static final String EXTRA_MESSAGE_GRUPPEN_ID = "GRUPPEN_ID";
+
+    private String groupID;
 
     private EditText chatTextInput;
 
     private ArrayList<String> messageUsernames = new ArrayList<>();
     private ArrayList<String> messageTexts = new ArrayList<>();
-
     RecyclerViewAdapter recyclerViewAdapter;// need instance for newly added messages
-
-    /// for dev
-    private int counter = 0;
-    private String Gruppenname;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser user;
     private DatabaseReference databaseRef;
+    private DatabaseReference groupRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +54,12 @@ public class ChatActivity extends AppCompatActivity {
 
         Log.d(TAG, "ChatActivity onCreate()");
 
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
-        Gruppenname = intent.getStringExtra(EXTRA_MESSAGE_GRUPPEN_NAME);
+        groupID = intent.getStringExtra(EXTRA_MESSAGE_GRUPPEN_ID);
 
         setupFirebase();
         init();
@@ -62,14 +67,16 @@ public class ChatActivity extends AppCompatActivity {
 
     private void init() {
 
-        // get views (youtube money)
         chatTextInput = (EditText) findViewById(R.id.edittext_chatbox);
 
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
+        // create reference for this group
+        groupRef = databaseRef.child("groups").child(groupID);
+
         // listen to database changes (new messages)
-        databaseRef.child("Gruppen").child(Gruppenname).addChildEventListener(new ChildEventListener() {
+        groupRef.child("messages").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Message msg = dataSnapshot.getValue(Message.class);
@@ -79,13 +86,6 @@ public class ChatActivity extends AppCompatActivity {
                 messageTexts.add(msg.text);
 
                 Log.d(TAG, "Message added: "+msg.senderUsername+": "+msg.text);
-
-
-                int id = Integer.valueOf(dataSnapshot.getKey());
-                if (id >= counter) {
-                    counter = id+1;
-                }
-
 
                 // notify recyclerViewAdapter that new message was added
                 // but only, if it was already initialized
@@ -111,11 +111,28 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        // listen to database changes (groupname)
+        groupRef.child("name").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String newGroupName = dataSnapshot.getValue(String.class);
+
+                setTitle(newGroupName);// set group name as title in action bar
+
+                Log.d(TAG, "group name changed to "+newGroupName);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+
+
         initRecyclerView();
 
 
         // onclick für "senden" button
-        ((Button) findViewById(R.id.chat_send_button)).setOnClickListener(new View.OnClickListener() {
+        ((ImageButton) findViewById(R.id.chat_send_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -147,13 +164,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void writeNewMessage(String senderUsername, String text) {
-        Message msg = new Message(senderUsername, text);
-
-        String messageId = String.valueOf(counter);
-
-        databaseRef.child("Gruppen").child(Gruppenname).child(messageId).setValue(msg);
-
-        counter++;
+        DatabaseReference newMessageRef = groupRef.child("messages").push();
+        newMessageRef.setValue(new Message(senderUsername, text));
     }
 
 
@@ -185,12 +197,6 @@ public class ChatActivity extends AppCompatActivity {
             }
 
         };
-    }
-
-    @Override
-    public void onBackPressed() {
-        // zurück-knopf am handy beendet die ganze app
-        finish();
     }
 
     @Override

@@ -6,13 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.selbstfindung.guflash.GroupActivity">
 
-    <Button
-        android:id="@+id/refresh_button"
-        android:layout_width="84dp"
-        android:layout_height="50dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="Refresh" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,6 +19,7 @@
                 android:padding="12sp"
                 android:text="Gruppen"
                 android:textAlignment="center"
+                android:textStyle="italic"
                 android:textSize="20sp" />
 
 
@@ -43,7 +37,7 @@
                 android:orientation="vertical">
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_viewGroup"
+                    android:id="@+id/groups_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
@@ -54,26 +48,22 @@
 
                     <EditText
                         android:id="@+id/create_group"
-                        android:hint="Gruppenname"
+                        android:hint="Neuer Gruppenname"
                         android:background="@android:color/transparent"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:layout_weight="1"
                         android:padding="16dp"/>
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/create_group_button"
-                        android:layout_width="72dp"
-                        android:layout_height="48dp"
-                        android:layout_gravity="bottom"
-                        android:background="#646060"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_vertical"
                         android:clickable="true"
-                        android:gravity="center"
-                        android:text="Erstelle Gruppe"
-                        android:textSize="14sp" />
+                        android:src="@android:drawable/ic_input_add" />
 
                 </LinearLayout>
 
