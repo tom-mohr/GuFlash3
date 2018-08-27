@@ -1,5 +1,18 @@
-Änderungen vom 27.08.18 14:30
+Änderungen vom 27.08.18 18:30 | 1.09
+- Child "Gruppen" in Firebase heißt jetzt "groups"
+- Gruppen haben nicht mehr ihren Namen als Key, sondern eine spezifische ID
+- Wir verwenden jetzt Firebase "push()":
+  -> Neue Gruppen und Nachrichten erhalten beim erstellen eine spezifische und chronologische ID
+  -> warum das besser ist: https://www.firebase.com/docs/web/guide/saving-data.html#section-push
+  -> So sind mehrere Gruppen mit gleichem Namen möglich (-> finde ich gut)
+- die ChatActivity hat eine Action Bar
+  -> Der Titel entspricht dem Gruppennamen
+  -> Es gibt einen zurück-Button links oben, der in die GroupActivity umleitet
+     (Das wurde nochmal im Manifest explizit festgelegt)
+ - Die GroupActivity wurde hübscher gemacht
 
+
+Änderungen vom 27.08.18 14:30 | 1.08
 -GroupActivity hinzugefügt
 -GroupActivity ist der eigentliche Home-Screen zu dem man nach dem login gebracht wird
 -Es gibt jetzt mehrere Chaträume
