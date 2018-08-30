@@ -1,4 +1,18 @@
-Änderungen vom 30.08.18 13:30
+Änderungen vom 30.08.18 21:20 | 1.11
+- lösch mal die daten von der app und schau dir den neuen signup und login screen an.
+  -> sieht geil aus ^^
+- episches material design bei allen buttons und (vor allem:) Eingabefeldern!
+	-> Placeholders in form fields are harmful
+	   https://www.nngroup.com/articles/form-design-placeholders/
+- passwort-bestätigung entfernt (unnötiges aufhalten des flows)
+- farben in der ganzen app geändert (values/colors.xml)
+- der navigation drawer hat noch keine funktionen ausser unter "profil"
+- neue gruppen haben jetzt ein "description" child
+- 
+- und noch alles mögliche andere hab ich gemacht.
+
+
+Änderungen vom 30.08.18 13:30 | 1.10
 - User Klasse hat Zugriff auf den Usernamen, Email und soll aktive Gruppen speichern
 - ProfileActivity hinzugefügt, Daten können dort verändert werden (aktive Gruppen sollen dort angezeigt werden)
 - vorzeitige Navigationsleiste, die zum Profil und Gruppenscreen führt (wird anders umgesetzt)
