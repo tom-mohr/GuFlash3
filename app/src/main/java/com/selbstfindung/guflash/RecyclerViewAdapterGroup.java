@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.selbstfindung.guflash.Activities.ChatActivity;
+
 import java.util.ArrayList;
 
 public class RecyclerViewAdapterGroup extends RecyclerView.Adapter<RecyclerViewAdapterGroup.ViewHolder>

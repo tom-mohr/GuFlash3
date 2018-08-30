@@ -66,13 +66,4 @@ public class FirebaseMethods
         Log.d(TAG, "checkIfUsernameExists: DIDN'T FIND A MATCH for : " + user.getUsername());
         return false;
     }
-    //fügt User zur Datenbank hinzu
-    public void addUserToDatabase(String username, String password)
-    {
-        Log.d(TAG, "User wird Datenbank hinzugefügt: "+username+" "+username.substring(0,username.indexOf('@')) );
-        User user = new User(username, password);
-
-        mRef.child("users").child(username.substring(0,username.indexOf('@'))).setValue(user);
-        Log.d(TAG, "User wurde Datenbank hinzugefügt: "+password);
-    }
 }

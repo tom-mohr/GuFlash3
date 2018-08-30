@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        >
+
+        <Button
+            android:id="@+id/useless_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clicke diesen Button falls du dich vor 'vielen' Tagen regestriert hast" />
+
+        <EditText
+            android:id="@+id/change_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Dein Username"
+            android:text=""
+            android:ems="10"
+            />
+
+
+
+        <EditText
+            android:id="@+id/change_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Neues Passwort"
+            android:text=""
+            android:ems="10"
+            android:paddingTop="40dp"
+            />
+
+        <EditText
+            android:id="@+id/change_password_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Bestätige Passwort"
+            android:text=""
+            android:ems="10"
+            />
+
+        <Button
+            android:id="@+id/confirm_changes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bestätige Änderungen"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="Deine Gruppen"
+            android:textAlignment="center"
+            android:textStyle="italic"
+            android:textSize="20sp"
+            android:paddingTop="30dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/home_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Home" />
+
+        <Button
+            android:id="@+id/profile_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

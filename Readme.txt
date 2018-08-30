@@ -1,3 +1,12 @@
+Änderungen vom 30.08.18 13:30
+- User Klasse hat Zugriff auf den Usernamen, Email und soll aktive Gruppen speichern
+- ProfileActivity hinzugefügt, Daten können dort verändert werden (aktive Gruppen sollen dort angezeigt werden)
+- vorzeitige Navigationsleiste, die zum Profil und Gruppenscreen führt (wird anders umgesetzt)
+- Chat nutzt jetzt den Usernamen statt der Email
+- Firebase speichert nun Userdaten, außer dem Passwort, diese werden bei der Registrierung initialisiert
+- extra Ordner für Activities
+
+
 Änderungen vom 27.08.18 18:30 | 1.09
 - Child "Gruppen" in Firebase heißt jetzt "groups"
 - Gruppen haben nicht mehr ihren Namen als Key, sondern eine spezifische ID

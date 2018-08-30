@@ -1,4 +1,4 @@
-package com.selbstfindung.guflash;
+package com.selbstfindung.guflash.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -15,6 +15,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.selbstfindung.guflash.R;
+
+import java.util.ArrayList;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -22,11 +27,21 @@ public class SignupActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mRef;
+
+    private String UserID;
+    private String Email;
+    private String Username;
+    private ArrayList<String> Gruppen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mRef = mFirebaseDatabase.getReference();
 
         setupFirebase();
         init();
@@ -63,7 +78,7 @@ public class SignupActivity extends AppCompatActivity {
                 EditText editTextPasswordConfirm = (EditText) findViewById(R.id.signup_password_confirm);
 
                 // frage die Werte in den Feldern ab
-                String email = editTextEmail.getText().toString();
+                final String email = editTextEmail.getText().toString();
                 String password = editTextPassword.getText().toString();
                 String passwordConfirm = editTextPasswordConfirm.getText().toString();
 
@@ -91,6 +106,8 @@ public class SignupActivity extends AppCompatActivity {
                                         // Sign in success
 
                                         Log.d(TAG, "Neuer User wurde erstellt.");
+
+                                        Email = email;
 
                                         Toast.makeText(SignupActivity.this, "Registrierung erfolgreich.", Toast.LENGTH_SHORT).show();
 
@@ -139,6 +156,15 @@ public class SignupActivity extends AppCompatActivity {
                     //User ist jetzt eingeloggt (-> Registrierung war also erfolgreich)
 
                     Log.d(TAG, "User ist jetzt eingeloggt.");
+
+                    //initialisierung der Einstellungen im Userprofil
+                    UserID = mAuth.getCurrentUser().getUid();
+                    Username = Email.substring(0,Email.indexOf('@'));
+
+                    mRef.child("users").child(UserID).child("email").setValue(Email);
+                    mRef.child("users").child(UserID).child("username").setValue(Username);
+                    mRef.child("users").child(UserID).child("gruppen").child("0").setValue("");
+
 
                     // weiterleiten zur Chat-Activity
                     startActivity(new Intent(SignupActivity.this, GroupActivity.class));
