@@ -15,23 +15,35 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ChatActivity"
+            android:name=".Activities.ChatActivity"
             android:label="@string/app_name"
-            android:theme="@style/ChatTheme">
+            android:theme="@style/MyActionBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GroupActivity" />
+                android:value=".Activities.BasicActivity" />
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".SignupActivity" />
-        <activity android:name=".GroupActivity" />
+        <activity android:name=".Activities.LoginActivity" />
+        <activity android:name=".Activities.SignupActivity" />
+        <activity android:name=".Activities.ProfileActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.BasicActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.BasicActivity"
+            android:label="@string/title_activity_basic"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Activities.CreateGroupActivity"
+            android:theme="@style/MyActionBarTheme">
+
+        </activity>
     </application>
 
 </manifest>

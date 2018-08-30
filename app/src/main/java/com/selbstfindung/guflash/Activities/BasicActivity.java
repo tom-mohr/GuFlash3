@@ -1,11 +1,15 @@
-package com.selbstfindung.guflash;
+package com.selbstfindung.guflash.Activities;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -16,11 +20,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.selbstfindung.guflash.R;
+import com.selbstfindung.guflash.RecyclerViewAdapterGroup;
 
 import java.util.ArrayList;
-import java.util.Map;
 
-public class GroupActivity extends AppCompatActivity {
+public class BasicActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
 
@@ -31,11 +36,13 @@ public class GroupActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group);
+        setContentView(R.layout.activity_basic);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference();
@@ -44,6 +51,16 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void init() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(BasicActivity.this, CreateGroupActivity.class));
+            }
+        });
+
+
+        setTitle("Gruppen");
 
         // listen for changes to the "groups" child
         mRef.child("groups").addChildEventListener(new ChildEventListener() {
@@ -79,24 +96,8 @@ public class GroupActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
 
+
         initRecyclerView();
-
-        // onclick für "Neue Gruppe erstellen"
-        ((ImageButton) findViewById(R.id.create_group_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                EditText editGroupName = ((EditText) findViewById(R.id.create_group));
-
-                String groupName = editGroupName.getText().toString();
-
-                DatabaseReference newGroupRef = mRef.child("groups").push();
-                newGroupRef.child("name").setValue(groupName);
-
-                editGroupName.setText("");
-
-            }
-        });
     }
 
     private  void initRecyclerView() {

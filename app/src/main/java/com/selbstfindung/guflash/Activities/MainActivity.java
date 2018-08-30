@@ -1,4 +1,4 @@
-package com.selbstfindung.guflash;
+package com.selbstfindung.guflash.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.selbstfindung.guflash.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "User ist bereits an diesem Gerät eingeloggt: "+user.getEmail());
 
                     // direkt weiterleiten zu Chat-Activity
-                    startActivity(new Intent(MainActivity.this, GroupActivity.class));
+                    startActivity(new Intent(MainActivity.this, BasicActivity.class));
                     finish();// user soll nicht mehr hierher zurück können
 
                 } else {

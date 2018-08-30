@@ -1,4 +1,4 @@
-package com.selbstfindung.guflash;
+package com.selbstfindung.guflash.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -15,6 +15,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.selbstfindung.guflash.R;
+
+import java.util.ArrayList;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -22,11 +27,21 @@ public class SignupActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mRef;
+
+    private String UserID;
+    private String Email;
+    private String Username;
+    private ArrayList<String> Gruppen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mRef = mFirebaseDatabase.getReference();
 
         setupFirebase();
         init();
@@ -60,20 +75,18 @@ public class SignupActivity extends AppCompatActivity {
 
                 EditText editTextEmail = (EditText) findViewById(R.id.signup_email);
                 EditText editTextPassword = (EditText) findViewById(R.id.signup_password);
-                EditText editTextPasswordConfirm = (EditText) findViewById(R.id.signup_password_confirm);
 
                 // frage die Werte in den Feldern ab
-                String email = editTextEmail.getText().toString();
+                final String email = editTextEmail.getText().toString();
                 String password = editTextPassword.getText().toString();
-                String passwordConfirm = editTextPasswordConfirm.getText().toString();
 
-                if(email.equals("") || password.equals("") || passwordConfirm.equals("")) {
+                if(email.equals("") || password.equals("")) {
                     // Nutzer hat "Registrieren" gedrückt, obwohl nicht alle Felder ausgefüllt sind
 
                     Toast.makeText(SignupActivity.this, "Bitte füll alle Felder aus", Toast.LENGTH_SHORT).show();
 
-                } else if (passwordConfirm.equals(password)) {
-                    // Nutzer hat alle Felder ausgefüllt UND die beiden Passwörter sind gleich
+                } else if (passwordIsOkay(password)) {
+                    // Nutzer hat alle Felder ausgefüllt und passwort ist OK
 
                     // signalisiere dem Nutzer, dass jetzt versucht wird, ihn zu registrieren
                     Toast.makeText(SignupActivity.this, "Registrierung...", Toast.LENGTH_SHORT);
@@ -92,6 +105,8 @@ public class SignupActivity extends AppCompatActivity {
 
                                         Log.d(TAG, "Neuer User wurde erstellt.");
 
+                                        Email = email;
+
                                         Toast.makeText(SignupActivity.this, "Registrierung erfolgreich.", Toast.LENGTH_SHORT).show();
 
 
@@ -108,18 +123,20 @@ public class SignupActivity extends AppCompatActivity {
 
                 } else {
 
-                    // alle Felder sind ausgefüllt, aber das Bestätigungs-Passwort ist falsch.
+                    // alle Felder sind ausgefüllt, aber das Passwort ist schlecht
 
-                    Toast.makeText(SignupActivity.this, "Passwort falsch bestätigt.", Toast.LENGTH_SHORT).show();
-
-                    // lösche den Inhalt des Passwort-bestätigen-Feldes
-                    editTextPasswordConfirm.setText("");
+                    Toast.makeText(SignupActivity.this, "Das Passwort ist nicht OK.", Toast.LENGTH_SHORT).show();
                 }
 
 
 
             }
         });
+    }
+
+    private boolean passwordIsOkay(String p) {
+        //TODO: Länge des Passworts checken: Was ist die minimale Länge, die Firebase-Auth. verlangt?
+        return true;
     }
 
     private void setupFirebase()
@@ -140,8 +157,17 @@ public class SignupActivity extends AppCompatActivity {
 
                     Log.d(TAG, "User ist jetzt eingeloggt.");
 
+                    //initialisierung der Einstellungen im Userprofil
+                    UserID = mAuth.getCurrentUser().getUid();
+                    Username = Email.substring(0,Email.indexOf('@'));
+
+                    mRef.child("users").child(UserID).child("email").setValue(Email);
+                    mRef.child("users").child(UserID).child("username").setValue(Username);
+                    mRef.child("users").child(UserID).child("gruppen").child("0").setValue("");
+
+
                     // weiterleiten zur Chat-Activity
-                    startActivity(new Intent(SignupActivity.this, GroupActivity.class));
+                    startActivity(new Intent(SignupActivity.this, BasicActivity.class));
 
                     finish();// user soll nicht mehr hierher zurück können
                 }

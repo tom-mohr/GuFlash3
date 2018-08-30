@@ -1,4 +1,4 @@
-package com.selbstfindung.guflash;
+package com.selbstfindung.guflash.Activities;
 
 import android.app.ActionBar;
 import android.content.Intent;
@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +22,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.selbstfindung.guflash.Message;
+import com.selbstfindung.guflash.R;
+import com.selbstfindung.guflash.RecyclerViewAdapter;
+import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
 
@@ -43,9 +46,11 @@ public class ChatActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseUser user;
+    private FirebaseUser mUser;
     private DatabaseReference databaseRef;
     private DatabaseReference groupRef;
+
+    private com.selbstfindung.guflash.User User;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +74,13 @@ public class ChatActivity extends AppCompatActivity {
 
         chatTextInput = (EditText) findViewById(R.id.edittext_chatbox);
 
-
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
         // create reference for this group
         groupRef = databaseRef.child("groups").child(groupID);
+
+        User = new User(mUser.getUid());
+        Log.d(TAG, "AAAAAAAAAAAAAAAAAAAAAAAA "+User.getUsername());
 
         // listen to database changes (new messages)
         groupRef.child("messages").addChildEventListener(new ChildEventListener() {
@@ -136,6 +143,11 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+
+
+                Log.d(TAG, "senden gedrückt "+mUser.getUid());
+                Log.d(TAG, "senden gedrückt "+User.getUsername());
+
                 // text string vom input feld kriegen
                 String text = chatTextInput.getText().toString();
 
@@ -145,7 +157,7 @@ public class ChatActivity extends AppCompatActivity {
                     chatTextInput.setText("");
 
                     // send message
-                    writeNewMessage(user.getEmail(), text);
+                    writeNewMessage(User.getUsername(), text);
                 }
             }
         });
@@ -164,6 +176,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void writeNewMessage(String senderUsername, String text) {
+        Log.d(TAG, "writing new Message");
         DatabaseReference newMessageRef = groupRef.child("messages").push();
         newMessageRef.setValue(new Message(senderUsername, text));
     }
@@ -172,7 +185,7 @@ public class ChatActivity extends AppCompatActivity {
     private void setupFirebase() {
 
         mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
+        mUser = mAuth.getCurrentUser();
 
         mAuthListener = new FirebaseAuth.AuthStateListener()
         {
@@ -180,9 +193,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
             {
 
-                user = firebaseAuth.getCurrentUser();
+                mUser = firebaseAuth.getCurrentUser();
 
-                if (user == null) {
+                if (mUser == null) {
                     // User ist ausgeloggt, obwohl er noch im Chat ist!
                     // Das ist falsch
 
