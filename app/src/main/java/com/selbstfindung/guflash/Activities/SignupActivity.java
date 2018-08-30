@@ -167,7 +167,7 @@ public class SignupActivity extends AppCompatActivity {
 
 
                     // weiterleiten zur Chat-Activity
-                    startActivity(new Intent(SignupActivity.this, BasicActivity.class));
+                    startActivity(new Intent(SignupActivity.this, NavigationActivity.class));
 
                     finish();// user soll nicht mehr hierher zurück können
                 }

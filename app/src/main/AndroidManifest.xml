@@ -20,7 +20,7 @@
             android:theme="@style/MyActionBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.BasicActivity" />
+                android:value=".Activities.NavigationActivity" />
         </activity>
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
@@ -34,16 +34,19 @@
         <activity android:name=".Activities.ProfileActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.BasicActivity" />
+                android:value=".Activities.NavigationActivity" />
         </activity>
         <activity
-            android:name=".Activities.BasicActivity"
-            android:label="@string/title_activity_basic"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".Activities.CreateGroupActivity"
+            android:name=".Activities.CreateGroupActivity"
             android:theme="@style/MyActionBarTheme">
-
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.NavigationActivity" />
         </activity>
+        <activity
+            android:name=".Activities.NavigationActivity"
+            android:label="@string/title_activity_navigation"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "User ist bereits an diesem Gerät eingeloggt: "+user.getEmail());
 
                     // direkt weiterleiten zu Chat-Activity
-                    startActivity(new Intent(MainActivity.this, BasicActivity.class));
+                    startActivity(new Intent(MainActivity.this, NavigationActivity.class));
                     finish();// user soll nicht mehr hierher zurück können
 
                 } else {
