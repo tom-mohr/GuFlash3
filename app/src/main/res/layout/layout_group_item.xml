@@ -4,8 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/group_layout"
-    android:background="#6200ea"
-    android:layout_margin="6dp">
+    android:background="@color/colorPrimary"
+    android:layout_marginLeft="6dp"
+    android:layout_marginRight="6dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="0dp" >
 
     <ImageView
         android:id="@+id/group_symbol"
@@ -13,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="12dp"
-        app:srcCompat="@android:drawable/ic_menu_myplaces" />
+        app:srcCompat="@drawable/ic_menu_group" />
 
     <TextView
         android:layout_toRightOf="@+id/group_symbol"

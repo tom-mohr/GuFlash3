@@ -2,6 +2,7 @@ package com.selbstfindung.guflash;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,8 +50,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
 
-                String toastText = "Nachricht angeklickt: "+String.valueOf(position);
-                Toast.makeText(mContext, toastText, Toast.LENGTH_SHORT).show();
+                String infoText = "Nachricht angeklickt: "+String.valueOf(position);
+
+                // SNACKBAR! (richtig nice)
+                Snackbar.make(v, infoText, Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
 
             }
         });

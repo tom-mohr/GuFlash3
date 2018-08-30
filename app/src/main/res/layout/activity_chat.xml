@@ -69,6 +69,7 @@
 
     </LinearLayout>
 
+<<<<<<< HEAD
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,4 +93,6 @@
 
 
 
+=======
+>>>>>>> 243c56cfc252f7927a19631903a96ef731fa8272
 </android.support.constraint.ConstraintLayout>

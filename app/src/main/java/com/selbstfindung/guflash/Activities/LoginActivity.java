@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                     // weiterleiten zur Chat-Activity
-                    startActivity(new Intent(LoginActivity.this, GroupActivity.class));
+                    startActivity(new Intent(LoginActivity.this, NavigationActivity.class));
 
                     finish();// user soll nicht mehr hierher zurück können
                 }

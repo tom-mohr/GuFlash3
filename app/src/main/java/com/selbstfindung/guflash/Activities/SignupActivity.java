@@ -75,20 +75,18 @@ public class SignupActivity extends AppCompatActivity {
 
                 EditText editTextEmail = (EditText) findViewById(R.id.signup_email);
                 EditText editTextPassword = (EditText) findViewById(R.id.signup_password);
-                EditText editTextPasswordConfirm = (EditText) findViewById(R.id.signup_password_confirm);
 
                 // frage die Werte in den Feldern ab
                 final String email = editTextEmail.getText().toString();
                 String password = editTextPassword.getText().toString();
-                String passwordConfirm = editTextPasswordConfirm.getText().toString();
 
-                if(email.equals("") || password.equals("") || passwordConfirm.equals("")) {
+                if(email.equals("") || password.equals("")) {
                     // Nutzer hat "Registrieren" gedrückt, obwohl nicht alle Felder ausgefüllt sind
 
                     Toast.makeText(SignupActivity.this, "Bitte füll alle Felder aus", Toast.LENGTH_SHORT).show();
 
-                } else if (passwordConfirm.equals(password)) {
-                    // Nutzer hat alle Felder ausgefüllt UND die beiden Passwörter sind gleich
+                } else if (passwordIsOkay(password)) {
+                    // Nutzer hat alle Felder ausgefüllt und passwort ist OK
 
                     // signalisiere dem Nutzer, dass jetzt versucht wird, ihn zu registrieren
                     Toast.makeText(SignupActivity.this, "Registrierung...", Toast.LENGTH_SHORT);
@@ -125,18 +123,20 @@ public class SignupActivity extends AppCompatActivity {
 
                 } else {
 
-                    // alle Felder sind ausgefüllt, aber das Bestätigungs-Passwort ist falsch.
+                    // alle Felder sind ausgefüllt, aber das Passwort ist schlecht
 
-                    Toast.makeText(SignupActivity.this, "Passwort falsch bestätigt.", Toast.LENGTH_SHORT).show();
-
-                    // lösche den Inhalt des Passwort-bestätigen-Feldes
-                    editTextPasswordConfirm.setText("");
+                    Toast.makeText(SignupActivity.this, "Das Passwort ist nicht OK.", Toast.LENGTH_SHORT).show();
                 }
 
 
 
             }
         });
+    }
+
+    private boolean passwordIsOkay(String p) {
+        //TODO: Länge des Passworts checken: Was ist die minimale Länge, die Firebase-Auth. verlangt?
+        return true;
     }
 
     private void setupFirebase()
@@ -167,7 +167,7 @@ public class SignupActivity extends AppCompatActivity {
 
 
                     // weiterleiten zur Chat-Activity
-                    startActivity(new Intent(SignupActivity.this, GroupActivity.class));
+                    startActivity(new Intent(SignupActivity.this, NavigationActivity.class));
 
                     finish();// user soll nicht mehr hierher zurück können
                 }
