@@ -1,4 +1,12 @@
-Änderungen vom 30.08.18 13:30
+Änderungen vom 31.08.18 19:20 | 1.11.1
+- menu icons sollten jetzt funktionieren
+- alle alten Gruppen wurden gelöscht
+- man kann sich unter "abmelden" tatsächlich von Firebase-Auth. abmelden
+
+=== bitte hier 1.11.0 einfügen ===
+
+
+Änderungen vom 30.08.18 13:30 | 1.10
 - User Klasse hat Zugriff auf den Usernamen, Email und soll aktive Gruppen speichern
 - ProfileActivity hinzugefügt, Daten können dort verändert werden (aktive Gruppen sollen dort angezeigt werden)
 - vorzeitige Navigationsleiste, die zum Profil und Gruppenscreen führt (wird anders umgesetzt)
