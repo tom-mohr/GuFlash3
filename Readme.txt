@@ -1,4 +1,4 @@
-﻿Änderungen vom 31.08.18 19:20 | 1.12.0 (T)
+﻿Änderungen vom 32.08.18 1:30 | 1.12.0 (T)
 - alle alten user (auch in firebase-auth.! -> neu registrieren) und groups wurden gelöscht
 - Gruppen/"groups" heissen jetzt "events"
 - User-class verbessert und verändert
@@ -6,6 +6,8 @@
      1. den wert von der privaten variable des user objekts
      2. den eintrag in der datenbank
 - Profil-Activity hübscher gemacht
+- Username ist bearbeitbar
+- Passwort ist neu wählbar -> epische eingabefelder, die sich durch button aktivieren lassen
 
 Änderungen vom 31.08.18 19:20 | 1.11.1 (T)
 - menu icons sollten jetzt funktionieren

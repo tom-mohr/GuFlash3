@@ -14,9 +14,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -90,6 +94,7 @@ public class ProfileActivity extends AppCompatActivity
                 final EditText input = new EditText(ProfileActivity.this);
                 // Specify the type of input expected
                 input.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+                input.setText(user.getName());// already put the existing username in there
                 builder.setView(input);
                 
                 // Set up the buttons
@@ -112,5 +117,55 @@ public class ProfileActivity extends AppCompatActivity
             }
         });
         
+        ((Button) findViewById(R.id.profile_change_password_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+    
+                // passwort-eingabefeld freigeben und button verschwinden lassen
+                
+                ((LinearLayout) findViewById(R.id.profile_change_password_layout)).setVisibility(View.VISIBLE);
+                ((Button) findViewById(R.id.profile_change_password_button)).setVisibility(View.GONE);
+            }
+        });
+    
+        ((Button) findViewById(R.id.profile_change_password_cancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+    
+                ((LinearLayout) findViewById(R.id.profile_change_password_layout)).setVisibility(View.GONE);
+                ((Button) findViewById(R.id.profile_change_password_button)).setVisibility(View.VISIBLE);
+            }
+        });
+    
+        ((Button) findViewById(R.id.profile_change_password_confirm)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+    
+                FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+    
+                if (authUser != null) {
+    
+                    // Passwort ändern
+                    String password = ((TextView) findViewById(R.id.profile_change_password_edittext)).getText().toString();
+                    authUser.updatePassword(password).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(ProfileActivity.this, "Passwort geändert.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(ProfileActivity.this, "Passwort konnte nicht geändert werden.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                    
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Fehler: Du bist nicht angemeldet.", Toast.LENGTH_SHORT).show();
+                }
+                
+                
+                ((LinearLayout) findViewById(R.id.profile_change_password_layout)).setVisibility(View.GONE);
+                ((Button) findViewById(R.id.profile_change_password_button)).setVisibility(View.VISIBLE);
+            }
+        });
     }
 }
