@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.selbstfindung.guflash.R;
 import com.selbstfindung.guflash.RecyclerViewAdapterGroup;
+import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
 
@@ -39,6 +41,8 @@ public class NavigationActivity extends AppCompatActivity
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
+
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +60,8 @@ public class NavigationActivity extends AppCompatActivity
             public void onClick(View view) {
 
                 // eigener code:
-                startActivity(new Intent(NavigationActivity.this, CreateGroupActivity.class));
+                Intent intent = new Intent(NavigationActivity.this, CreateGroupActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -194,7 +199,18 @@ public class NavigationActivity extends AppCompatActivity
             //TODO: App settings
 
         } else if (id == R.id.nav_logout) {
-            ///TODO: Logout
+
+            // sign out from firebase
+
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+
+            ///TODO: listener für erfolgreiches signout
+            ///  ->  https://developers.google.com/android/reference/com/google/firebase/auth/FirebaseAuth.IdTokenListener#onIdTokenChanged(com.google.firebase.auth.FirebaseAuth)
+
+            auth.signOut();
+
+            /// anstatt listener vorerst finish():
+            finish();
 
         }
 

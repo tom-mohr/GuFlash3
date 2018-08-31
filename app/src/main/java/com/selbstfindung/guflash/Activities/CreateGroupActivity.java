@@ -11,6 +11,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.selbstfindung.guflash.R;
 
+import java.util.ArrayList;
+
 public class CreateGroupActivity extends AppCompatActivity {
 
     private DatabaseReference mRef;
@@ -51,6 +53,8 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                 String eventNameString = eventName.getText().toString();
                 String descriptionString = description.getText().toString();
+                // userIDs:
+                ArrayList<String> userIDs = new ArrayList<>();
 
                 if (checkGroupName(eventNameString)) {
 
@@ -60,6 +64,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                     // werte ausfüllen
                     newGroupRef.child("name").setValue(eventNameString);
                     newGroupRef.child("description").setValue(descriptionString);
+                    newGroupRef.child("users").setValue(userIDs);
 
                     // zurück zur GroupActivity
                     finish();
