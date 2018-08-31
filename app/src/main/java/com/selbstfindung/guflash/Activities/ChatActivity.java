@@ -50,7 +50,7 @@ public class ChatActivity extends AppCompatActivity {
     private DatabaseReference databaseRef;
     private DatabaseReference groupRef;
 
-    private com.selbstfindung.guflash.User User;
+    private com.selbstfindung.guflash.User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,12 +87,21 @@ public class ChatActivity extends AppCompatActivity {
         chatTextInput = (EditText) findViewById(R.id.edittext_chatbox);
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
-
+    
         // create reference for this group
         groupRef = databaseRef.child("groups").child(groupID);
-
-        User = new User(mUser.getUid());
-        Log.d(TAG, "AAAAAAAAAAAAAAAAAAAAAAAA "+User.getUsername());
+        
+        user = new User(mUser.getUid(), new User.Callback() {
+            @Override
+            public void onProfileChanged() {
+            
+            }
+    
+            @Override
+            public void onLoadingFailed() {
+        
+            }
+        });
 
         // listen to database changes (new messages)
         groupRef.child("messages").addChildEventListener(new ChildEventListener() {
@@ -154,12 +163,7 @@ public class ChatActivity extends AppCompatActivity {
         ((ImageButton) findViewById(R.id.chat_send_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
-                Log.d(TAG, "senden gedrückt "+mUser.getUid());
-                Log.d(TAG, "senden gedrückt "+User.getUsername());
-
+                
                 // text string vom input feld kriegen
                 String text = chatTextInput.getText().toString();
 
@@ -169,7 +173,7 @@ public class ChatActivity extends AppCompatActivity {
                     chatTextInput.setText("");
 
                     // send message
-                    writeNewMessage(User.getUsername(), text);
+                    writeNewMessage(user.getName(), text);
                 }
             }
         });

@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.selbstfindung.guflash.R;
+import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
 
@@ -29,11 +30,8 @@ public class SignupActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
-
-    private String UserID;
-    private String Email;
-    private String Username;
-    private ArrayList<String> Gruppen;
+    
+    private String enteredEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +75,10 @@ public class SignupActivity extends AppCompatActivity {
                 EditText editTextPassword = (EditText) findViewById(R.id.signup_password);
 
                 // frage die Werte in den Feldern ab
-                final String email = editTextEmail.getText().toString();
+                enteredEmail = editTextEmail.getText().toString();
                 String password = editTextPassword.getText().toString();
 
-                if(email.equals("") || password.equals("")) {
+                if(enteredEmail.equals("") || password.equals("")) {
                     // Nutzer hat "Registrieren" gedrückt, obwohl nicht alle Felder ausgefüllt sind
 
                     Toast.makeText(SignupActivity.this, "Bitte füll alle Felder aus", Toast.LENGTH_SHORT).show();
@@ -94,7 +92,7 @@ public class SignupActivity extends AppCompatActivity {
 
                     // sage Firebase-Authentication, dass es einen neuen Nutzer erstellen soll
                     // außerdem: gib mir feedback, ob das erfolgreich war
-                    mAuth.createUserWithEmailAndPassword(email, password)
+                    mAuth.createUserWithEmailAndPassword(enteredEmail, password)
                             .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task< AuthResult > task)
@@ -104,9 +102,7 @@ public class SignupActivity extends AppCompatActivity {
                                         // Sign in success
 
                                         Log.d(TAG, "Neuer User wurde erstellt.");
-
-                                        Email = email;
-
+                                        
                                         Toast.makeText(SignupActivity.this, "Registrierung erfolgreich.", Toast.LENGTH_SHORT).show();
 
 
@@ -154,21 +150,20 @@ public class SignupActivity extends AppCompatActivity {
 
                 if(user !=null) {
                     //User ist jetzt eingeloggt (-> Registrierung war also erfolgreich)
-
-                    Log.d(TAG, "User ist jetzt eingeloggt.");
-
-                    //initialisierung der Einstellungen im Userprofil
-                    UserID = mAuth.getCurrentUser().getUid();
-                    Username = Email.substring(0,Email.indexOf('@'));
-
-                    mRef.child("users").child(UserID).child("email").setValue(Email);
-                    mRef.child("users").child(UserID).child("username").setValue(Username);
-                    mRef.child("users").child(UserID).child("gruppen").child("0").setValue("");
-
-
+                    
+                    Log.d(TAG, "User ist jetzt eingeloggt... erstelle profil in datenbank");
+    
+                    //TODO: Nachschlagen: Verwendung der UserID von FirebaseAuth. ist unsicher?
+                    String userID = mAuth.getCurrentUser().getUid();// unique user ID
+                    String username = enteredEmail.substring(0, enteredEmail.indexOf('@'));
+                    
+                    // Userprofil in datenbank eintragen
+                    User.make(userID, username, enteredEmail, new ArrayList<String>());
+                    
+                    
                     // weiterleiten zur Chat-Activity
                     startActivity(new Intent(SignupActivity.this, NavigationActivity.class));
-
+                    
                     finish();// user soll nicht mehr hierher zurück können
                 }
             }

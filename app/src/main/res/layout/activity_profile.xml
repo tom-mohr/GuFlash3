@@ -5,67 +5,76 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
-        >
-
-        <Button
-            android:id="@+id/useless_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Clicke diesen Button falls du dich vor 'vielen' Tagen regestriert hast" />
-
-        <EditText
-            android:id="@+id/change_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Dein Username"
-            android:text=""
-            android:ems="10"
-            />
+        android:layout_height="match_parent">
 
 
-
-        <EditText
-            android:id="@+id/change_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Neues Passwort"
-            android:text=""
-            android:ems="10"
-            android:paddingTop="40dp"
-            />
-
-        <EditText
-            android:id="@+id/change_password_confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Bestätige Passwort"
-            android:text=""
-            android:ems="10"
-            />
-
-        <Button
-            android:id="@+id/confirm_changes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bestätige Änderungen"
-            />
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start"
+            android:padding="50dp">
 
-            android:text="Deine Gruppen"
-            android:textAlignment="center"
-            android:textStyle="italic"
-            android:textSize="20sp"
-            android:paddingTop="30dp"
-            />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="24sp">
+                <TextView
+                    android:id="@+id/profile_username_caption"
+                    android:text="Anzeigename"
+                    android:layout_alignParentStart="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                <RelativeLayout
+                    android:layout_below="@id/profile_username_caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/profile_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true"/>
+                    <ImageButton
+                        android:src="@drawable/ic_menu_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"/>
+                </RelativeLayout>
+            </RelativeLayout>
 
-    </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="24sp">
+                <TextView
+                    android:id="@+id/profile_email_caption"
+                    android:text="E-Mail"
+                    android:layout_alignParentStart="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                <RelativeLayout
+                    android:layout_below="@id/profile_email_caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/profile_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true"/>
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

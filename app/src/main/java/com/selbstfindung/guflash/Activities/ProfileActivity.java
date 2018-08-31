@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,21 +25,9 @@ import java.util.ArrayList;
 public class ProfileActivity extends AppCompatActivity
 {
     private static final String TAG = "MONTAG";
-
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseUser mUser;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mRef;
-    private DatabaseReference groupRef;
-
-    private String UserID;
-    private String Email;
-    private String Username;
-    private ArrayList<String> Gruppen;
-
+    
     private User user;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -48,119 +37,40 @@ public class ProfileActivity extends AppCompatActivity
         ActionBar actionBar = getActionBar();
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mRef = mFirebaseDatabase.getReference();
-
-        setupFirebase();
+        
         init();
     }
 
-    private void init()
-    {
-        Log.d(TAG, "Setting up Content");
+    private void init() {
 
-        setTitle("Profil bearbeiten");
-
-        user = new User(mUser.getUid());
-
-        ((Button) findViewById(R.id.useless_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UserID = mAuth.getCurrentUser().getUid();
-                Email = mUser.getEmail();
-                Username = Email.substring(0,Email.indexOf('@'));
-                //Gruppen.add("");
-
-                mRef.child("users").child(UserID).child("email").setValue(Email);
-                mRef.child("users").child(UserID).child("username").setValue(Username);
-                mRef.child("users").child(UserID).child("gruppen").child("0").setValue("");
-
-                Toast.makeText(ProfileActivity.this, "Daten zur Datenbank hinzugefügt", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        final EditText changeUsername = (EditText) findViewById(R.id.change_username);
-        final EditText changePassword = (EditText) findViewById(R.id.change_password);
-        final EditText changePasswordConfirm = (EditText) findViewById(R.id.change_password_confirm);
-
-        //changeUsername.setText(user.getUsername());
-
-        ((Button) findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final String Username = changeUsername.getText().toString();
-                final String Password1 = changePassword.getText().toString();
-                final String Password2 = changePasswordConfirm.getText().toString();
-
-                changePassword.setText("");
-                changePasswordConfirm.setText("");
-
-                //wenn Username geändert wurde
-                if(!Username.equals(user.getUsername())&&!Username.equals(""))
-                {
-                    user.setUsername(changeUsername.getText().toString());
+        setTitle("Profil");
+    
+        Log.d(TAG, "init: wuaaaaat?");
+        
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        
+        if (userID != null) {
+            
+            user = new User(userID, new User.Callback() {
+                @Override
+                public void onProfileChanged() {
+                    ((TextView) findViewById(R.id.profile_username)).setText(user.getName());
+                    ((TextView) findViewById(R.id.profile_email)).setText(user.getEmail());
+    
+    
+                    //TODO: aktive Gruppen über Recyclerview ausgeben
+                    //Bessere Idee: Im Navigation Drawer kann man ja in "meine Events" wechseln
                 }
-                if(Password1.equals(""))
-                {
-
+    
+                @Override
+                public void onLoadingFailed() {
+                    Log.d(TAG, "Profil konnte nicht geladen werden");
                 }
-                else if(!Password1.equals(Password2))
-                {
-                    Toast.makeText(ProfileActivity.this, "Passwort falsch bestätigt.", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    mUser.updatePassword(Password1);
-                }
-
-            }
-
-        });
-        //TODO: aktive Gruppen über Recyclerview ausgeben
-        //Layout sollte Gruppe verlassen beinhalten
-    }
-
-    private void setupFirebase()
-    {
-        Log.d(TAG, "Setting up Firebase");
-
-        //brauche Userdaten aus der Datenbank
-
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-
-        mAuthListener = new FirebaseAuth.AuthStateListener()
-        {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
-            {
-
-                mUser = firebaseAuth.getCurrentUser();
-
-                if (mUser == null) {
-                    // User ist ausgeloggt, obwohl er noch im Chat ist!
-                    // Das ist falsch
-
-                    Log.w(TAG, "User ist in der Chat-Activity, obwohl er nicht angemeldet ist.");
-
-                    // umleiten zur Login-Activity
-                    startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-
-                    finish();// user soll nicht mehr zurück in den chat kommen, bis er sich wieder angemeldet hat
-                }
-
-            }
-
-        };
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+            });
+            
+        } else {
+            
+            Log.w(TAG, "Firebase-Auth. hat keine CurrentUser-Uid geliefert");
         }
     }
 }
