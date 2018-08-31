@@ -2,14 +2,18 @@ package com.selbstfindung.guflash.Activities;
 
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,8 +48,7 @@ public class ProfileActivity extends AppCompatActivity
     private void init() {
 
         setTitle("Profil");
-    
-        Log.d(TAG, "init: wuaaaaat?");
+        
         
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         
@@ -72,5 +75,42 @@ public class ProfileActivity extends AppCompatActivity
             
             Log.w(TAG, "Firebase-Auth. hat keine CurrentUser-Uid geliefert");
         }
+        
+        
+        ((ImageButton) findViewById(R.id.profile_username_edit_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+                // Dialog öffnen
+                
+    
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+                builder.setTitle("Namen bearbeiten");
+    
+                final EditText input = new EditText(ProfileActivity.this);
+                // Specify the type of input expected
+                input.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+                builder.setView(input);
+                
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String newUsername = input.getText().toString();
+                        
+                        user.setName(newUsername);
+                    }
+                });
+                builder.setNegativeButton("abbrechen", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                
+                builder.show();
+            }
+        });
+        
     }
 }

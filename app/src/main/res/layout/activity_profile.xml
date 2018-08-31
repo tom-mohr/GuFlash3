@@ -40,6 +40,7 @@
                         android:layout_centerVertical="true"
                         android:layout_alignParentStart="true"/>
                     <ImageButton
+                        android:id="@+id/profile_username_edit_button"
                         android:src="@drawable/ic_menu_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
