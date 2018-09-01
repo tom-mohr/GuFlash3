@@ -28,7 +28,6 @@ public class GroupActivity extends AppCompatActivity {
     private static final String TAG = "MONTAG";
 
     private ArrayList<String> groupIDs = new ArrayList<>();
-    private ArrayList<String> groupNames = new ArrayList<>();
     private RecyclerViewAdapterGroup recyclerViewAdapterGroup;
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -79,10 +78,7 @@ public class GroupActivity extends AppCompatActivity {
 
                 String groupID = dataSnapshot.getKey();
 
-                String groupName = dataSnapshot.child("name").getValue(String.class);
-
                 groupIDs.add(groupID);
-                groupNames.add(groupName);
 
 
                 if (recyclerViewAdapterGroup != null) {
@@ -130,7 +126,7 @@ public class GroupActivity extends AppCompatActivity {
         Log.d(TAG, "initialisiere RecyclerView für Gruppen");
 
         RecyclerView recyclerView = findViewById(R.id.groups_recycler_view);
-        recyclerViewAdapterGroup = new RecyclerViewAdapterGroup(groupIDs, groupNames, this);
+        recyclerViewAdapterGroup = new RecyclerViewAdapterGroup(groupIDs, this);
         recyclerView.setAdapter(recyclerViewAdapterGroup);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

@@ -1,0 +1,16 @@
+Bugs:
+-Ort auf Google Maps wählen schließt sich manchmal direkt
+-Wenn man auf Zeit festlegen geht gehen alle Daten, die man zuvor festgelegt hat verloren
+-Configuration Activity kann nicht gefunden werden
+-
+
+ToDo:
+-Meine Events hinzufügen
+-App Settings hinzufügen
+	->vllt Farbton selbst auswählbar
+-Listener für Signout
+-Zeit und Standort wählen und in datenbank abspeichern
+-Eigene Nachrichten sollten rechts gezeigt werden/sich von den anderen unterscheiden
+-Teilnehmerzahl usw bei Gruppen anzeigen
+
+-vllt TextView unten halten und die Tastatur öffnet sich nicht direkt (wie bei WhatsApp)

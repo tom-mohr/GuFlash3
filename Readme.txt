@@ -1,3 +1,11 @@
+Änderungen vom 01.09.18 23:00 | 1.14.0 (G)
+-kleine Bugfixes für besseres Erlebnis
+-Gruppenbeschreibung wird nun hinzugefügt (RecyclerViewAdapter braucht nur noch ID-ArrayList)
+-Platzhalter für Teilnehmeranzahl
+-ConfigurationActivity hinzugefügt die noch keine Funktionen hat
+
+-Textdatei für Bugs und ToDOs für bessere Übersichtlichkeit
+
 Änderungen vom 01.09.18 15:30 | 1.13.0 (T)
 - "Event erstellen"-Activity designt.
   -> PlacePicker verwendet

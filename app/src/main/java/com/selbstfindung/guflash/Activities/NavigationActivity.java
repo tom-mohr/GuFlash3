@@ -30,15 +30,18 @@ import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
 
+import static com.google.firebase.internal.FirebaseAppHelper.addIdTokenListener;
+
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MONTAG";
 
     private ArrayList<String> groupIDs = new ArrayList<>();
-    private ArrayList<String> groupNames = new ArrayList<>();
     private RecyclerViewAdapterGroup recyclerViewAdapterGroup;
 
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
 
@@ -101,7 +104,6 @@ public class NavigationActivity extends AppCompatActivity
                 String groupName = dataSnapshot.child("name").getValue(String.class);
 
                 groupIDs.add(groupID);
-                groupNames.add(groupName);
 
 
                 if (recyclerViewAdapterGroup != null) {
@@ -131,7 +133,7 @@ public class NavigationActivity extends AppCompatActivity
         Log.d(TAG, "initialisiere RecyclerView für Gruppen");
 
         RecyclerView recyclerView = findViewById(R.id.groups_recycler_view);
-        recyclerViewAdapterGroup = new RecyclerViewAdapterGroup(groupIDs, groupNames, this);
+        recyclerViewAdapterGroup = new RecyclerViewAdapterGroup(groupIDs, this);
         recyclerView.setAdapter(recyclerViewAdapterGroup);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -188,23 +190,22 @@ public class NavigationActivity extends AppCompatActivity
             startActivity(new Intent(NavigationActivity.this, ProfileActivity.class));
 
         } else if (id == R.id.nav_app_settings) {
-            //TODO: App settings
+            startActivity(new Intent(NavigationActivity.this, ConfigurationActivity.class));
 
         } else if (id == R.id.nav_logout) {
 
             // sign out from firebase
 
-            FirebaseAuth auth = FirebaseAuth.getInstance();
+            mAuth = FirebaseAuth.getInstance();
+
+            mAuth.signOut();
 
             ///TODO: listener für erfolgreiches signout
             ///  ->  https://developers.google.com/android/reference/com/google/firebase/auth/FirebaseAuth.IdTokenListener#onIdTokenChanged(com.google.firebase.auth.FirebaseAuth)
 
-            auth.signOut();
-
-            /// anstatt listener vorerst finish():
             finish();
-
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

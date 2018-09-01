@@ -63,10 +63,7 @@ public class ProfileActivity extends AppCompatActivity
                 public void onProfileChanged() {
                     ((TextView) findViewById(R.id.profile_username)).setText(user.getName());
                     ((TextView) findViewById(R.id.profile_email)).setText(user.getEmail());
-    
-    
-                    //TODO: aktive Gruppen über Recyclerview ausgeben
-                    //Bessere Idee: Im Navigation Drawer kann man ja in "meine Events" wechseln
+
                 }
     
                 @Override
