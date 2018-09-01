@@ -1,12 +1,21 @@
 package com.selbstfindung.guflash.Activities;
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.selbstfindung.guflash.R;
@@ -14,9 +23,14 @@ import com.selbstfindung.guflash.R;
 import java.util.ArrayList;
 
 public class CreateGroupActivity extends AppCompatActivity {
-
+    
+    private static final String TAG = "MONTAG";
+    private static final int PLACE_PICKER_REQUEST = 1;
+    
     private DatabaseReference mRef;
-
+    private RelativeLayout layoutAddLocation;
+    private RelativeLayout layoutSelectedLocation;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +44,36 @@ public class CreateGroupActivity extends AppCompatActivity {
     private void init() {
 
         setTitle("Event erstellen");
+        
+        
+        ((RelativeLayout) findViewById(R.id.create_event_set_time_layout)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(CreateGroupActivity.this, TimePickingActivity.class));
+            }
+        });
+        
+    
+        layoutAddLocation = (RelativeLayout) findViewById(R.id.create_event_add_location_layout);
+        layoutSelectedLocation = (RelativeLayout) findViewById(R.id.create_event_selected_location_layout);
+        
+        layoutAddLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // starte Place Picker!
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(CreateGroupActivity.this), PLACE_PICKER_REQUEST);
+                } catch (GooglePlayServicesRepairableException e) {
+                    Toast.makeText(CreateGroupActivity.this, "Place Picker konnte nicht gestartet werden. (behebbar)", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    Toast.makeText(CreateGroupActivity.this, "Place Picker konnte nicht gestartet werden.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+        });
+        
 
         final EditText eventName = (EditText) findViewById(R.id.create_group_event_name_edit_text);
         final EditText description = (EditText) findViewById(R.id.create_group_description_edit_text);
@@ -53,6 +97,13 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                 String eventNameString = eventName.getText().toString();
                 String descriptionString = description.getText().toString();
+    
+    
+                EditText minUsersEditText = (EditText) findViewById(R.id.create_event_min_users);
+                EditText maxUsersEditText = (EditText) findViewById(R.id.create_event_max_users);
+                
+                
+                
                 // userIDs:
                 ArrayList<String> userIDs = new ArrayList<>();
 
@@ -78,5 +129,20 @@ public class CreateGroupActivity extends AppCompatActivity {
 
     private boolean checkGroupName(String name) {
         return !name.equals("");
+    }
+    
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                
+                Place place = PlacePicker.getPlace(this, data);
+                
+                ((TextView) findViewById(R.id.create_event_selected_location_name)).setText(place.getName());
+                ((TextView) findViewById(R.id.create_event_selected_location_address)).setText(place.getAddress());
+                
+                layoutAddLocation.setVisibility(View.GONE);
+                layoutSelectedLocation.setVisibility(View.VISIBLE);
+            }
+        }
     }
 }

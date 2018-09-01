@@ -22,4 +22,5 @@
     <string name="nav_header_title">Gu Flash</string>
     <string name="nav_header_subtitle">schnell Events starten</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="title_activity_maps">Karte</string>
 </resources>
