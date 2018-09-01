@@ -1,10 +1,7 @@
 package com.selbstfindung.guflash.Activities;
 
 
-<<<<<<< HEAD
-=======
 import android.app.ActionBar;
->>>>>>> 243c56cfc252f7927a19631903a96ef731fa8272
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -48,12 +45,6 @@ public class ProfileActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-<<<<<<< HEAD
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mRef = mFirebaseDatabase.getReference();
-
-        setupButtons();
-=======
         ActionBar actionBar = getActionBar();
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -61,47 +52,16 @@ public class ProfileActivity extends AppCompatActivity
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference();
 
->>>>>>> 243c56cfc252f7927a19631903a96ef731fa8272
         setupFirebase();
         init();
     }
 
-<<<<<<< HEAD
-
-    private void setupButtons()
-    {
-        //OnClickListener für untere Leiste
-
-        Log.d(TAG, "Setting up Buttons");
-
-        ((Button)findViewById(R.id.profile_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this, ProfileActivity.class));
-                finish();
-            }
-        });
-
-        ((Button)findViewById(R.id.home_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this, GroupActivity.class));
-                finish();
-            }
-        });
-    }
-
-=======
->>>>>>> 243c56cfc252f7927a19631903a96ef731fa8272
     private void init()
     {
         Log.d(TAG, "Setting up Content");
 
-<<<<<<< HEAD
-=======
         setTitle("Profil bearbeiten");
 
->>>>>>> 243c56cfc252f7927a19631903a96ef731fa8272
         user = new User(mUser.getUid());
 
         ((Button) findViewById(R.id.useless_button)).setOnClickListener(new View.OnClickListener() {

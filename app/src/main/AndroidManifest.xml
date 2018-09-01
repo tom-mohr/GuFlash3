@@ -20,11 +20,7 @@
             android:theme="@style/MyActionBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-<<<<<<< HEAD
-                android:value=".Activities.GroupActivity" />
-=======
                 android:value=".Activities.NavigationActivity" />
->>>>>>> 243c56cfc252f7927a19631903a96ef731fa8272
         </activity>
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
@@ -35,10 +31,6 @@
         </activity>
         <activity android:name=".Activities.LoginActivity" />
         <activity android:name=".Activities.SignupActivity" />
-<<<<<<< HEAD
-        <activity android:name=".Activities.GroupActivity" />
-        <activity android:name=".Activities.ProfileActivity" />
-=======
         <activity android:name=".Activities.ProfileActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -55,7 +47,6 @@
             android:name=".Activities.NavigationActivity"
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme"></activity>
->>>>>>> 243c56cfc252f7927a19631903a96ef731fa8272
     </application>
 
 </manifest>

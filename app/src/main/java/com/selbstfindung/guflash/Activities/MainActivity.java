@@ -46,11 +46,13 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     //User ist bereits eingeloggt
 
-                    Log.d(TAG, "User ist bereits an diesem Gerät eingeloggt: "+user.getEmail());
+                    Log.d(TAG, "User ist bereits an diesem Gerät eingeloggt.");
 
                     // direkt weiterleiten zu Chat-Activity
                     startActivity(new Intent(MainActivity.this, NavigationActivity.class));
                     finish();// user soll nicht mehr hierher zurück können
+
+                    Log.d(TAG, "finish main activity");
 
                 } else {
                     //User ist ausgeloggt
@@ -59,8 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
                     // weiterleiten zu Signup-Activity
                     startActivity(new Intent(MainActivity.this, SignupActivity.class));
-                    Log.d(TAG, "finish main activity");
                     finish();// user soll nicht mehr hierher zurück können
+
+                    Log.d(TAG, "finish main activity");
                 }
 
             }

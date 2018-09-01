@@ -59,37 +59,27 @@ public class ChatActivity extends AppCompatActivity {
 
         Log.d(TAG, "ChatActivity onCreate()");
 
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        groupID = intent.getStringExtra(EXTRA_MESSAGE_GRUPPEN_ID);
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
 
-        setupButtons();
-        setupFirebase();
-        init();
-    }
+        if (mUser != null) {// user ist angemeldet
 
-    private void setupButtons()
-    {
-        //OnClickListener für untere Leiste
+            ActionBar actionBar = getActionBar();
+            if (actionBar != null)
+                actionBar.setDisplayHomeAsUpEnabled(true);
 
-        ((Button)findViewById(R.id.profile_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ChatActivity.this, ProfileActivity.class));
-                finish();
-            }
-        });
+            Intent intent = getIntent();
+            groupID = intent.getStringExtra(EXTRA_MESSAGE_GRUPPEN_ID);
 
-        ((Button)findViewById(R.id.home_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(ChatActivity.this, GroupActivity.class));
-                finish();
-            }
-        });
+            init();
+
+        } else {
+            // user ist aus irgendeinem grund nicht angemeldet,
+            // aber trotzdem in der chat activity gelandet.
+            // das sollte eigentlich nicht vorkommen.
+            finish();// erstmal zurück in die navigation activity
+        }
     }
 
     private void init() {
@@ -204,10 +194,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    private void setupFirebase() {
-
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
+    private void initAuthListener() {
 
         mAuthListener = new FirebaseAuth.AuthStateListener()
         {
@@ -217,7 +204,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 mUser = firebaseAuth.getCurrentUser();
 
-                if (mUser == null) {
+                if (mUser==null) {
                     // User ist ausgeloggt, obwohl er noch im Chat ist!
                     // Das ist falsch
 

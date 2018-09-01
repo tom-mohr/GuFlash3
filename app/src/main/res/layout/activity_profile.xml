@@ -68,26 +68,4 @@
 
     </LinearLayout>
 
-<<<<<<< HEAD
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <Button
-            android:id="@+id/home_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Home" />
-
-        <Button
-            android:id="@+id/profile_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Profile" />
-
-    </LinearLayout>
-
-=======
->>>>>>> 243c56cfc252f7927a19631903a96ef731fa8272
 </android.support.constraint.ConstraintLayout>
