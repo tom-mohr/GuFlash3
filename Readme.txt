@@ -1,4 +1,9 @@
-﻿Änderungen vom 32.08.18 1:30 | 1.12.0 (T)
+Änderungen vom 01.09.18 15:30 | 1.13.0 (T)
+- "Event erstellen"-Activity designt.
+  -> PlacePicker verwendet
+     -> musste App mit Google Places API verbinden
+
+Änderungen vom 01.09.18 1:30 | 1.12.0 (T)
 - alle alten user (auch in firebase-auth.! -> neu registrieren) und groups wurden gelöscht
 - Gruppen/"groups" heissen jetzt "events"
 - User-class verbessert und verändert
