@@ -2,16 +2,25 @@ package com.selbstfindung.guflash.Activities;
 
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -24,21 +33,9 @@ import java.util.ArrayList;
 public class ProfileActivity extends AppCompatActivity
 {
     private static final String TAG = "MONTAG";
-
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseUser mUser;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mRef;
-    private DatabaseReference groupRef;
-
-    private String UserID;
-    private String Email;
-    private String Username;
-    private ArrayList<String> Gruppen;
-
+    
     private User user;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -48,119 +45,127 @@ public class ProfileActivity extends AppCompatActivity
         ActionBar actionBar = getActionBar();
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mRef = mFirebaseDatabase.getReference();
-
-        setupFirebase();
+        
         init();
     }
 
-    private void init()
-    {
-        Log.d(TAG, "Setting up Content");
+    private void init() {
 
-        setTitle("Profil bearbeiten");
-
-        user = new User(mUser.getUid());
-
-        ((Button) findViewById(R.id.useless_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UserID = mAuth.getCurrentUser().getUid();
-                Email = mUser.getEmail();
-                Username = Email.substring(0,Email.indexOf('@'));
-                //Gruppen.add("");
-
-                mRef.child("users").child(UserID).child("email").setValue(Email);
-                mRef.child("users").child(UserID).child("username").setValue(Username);
-                mRef.child("users").child(UserID).child("gruppen").child("0").setValue("");
-
-                Toast.makeText(ProfileActivity.this, "Daten zur Datenbank hinzugefügt", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        final EditText changeUsername = (EditText) findViewById(R.id.change_username);
-        final EditText changePassword = (EditText) findViewById(R.id.change_password);
-        final EditText changePasswordConfirm = (EditText) findViewById(R.id.change_password_confirm);
-
-        //changeUsername.setText(user.getUsername());
-
-        ((Button) findViewById(R.id.confirm_changes)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final String Username = changeUsername.getText().toString();
-                final String Password1 = changePassword.getText().toString();
-                final String Password2 = changePasswordConfirm.getText().toString();
-
-                changePassword.setText("");
-                changePasswordConfirm.setText("");
-
-                //wenn Username geändert wurde
-                if(!Username.equals(user.getUsername())&&!Username.equals(""))
-                {
-                    user.setUsername(changeUsername.getText().toString());
+        setTitle("Profil");
+        
+        
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        
+        if (userID != null) {
+            
+            user = new User(userID, new User.Callback() {
+                @Override
+                public void onProfileChanged() {
+                    ((TextView) findViewById(R.id.profile_username)).setText(user.getName());
+                    ((TextView) findViewById(R.id.profile_email)).setText(user.getEmail());
+    
+    
+                    //TODO: aktive Gruppen über Recyclerview ausgeben
+                    //Bessere Idee: Im Navigation Drawer kann man ja in "meine Events" wechseln
                 }
-                if(Password1.equals(""))
-                {
-
+    
+                @Override
+                public void onLoadingFailed() {
+                    Log.d(TAG, "Profil konnte nicht geladen werden");
                 }
-                else if(!Password1.equals(Password2))
-                {
-                    Toast.makeText(ProfileActivity.this, "Passwort falsch bestätigt.", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    mUser.updatePassword(Password1);
-                }
-
-            }
-
-        });
-        //TODO: aktive Gruppen über Recyclerview ausgeben
-        //Layout sollte Gruppe verlassen beinhalten
-    }
-
-    private void setupFirebase()
-    {
-        Log.d(TAG, "Setting up Firebase");
-
-        //brauche Userdaten aus der Datenbank
-
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-
-        mAuthListener = new FirebaseAuth.AuthStateListener()
-        {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
-            {
-
-                mUser = firebaseAuth.getCurrentUser();
-
-                if (mUser == null) {
-                    // User ist ausgeloggt, obwohl er noch im Chat ist!
-                    // Das ist falsch
-
-                    Log.w(TAG, "User ist in der Chat-Activity, obwohl er nicht angemeldet ist.");
-
-                    // umleiten zur Login-Activity
-                    startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-
-                    finish();// user soll nicht mehr zurück in den chat kommen, bis er sich wieder angemeldet hat
-                }
-
-            }
-
-        };
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+            });
+            
+        } else {
+            
+            Log.w(TAG, "Firebase-Auth. hat keine CurrentUser-Uid geliefert");
         }
+        
+        
+        ((ImageButton) findViewById(R.id.profile_username_edit_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+                // Dialog öffnen
+                
+    
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+                builder.setTitle("Namen bearbeiten");
+    
+                final EditText input = new EditText(ProfileActivity.this);
+                // Specify the type of input expected
+                input.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+                input.setText(user.getName());// already put the existing username in there
+                builder.setView(input);
+                
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String newUsername = input.getText().toString();
+                        
+                        user.setName(newUsername);
+                    }
+                });
+                builder.setNegativeButton("abbrechen", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                
+                builder.show();
+            }
+        });
+        
+        ((Button) findViewById(R.id.profile_change_password_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+    
+                // passwort-eingabefeld freigeben und button verschwinden lassen
+                
+                ((LinearLayout) findViewById(R.id.profile_change_password_layout)).setVisibility(View.VISIBLE);
+                ((Button) findViewById(R.id.profile_change_password_button)).setVisibility(View.GONE);
+            }
+        });
+    
+        ((Button) findViewById(R.id.profile_change_password_cancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+    
+                ((LinearLayout) findViewById(R.id.profile_change_password_layout)).setVisibility(View.GONE);
+                ((Button) findViewById(R.id.profile_change_password_button)).setVisibility(View.VISIBLE);
+            }
+        });
+    
+        ((Button) findViewById(R.id.profile_change_password_confirm)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+    
+                FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
+    
+                if (authUser != null) {
+    
+                    // Passwort ändern
+                    String password = ((TextView) findViewById(R.id.profile_change_password_edittext)).getText().toString();
+                    authUser.updatePassword(password).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(ProfileActivity.this, "Passwort geändert.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(ProfileActivity.this, "Passwort konnte nicht geändert werden.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                    
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Fehler: Du bist nicht angemeldet.", Toast.LENGTH_SHORT).show();
+                }
+                
+                
+                ((LinearLayout) findViewById(R.id.profile_change_password_layout)).setVisibility(View.GONE);
+                ((Button) findViewById(R.id.profile_change_password_button)).setVisibility(View.VISIBLE);
+            }
+        });
     }
 }

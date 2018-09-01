@@ -1,12 +1,23 @@
-Änderungen vom 31.08.18 19:20 | 1.11.1
+﻿Änderungen vom 32.08.18 1:30 | 1.12.0 (T)
+- alle alten user (auch in firebase-auth.! -> neu registrieren) und groups wurden gelöscht
+- Gruppen/"groups" heissen jetzt "events"
+- User-class verbessert und verändert
+  -> vor allem: setter verändern immer zwei sachen:
+     1. den wert von der privaten variable des user objekts
+     2. den eintrag in der datenbank
+- Profil-Activity hübscher gemacht
+- Username ist bearbeitbar
+- Passwort ist neu wählbar -> epische eingabefelder, die sich durch button aktivieren lassen
+
+Änderungen vom 31.08.18 19:20 | 1.11.1 (T)
 - menu icons sollten jetzt funktionieren
 - alle alten Gruppen wurden gelöscht
 - man kann sich unter "abmelden" tatsächlich von Firebase-Auth. abmelden
 
-=== bitte hier 1.11.0 einfügen ===
+=== 1.11.0 (T) Log fehlt ===
 
 
-Änderungen vom 30.08.18 13:30 | 1.10
+Änderungen vom 30.08.18 13:30 | 1.10 (G)
 - User Klasse hat Zugriff auf den Usernamen, Email und soll aktive Gruppen speichern
 - ProfileActivity hinzugefügt, Daten können dort verändert werden (aktive Gruppen sollen dort angezeigt werden)
 - vorzeitige Navigationsleiste, die zum Profil und Gruppenscreen führt (wird anders umgesetzt)
@@ -15,7 +26,7 @@
 - extra Ordner für Activities
 
 
-Änderungen vom 27.08.18 18:30 | 1.09
+Änderungen vom 27.08.18 18:30 | 1.09 (T)
 - Child "Gruppen" in Firebase heißt jetzt "groups"
 - Gruppen haben nicht mehr ihren Namen als Key, sondern eine spezifische ID
 - Wir verwenden jetzt Firebase "push()":

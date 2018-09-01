@@ -55,15 +55,15 @@ public class FirebaseMethods
         //Schleife die durch alle Children der Node "Users" durchgeht
         for(DataSnapshot ds: dataSnapshot.child("users").getChildren())
         {
-            user.setUsername(ds.getValue(User.class).getUsername());
+            user.setName(ds.getValue(User.class).getName());
             //wenn der Username Vorhanden ist wird true ausgegeben
-            if(user.getUsername().equals(username))
+            if(user.getName().equals(username))
             {
-                Log.d(TAG, "checkIfUsernameExists: FOUND A MATCH: " + user.getUsername());
+                Log.d(TAG, "checkIfUsernameExists: FOUND A MATCH: " + user.getName());
                 return true;
             }
         }
-        Log.d(TAG, "checkIfUsernameExists: DIDN'T FIND A MATCH for : " + user.getUsername());
+        Log.d(TAG, "checkIfUsernameExists: DIDN'T FIND A MATCH for : " + user.getName());
         return false;
     }
 }
