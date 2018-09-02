@@ -17,6 +17,41 @@
             android:orientation="vertical"
             android:padding="12dp">
 
+
+            <TextView
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:layout_width="match_parent"
+                android:text="Was?"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/create_group_event_name_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text|textCapSentences"
+                    android:hint="Event-Name"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/create_group_description_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:hint="Was wird passieren?" />
+            </android.support.design.widget.TextInputLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+
             <TextView
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="match_parent"
@@ -27,7 +62,7 @@
             <RelativeLayout
                 android:id="@+id/create_event_add_location_layout"
                 android:visibility="visible"
-                style="@style/Widget.AppCompat.Button"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_width="match_parent"
@@ -112,7 +147,7 @@
             <RelativeLayout
                 android:id="@+id/create_event_set_time_layout"
                 android:visibility="visible"
-                style="@style/Widget.AppCompat.Button"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:clickable="true"
                 android:focusable="true"
                 android:layout_width="match_parent"
@@ -130,39 +165,6 @@
 
             </RelativeLayout>
 
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="24dp" />
-
-            <TextView
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:layout_width="match_parent"
-                android:text="Was?"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"/>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/create_group_event_name_edit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textCapWords"
-                    android:hint="Event-Name"/>
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/create_group_description_edit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textCapSentences|textMultiLine"
-                    android:hint="Was wird passieren?" />
-            </android.support.design.widget.TextInputLayout>
 
             <Space
                 android:layout_width="match_parent"

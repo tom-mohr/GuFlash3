@@ -1,8 +1,9 @@
 Bugs:
 -Ort auf Google Maps wählen schließt sich manchmal direkt
 -Wenn man auf Zeit festlegen geht gehen alle Daten, die man zuvor festgelegt hat verloren
--Configuration Activity kann nicht gefunden werden
 -
+
+
 
 ToDo:
 -Meine Events hinzufügen
@@ -14,3 +15,40 @@ ToDo:
 -Teilnehmerzahl usw bei Gruppen anzeigen
 
 -vllt TextView unten halten und die Tastatur öffnet sich nicht direkt (wie bei WhatsApp)
+
+
+== TS ==
+
+- kurzbeschreibungen raus
+  -> nur
+     - Titel
+     - Teilnehmerzahl
+     - differenz:
+       - wenn zu wenig: in rot "noch 3 bis zur Eröffnung"
+       - wenn genug: in grün "noch 3 Plätze"
+
+- Erklärungs-Activity
+- AppName überlegen
+
+- durchsuchen erleichtern
+    - sortieren nach:
+      - entfernung
+      - teilnehmerzahl
+      - dauer bis zum stattfinden
+
+    - filter:
+      - suche
+      - tags
+
+- bei klick auf gruppe soll popup aufgehen
+  -> hat elemente:
+     - Titel
+     - Beschreibung
+     - nochmal Teilnehmerzahl usw.
+     - zeit
+- location beim erstellen nochmal änderbar
+
+- chat
+  - farben
+  - eigene auf rechter seite
+

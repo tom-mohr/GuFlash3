@@ -160,7 +160,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         // onclick für "senden" button
-        ((ImageButton) findViewById(R.id.chat_send_button)).setOnClickListener(new View.OnClickListener() {
+        ((Button) findViewById(R.id.chat_send_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
