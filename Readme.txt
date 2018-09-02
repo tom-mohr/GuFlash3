@@ -1,4 +1,7 @@
-Änderungen vom 02.09.18  1.15.0 (T)
+Änderungen vom 02.09.18 | 1.15.1 (T)
+- settings icon nachgereicht
+
+Änderungen vom 02.09.18 | 1.15.0 (T)
 - bugfix: ConfigurationActivity in Android Manifest deklariert
 - NavigationActivity ist jetzt launchmode="singleTop" (im Manifest),
   damit sie nicht jedesmal restarted wird, wenn man in einer anderen
