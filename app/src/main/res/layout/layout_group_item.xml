@@ -24,7 +24,7 @@
         android:layout_toLeftOf="@+id/group_participants"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Gruppenname"
+        android:text="123456789012345678901234567890123456789012"
         android:textSize="22sp"
         android:textColor="#ffffff"
         android:textStyle="bold"

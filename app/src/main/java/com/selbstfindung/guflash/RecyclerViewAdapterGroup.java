@@ -66,9 +66,17 @@ public class RecyclerViewAdapterGroup extends RecyclerView.Adapter<RecyclerViewA
                 GroupName = dataSnapshot.child("groups").child(mGroupIDs.get(position)).child("name").getValue(String.class);
                 GroupDescription = dataSnapshot.child("groups").child(mGroupIDs.get(position)).child("description").getValue(String.class);
 
-                holder.group_name.setText(GroupName);
+                if(GroupName.length()<42)
+                {
+                    holder.group_name.setText(GroupName);
+                }
+                else
+                {
+                    holder.group_name.setText(GroupName.substring(0,38)+"...");
+                }
                 if(!GroupDescription.equals("")) {
-                    holder.group_description.setText(GroupDescription);
+
+                        holder.group_description.setText(GroupDescription);
                 }
                 else
                 {
