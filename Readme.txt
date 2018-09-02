@@ -1,3 +1,27 @@
+Änderungen vom 02.09.18 | 1.17.0 (T)
+- Chat-Design verbessert
+- Chat REVOLUTIONIERT:
+  - zwei unterschiedliche Layouts für eigene und fremde Nachrichten
+    -> RecyclerViewAdapter für Chat nochmal völlig überarbeitet
+  - Timestamps
+    -> Die Zeit wird in der Datenbank einfach in einem einzigen long gespeichert.
+       Daraus kann man, wenn man will, später Datum und Uhrzeit wieder herstellen,
+       und angepasst an die lokalen Gewohnheiten formatieren.
+       Das wirkt vllt lame, hat aber ganz schön lange gedauert das herauszufinden xD
+  - anstatt Username wird jetzt die UserID an jede Message gebunden
+    -> Für den Fall dass sich der Username ändert
+       ABER: Bis jetzt werden einfach nur die UserIDs anstatt des Usernames angezeigt
+             ( -> Geplant ist, dass die mit den UserIDs verknüpften Usernames
+                  beim Laden der Gruppe von der Datenbank abgefragt werden. )
+  => Ich musste also die Message-Klasse ändern und alle Gruppen löschen.
+
+
+Änderungen vom 02.09.18 | 1.16.1 (T)
+- Chat-Design verbessert
+
+Änderungen vom 02.09.18 | 1.16.0 (T)
+- Chat-Design verbessert
+
 Änderungen vom 02.09.18 | 1.15.1 (T)
 - settings icon nachgereicht
 

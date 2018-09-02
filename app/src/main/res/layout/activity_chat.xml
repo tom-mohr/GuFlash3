@@ -8,11 +8,16 @@
     android:background="@color/colorAccentDark">
 
     <android.support.v7.widget.RecyclerView
+        android:paddingTop="?android:attr/actionBarSize"
+        android:paddingBottom="12dp"
+        android:clipToPadding="false"
         android:id="@+id/chat_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/chat_divider"/>
 
     <View
+        android:id="@+id/chat_divider"
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:background="#dfdfdf"
@@ -23,6 +28,7 @@
 
 
     <LinearLayout
+        android:layout_weight="1"
         android:id="@+id/layout_chatbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -59,5 +65,7 @@
 
 
     </LinearLayout>
+
+
 
 </android.support.constraint.ConstraintLayout>

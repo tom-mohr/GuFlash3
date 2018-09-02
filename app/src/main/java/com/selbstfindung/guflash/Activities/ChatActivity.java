@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,12 +21,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.selbstfindung.guflash.ChatRecyclerViewAdapter;
 import com.selbstfindung.guflash.Message;
 import com.selbstfindung.guflash.R;
-import com.selbstfindung.guflash.RecyclerViewAdapter;
 import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -40,13 +41,12 @@ public class ChatActivity extends AppCompatActivity {
 
     private EditText chatTextInput;
 
-    private ArrayList<String> messageUsernames = new ArrayList<>();
-    private ArrayList<String> messageTexts = new ArrayList<>();
-    RecyclerViewAdapter recyclerViewAdapter;// need instance for newly added messages
+    private List<Message> messageList;
+    ChatRecyclerViewAdapter recyclerViewAdapter;// need instance for newly added messages
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseUser mUser;
+    private FirebaseUser firebaseUser;
     private DatabaseReference databaseRef;
     private DatabaseReference groupRef;
 
@@ -61,9 +61,9 @@ public class ChatActivity extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
+        firebaseUser = mAuth.getCurrentUser();
 
-        if (mUser != null) {// user ist angemeldet
+        if (firebaseUser != null) {// user ist angemeldet
 
             ActionBar actionBar = getActionBar();
             if (actionBar != null)
@@ -83,6 +83,8 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void init() {
+        
+        messageList = new ArrayList<>();
 
         chatTextInput = (EditText) findViewById(R.id.edittext_chatbox);
 
@@ -91,7 +93,7 @@ public class ChatActivity extends AppCompatActivity {
         // create reference for this group
         groupRef = databaseRef.child("groups").child(groupID);
 
-        user = new User(mUser.getUid(), new User.Callback() {
+        user = new User(firebaseUser.getUid(), new User.Callback() {
             @Override
             public void onProfileChanged() {
 
@@ -108,19 +110,17 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Message msg = dataSnapshot.getValue(Message.class);
-
-                // absender und inhalt den arrays hinzufügen
-                messageUsernames.add(msg.senderUsername);
-                messageTexts.add(msg.text);
-
-                Log.d(TAG, "Message added: "+msg.senderUsername+": "+msg.text);
+                
+                messageList.add(msg);
+                
+                Log.d(TAG, "Message added: "+msg.getSenderUserID()+": "+msg.getText());
 
                 // notify recyclerViewAdapter that new message was added
                 // but only, if it was already initialized
                 // see: https://stackoverflow.com/questions/27845069/add-a-new-item-to-recyclerview-programmatically
                 if (recyclerViewAdapter != null) {
 
-                    int position = messageTexts.size() - 1;// last index in list
+                    int position = messageList.size() - 1;// last index in list
                     recyclerViewAdapter.notifyItemInserted(position);
                 }
             }
@@ -173,7 +173,7 @@ public class ChatActivity extends AppCompatActivity {
                     chatTextInput.setText("");
 
                     // send message
-                    writeNewMessage(user.getName(), text);
+                    writeNewMessage(user, text);
                 }
             }
         });
@@ -185,16 +185,20 @@ public class ChatActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.chat_recycler_view);
 
-        recyclerViewAdapter = new RecyclerViewAdapter(this, messageUsernames, messageTexts);
+        recyclerViewAdapter = new ChatRecyclerViewAdapter(this, messageList, user.getId());
 
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void writeNewMessage(String senderUsername, String text) {
+    private void writeNewMessage(User user, String text) {
         Log.d(TAG, "writing new Message");
+    
+        String senderUserID = user.getId();
+        long time = new GregorianCalendar().getTime().getTime();
+        
         DatabaseReference newMessageRef = groupRef.child("messages").push();
-        newMessageRef.setValue(new Message(senderUsername, text));
+        newMessageRef.setValue(new Message(senderUserID, text, time));
     }
 
 
@@ -206,9 +210,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
             {
 
-                mUser = firebaseAuth.getCurrentUser();
+                firebaseUser = firebaseAuth.getCurrentUser();
 
-                if (mUser==null) {
+                if (firebaseUser ==null) {
                     // User ist ausgeloggt, obwohl er noch im Chat ist!
                     // Das ist falsch
 

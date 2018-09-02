@@ -1,6 +1,7 @@
 package com.selbstfindung.guflash;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +36,7 @@ public class User {
     }
     
     //liest alle Daten für User aus über die userID
-    public User(String userID, final Callback callback) {
+    public User(String userID, @Nullable final Callback callback) {
     
         id = userID;// never changes
         
@@ -63,7 +64,8 @@ public class User {
                 setEmail(newEmail);
                 setEventIDs(newEventIDs);
                 
-                callback.onProfileChanged();
+                if (callback != null)
+                    callback.onProfileChanged();
             }
             
             @Override
