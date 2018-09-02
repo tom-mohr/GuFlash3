@@ -1,3 +1,14 @@
+Änderungen vom 02.09.18  1.15.0 (T)
+- bugfix: ConfigurationActivity in Android Manifest deklariert
+- NavigationActivity ist jetzt launchmode="singleTop" (im Manifest),
+  damit sie nicht jedesmal restarted wird, wenn man in einer anderen
+  Activity den back button in der Action Bar drückt (geht schneller, vermeidet bugs)
+  -> https://stackoverflow.com/questions/21805382/how-to-resume-activity-instead-of-restart-when-going-up-from-action-bar
+  -> https://stackoverflow.com/questions/14462456/returning-from-an-activity-using-navigateupfromsametask/16147110#16147110
+- Beim Abmelden wird ein Bestätigungsdialog angezeigt
+- Menu icons und app icon verbessert und dateien "aufgeräumt"
+- Layout von Event items
+
 Änderungen vom 01.09.18 23:00 | 1.14.0 (G)
 -kleine Bugfixes für besseres Erlebnis
 -Gruppenbeschreibung wird nun hinzugefügt (RecyclerViewAdapter braucht nur noch ID-ArrayList)

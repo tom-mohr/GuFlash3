@@ -22,11 +22,11 @@
                 android:title="Profil" />
             <item
                 android:id="@+id/nav_app_settings"
-                android:icon="@drawable/ic_menu_manage"
+                android:icon="@drawable/ic_menu_settings"
                 android:title="Einstellungen" />
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_menu_logout"
+                android:icon="@drawable/ic_menu_lock"
                 android:title="abmelden" />
         </menu>
     </item>
