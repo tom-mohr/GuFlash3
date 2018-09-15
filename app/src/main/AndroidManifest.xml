@@ -48,12 +48,13 @@
                 android:value=".Activities.NavigationActivity" />
         </activity>
         <activity
-            android:name=".Activities.CreateGroupActivity"
+            android:name=".Activities.CreateEventActivity"
             android:theme="@style/MyActionBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.NavigationActivity" />
         </activity>
+        <activity android:name=".Activities.MyEventActivity"/>
         <activity
             android:name=".Activities.NavigationActivity"
             android:label="@string/title_activity_navigation"
@@ -77,7 +78,7 @@
             android:theme="@style/MyActionBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.CreateGroupActivity" />
+                android:value=".Activities.CreateEventActivity" />
         </activity>
         <activity
             android:name=".Activities.ConfigurationActivity"

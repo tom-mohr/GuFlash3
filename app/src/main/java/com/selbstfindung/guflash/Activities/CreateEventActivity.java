@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +21,7 @@ import com.selbstfindung.guflash.R;
 
 import java.util.ArrayList;
 
-public class CreateGroupActivity extends AppCompatActivity {
+public class CreateEventActivity extends AppCompatActivity {
     
     private static final String TAG = "MONTAG";
     private static final int PLACE_PICKER_REQUEST = 1;
@@ -34,7 +33,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_group);
+        setContentView(R.layout.activity_create_event);
 
         mRef = FirebaseDatabase.getInstance().getReference();
 
@@ -49,7 +48,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         ((RelativeLayout) findViewById(R.id.create_event_set_time_layout)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(CreateGroupActivity.this, TimePickingActivity.class));
+                startActivity(new Intent(CreateEventActivity.this, TimePickingActivity.class));
             }
         });
         
@@ -63,12 +62,12 @@ public class CreateGroupActivity extends AppCompatActivity {
                 // starte Place Picker!
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
-                    startActivityForResult(builder.build(CreateGroupActivity.this), PLACE_PICKER_REQUEST);
+                    startActivityForResult(builder.build(CreateEventActivity.this), PLACE_PICKER_REQUEST);
                 } catch (GooglePlayServicesRepairableException e) {
-                    Toast.makeText(CreateGroupActivity.this, "Place Picker konnte nicht gestartet werden. (behebbar)", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateEventActivity.this, "Place Picker konnte nicht gestartet werden. (behebbar)", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 } catch (GooglePlayServicesNotAvailableException e) {
-                    Toast.makeText(CreateGroupActivity.this, "Place Picker konnte nicht gestartet werden.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateEventActivity.this, "Place Picker konnte nicht gestartet werden.", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
@@ -101,8 +100,8 @@ public class CreateGroupActivity extends AppCompatActivity {
     
                 EditText minUsersEditText = (EditText) findViewById(R.id.create_event_min_users);
                 EditText maxUsersEditText = (EditText) findViewById(R.id.create_event_max_users);
-                
-                
+
+
                 
                 // userIDs:
                 ArrayList<String> userIDs = new ArrayList<>();
@@ -116,8 +115,9 @@ public class CreateGroupActivity extends AppCompatActivity {
                     newGroupRef.child("name").setValue(eventNameString);
                     newGroupRef.child("description").setValue(descriptionString);
                     newGroupRef.child("users").setValue(userIDs);
+                    newGroupRef.child("maxTeilnehmer").setValue(maxUsersEditText.getText().toString());
 
-                    // zurück zur GroupActivity
+                    // zurück zur EventActivity
                     finish();
 
                 } else {

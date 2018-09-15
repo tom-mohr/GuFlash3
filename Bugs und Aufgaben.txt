@@ -1,31 +1,16 @@
 Bugs:
 -Ort auf Google Maps wählen schließt sich manchmal direkt
 -Wenn man auf Zeit festlegen geht gehen alle Daten, die man zuvor festgelegt hat verloren
--
-
+-Man muss die Liste von Events neu aufrufen, damit Änderungen bei Teilnehmerzahlen sichtbar werden
+-Chat beginnt ganz oben, man muss immer komplett runterscrollen
 
 
 ToDo:
--Meine Events hinzufügen
--App Settings hinzufügen
-	->vllt Farbton selbst auswählbar
--Listener für Signout
+-App Settings entfernen
 -Zeit und Standort wählen und in datenbank abspeichern
--Eigene Nachrichten sollten rechts gezeigt werden/sich von den anderen unterscheiden
--Teilnehmerzahl usw bei Gruppen anzeigen
-
--vllt TextView unten halten und die Tastatur öffnet sich nicht direkt (wie bei WhatsApp)
-
+-Bei Meine Events muss der fliegende Button weg
 
 == TS ==
-
-- kurzbeschreibungen raus
-  -> nur
-     - Titel
-     - Teilnehmerzahl
-     - differenz:
-       - wenn zu wenig: in rot "noch 3 bis zur Eröffnung"
-       - wenn genug: in grün "noch 3 Plätze"
 
 - Erklärungs-Activity
 - AppName überlegen
@@ -40,6 +25,7 @@ ToDo:
       - suche
       - tags
 
+-Das Joinen soll nur über ein popup möglich sein
 - bei klick auf gruppe soll popup aufgehen
   -> hat elemente:
      - Titel
@@ -48,7 +34,4 @@ ToDo:
      - zeit
 - location beim erstellen nochmal änderbar
 
-- chat
-  - farben
-  - eigene auf rechter seite
 

@@ -21,7 +21,7 @@ public class User {
     private String id;
     private String name;
     private String email;
-    private ArrayList<String> eventIDs;
+    private ArrayList<String> eventIDs = new ArrayList<>();
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference userRef;
@@ -113,8 +113,20 @@ public class User {
         this.eventIDs = eventIDs;
     }
     public void addEventID(String eventID) {
-        eventIDs.add(eventID);
-        updateEventIDs();
+
+        if(eventIDs==null) {
+            Log.d(TAG, "Creating Eventlist with first element");
+            ArrayList<String> FirstEvent = new ArrayList<>();
+            FirstEvent.add(eventID);
+            setEventIDs(FirstEvent);
+            updateEventIDs();
+        }
+        else if(!eventIDs.contains(eventID))
+        {
+            Log.d(TAG, "Adding event to list");
+            eventIDs.add(eventID);
+            updateEventIDs();
+        }
     }
     public void removeEventID(String eventID) {
         eventIDs.remove(eventID);

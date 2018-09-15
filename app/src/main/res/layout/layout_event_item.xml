@@ -41,10 +41,10 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
                 />
             <TextView
-                android:id="@+id/group_description"
+                android:id="@+id/teilnehmer_differenz"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Beschreibung"
+                android:text="Hier soll die Differenz stehen"
                 android:textAppearance="@style/TextAppearance.AppCompat.Tooltip"
                 android:layout_below="@+id/group_name"
                 android:layout_alignStart="@+id/group_name"
@@ -67,16 +67,34 @@
                 android:layout_height="wrap_content"
                 android:text="Check"/>
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/group_participants"
+            <Button
+                android:id="@+id/join_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="6/100"
-                />
+                android:text="Join"
+                android:textColor="#006400"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/current_participants"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="/"
+                    />
+                <TextView
+                    android:id="@+id/max_participants"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="max"
+                    />
+            </LinearLayout>
 
         </LinearLayout>
 

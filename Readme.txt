@@ -1,3 +1,12 @@
+Änderungen vom 13.09.18 | 1.18.0 (G)
+-Es gibt keine Gruppen mehr sondern nur Events (in der Datenbank heißen die events immer noch Gruppen)
+-Meine Events Activity hinzugefügt
+    -wenn man auf den Button join klickt wird die gruppe dem User hinzugefügt und er kann sie unter meine Gruppen sehen
+-wenn man sich im Chat einer Gruppe befindet und noch nicht als User eingetragen ist, wird man als User hinzugefügt     (das könnte man auch zum join button packen, aber dafür muss man auf die Teilnehmerliste zugreifen ohne das man Teilnehmer ist; wollen wir das?)
+-Teilnehmerzahl wird jetzt angezeigt
+-man muss eine maximale Teilnehmerzahl eingeben, dafür wird es richtig angezeigt und es wird die Differenz zwischen max und momentan als Text ausgeben(min Teilnehmerzahl fehlt noch)
+
+
 Änderungen vom 02.09.18 | 1.17.0 (T)
 - Chat-Design verbessert
 - Chat REVOLUTIONIERT:
