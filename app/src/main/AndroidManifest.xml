@@ -54,12 +54,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.NavigationActivity" />
         </activity>
-        <activity android:name=".Activities.MyEventActivity"/>
+        <activity android:name=".Activities.MyEventActivity" />
         <activity
             android:name=".Activities.NavigationActivity"
             android:label="@string/title_activity_navigation"
-            android:theme="@style/AppTheme"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -86,6 +86,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.NavigationActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.JoinPopupActivity"
+            android:theme="@style/MyPopupTheme">
         </activity>
     </application>
 

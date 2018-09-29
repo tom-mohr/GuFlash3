@@ -91,7 +91,7 @@ public class ChatActivity extends AppCompatActivity {
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
         // create reference for this group
-        groupRef = databaseRef.child("groups").child(groupID);
+        groupRef = databaseRef.child("events").child(groupID);
 
         user = new User(firebaseUser.getUid(), new User.Callback() {
             @Override

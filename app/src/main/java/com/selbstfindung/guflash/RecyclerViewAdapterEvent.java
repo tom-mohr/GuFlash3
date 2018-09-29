@@ -21,7 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.selbstfindung.guflash.Activities.ChatActivity;
-import com.selbstfindung.guflash.Activities.ProfileActivity;
+import com.selbstfindung.guflash.Activities.JoinPopupActivity;
+import com.selbstfindung.guflash.Activities.NavigationActivity;
 
 import java.util.ArrayList;
 
@@ -32,9 +33,10 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
     private ArrayList<String> mEventIDs = new ArrayList<>();
     private Context mContext;
 
-    String EventName;
-    String Teilnehmerzahl;
-    String MaxTeilnehmerzahl;
+    private String eventName;
+    private int nMembers;
+    private int maxMembers;
+    private ArrayList<String> memberIds = new ArrayList<>();
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
@@ -76,30 +78,37 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
             public void onLoadingFailed() {}
         });
 
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                
+                DataSnapshot eventRef = dataSnapshot.child("events").child(mEventIDs.get(position));
 
-                EventName = dataSnapshot.child("groups").child(mEventIDs.get(position)).child("name").getValue(String.class);
-                Teilnehmerzahl = "" + dataSnapshot.child("groups").child(mEventIDs.get(position)).child("users").getChildrenCount();
-                MaxTeilnehmerzahl = "" + dataSnapshot.child("groups").child(mEventIDs.get(position)).child("maxTeilnehmer").getValue();
-                int Differenz = (int)((long)dataSnapshot.child("groups").child(mEventIDs.get(position)).child("maxTeilnehmer").getValue()-dataSnapshot.child("groups").child(mEventIDs.get(position)).child("users").getChildrenCount());
-
-                if(EventName.length()<42)
-                {
-                    holder.event_name.setText(EventName);
+                eventName = eventRef.child("name").getValue(String.class);
+                for (DataSnapshot child: eventRef.child("members").getChildren()) {
+                    memberIds.add(child.getKey());
                 }
+                nMembers = ((Long) eventRef.child("members").getChildrenCount()).intValue();
+                maxMembers = ((Long) eventRef.child("max_members").getValue()).intValue();
+                int diff = maxMembers - nMembers;
+
+                if(eventName.length()<42) {
+                    holder.event_name.setText(eventName);
+                } else {
+                    holder.event_name.setText(eventName.substring(0,38)+"...");
+                }
+                
+                String nMembersInfoString;
+                if (diff > 0)
+                    nMembersInfoString = "Noch "+diff+" von "+maxMembers+" Plätzen frei";
                 else
-                {
-                    holder.event_name.setText(EventName.substring(0,38)+"...");
-                }
+                    nMembersInfoString = "alle "+maxMembers+" Plätze belegt";
+                
+                holder.teilnehmer_differenz.setText(nMembersInfoString);
+                holder.current_participants.setText(String.valueOf(nMembers));
+                holder.max_participants.setText(String.valueOf(maxMembers));
 
-                holder.teilnehmer_differenz.setText("Noch "+ Differenz +" Plätze übrig");
-
-                holder.current_participants.setText(Teilnehmerzahl);
-                holder.max_participants.setText(MaxTeilnehmerzahl);
-
-                Log.d(TAG, "Gruppe hinzugefügt "+EventName +" "+ Teilnehmerzahl);
+                Log.d(TAG, "Gruppe hinzugefügt "+ eventName +" "+ nMembers);
             }
 
             @Override
@@ -108,17 +117,24 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
             }
         });
 
-
         holder.event_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 Log.d(TAG, "Gruppe " +mEventIDs.get(position)+ " wurde aufgerufen");
-
-                //weiterleiten an den Chat
-                Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
-                mContext.startActivity(intent);
+                
+                // bin ich bereits member in dieser gruppe?
+                if (isUserMember()) {
+                    //weiterleiten an den Chat
+                    Intent intent = new Intent(mContext, ChatActivity.class);
+                    intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
+                    mContext.startActivity(intent);
+                } else {
+                    // join-dialog öffnen
+                    Intent intent = new Intent(mContext, JoinPopupActivity.class);
+                    intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
+                    mContext.startActivity(intent);
+                }
             }
         });
 
@@ -134,6 +150,13 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
             }
         });
 
+    }
+    
+    private boolean isUserMember() {
+        for (String id: memberIds)
+            if (id.equals(user.getId()))
+                return true;
+        return false;
     }
 
     @Override

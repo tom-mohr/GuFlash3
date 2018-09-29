@@ -5,11 +5,11 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_groups"
+            android:id="@+id/nav_events"
             android:icon="@drawable/ic_menu_group_outline"
             android:title="Alle Events" />
         <item
-            android:id="@+id/nav_favorite_groups"
+            android:id="@+id/nav_favorite_events"
             android:icon="@drawable/ic_menu_group"
             android:title="Meine Events" />
     </group>

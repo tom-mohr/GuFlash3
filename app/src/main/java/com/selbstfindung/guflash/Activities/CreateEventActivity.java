@@ -92,30 +92,29 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                // Felder auslesen...
-
-                String eventNameString = eventName.getText().toString();
-                String descriptionString = description.getText().toString();
-    
-    
+                
                 EditText minUsersEditText = (EditText) findViewById(R.id.create_event_min_users);
                 EditText maxUsersEditText = (EditText) findViewById(R.id.create_event_max_users);
-
-
                 
-                // userIDs:
-                ArrayList<String> userIDs = new ArrayList<>();
+                // Felder auslesen...
+                String eventNameString = eventName.getText().toString();
+                String descriptionString = description.getText().toString();
+                int maxUsers = Integer.parseInt(maxUsersEditText.getText().toString());
+                
 
                 if (checkGroupName(eventNameString)) {
 
                     // neue gruppe in datenbank anlegen
-                    DatabaseReference newGroupRef = mRef.child("groups").push();
+                    DatabaseReference newGroupRef = mRef.child("events").push();
+    
+                    // userIDs:
+                    ArrayList<String> userIDs = new ArrayList<>();
 
                     // werte ausfüllen
                     newGroupRef.child("name").setValue(eventNameString);
                     newGroupRef.child("description").setValue(descriptionString);
-                    newGroupRef.child("users").setValue(userIDs);
-                    newGroupRef.child("maxTeilnehmer").setValue(maxUsersEditText.getText().toString());
+                    newGroupRef.child("members").setValue(userIDs);
+                    newGroupRef.child("max_members").setValue(maxUsers);
 
                     // zurück zur EventActivity
                     finish();

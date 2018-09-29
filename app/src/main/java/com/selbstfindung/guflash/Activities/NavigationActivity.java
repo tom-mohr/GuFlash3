@@ -93,8 +93,8 @@ public class NavigationActivity extends AppCompatActivity
 
         setTitle("Events");
 
-        // listen for changes to the "groups" child
-        mRef.child("groups").addChildEventListener(new ChildEventListener() {
+        // listen for changes to the "events" child
+        mRef.child("events").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -133,7 +133,7 @@ public class NavigationActivity extends AppCompatActivity
     private  void initRecyclerView() {
         Log.d(TAG, "initialisiere RecyclerView für Gruppen");
 
-        RecyclerView recyclerView = findViewById(R.id.groups_recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
         recyclerViewAdapterEvent = new RecyclerViewAdapterEvent(groupIDs, this);
         recyclerView.setAdapter(recyclerViewAdapterEvent);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -176,10 +176,10 @@ public class NavigationActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_groups) {
+        if (id == R.id.nav_events) {
             startActivity(new Intent(NavigationActivity.this, NavigationActivity.class));
 
-        } else if (id == R.id.nav_favorite_groups) {
+        } else if (id == R.id.nav_favorite_events) {
             startActivity(new Intent(NavigationActivity.this, MyEventActivity.class));
 
         } else if (id == R.id.nav_profile_settings) {

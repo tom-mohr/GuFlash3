@@ -44,7 +44,6 @@
                 android:id="@+id/teilnehmer_differenz"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hier soll die Differenz stehen"
                 android:textAppearance="@style/TextAppearance.AppCompat.Tooltip"
                 android:layout_below="@+id/group_name"
                 android:layout_alignStart="@+id/group_name"
@@ -62,17 +61,6 @@
             android:padding="6dp"
             android:gravity="center_horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Check"/>
-
-            <Button
-                android:id="@+id/join_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Join"
-                android:textColor="#006400"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,7 +69,6 @@
                     android:id="@+id/current_participants"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="6"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -92,9 +79,15 @@
                     android:id="@+id/max_participants"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="max"
                     />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/join_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Join"
+                android:textColor="#006400"/>
 
         </LinearLayout>
 
