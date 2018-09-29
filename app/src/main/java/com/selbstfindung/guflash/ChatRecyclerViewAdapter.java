@@ -14,8 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -39,22 +42,44 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
     String ownUserID;
     Map<String, String> userNames;
 
+    DatabaseReference allUsersRef;
+
     public ChatRecyclerViewAdapter(Context context, List<Message> messageList, String ownUserID) {
         this.mContext = context;
         this.messageList = messageList;
         this.ownUserID = ownUserID;
         
         timeFormatter = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
-        
+
+        allUsersRef = FirebaseDatabase.getInstance().getReference().child("users");
         userNames = new HashMap<>();
+    }
+
+    private interface GetUsernameFromIdCallback {
+        void foundUsername(String username);
     }
     
     @Nullable
-    private String getUsernameFromID(String id) {
+    private void getUsernameFromID(String id, final GetUsernameFromIdCallback callback) {
         if (userNames.containsKey(id)) {
-            return userNames.get(id);
+            String name = userNames.get(id);
+            callback.foundUsername(name);
+        } else {
+            final String messageUserId = id;
+            allUsersRef.child(id).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String name = (String) dataSnapshot.getValue();
+                    userNames.put(messageUserId, name);
+                    callback.foundUsername(name);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
-        return null;
     }
     
     @Override
@@ -146,7 +171,15 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
     
             messageText.setText(message.getText());
             timeText.setText(timeString);
-            nameText.setText(message.getSenderUserID());
+
+            GetUsernameFromIdCallback callback = new GetUsernameFromIdCallback() {
+                @Override
+                public void foundUsername(String username) {
+                    nameText.setText(username);
+                }
+            };
+
+            getUsernameFromID(message.getSenderUserID(), callback);
         }
     }
 }

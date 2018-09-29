@@ -85,10 +85,10 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
                 DataSnapshot eventRef = dataSnapshot.child("events").child(mEventIDs.get(position));
 
                 eventName = eventRef.child("name").getValue(String.class);
-                for (DataSnapshot child: eventRef.child("members").getChildren()) {
+                for (DataSnapshot child: eventRef.child("users").getChildren()) {
                     memberIds.add(child.getKey());
                 }
-                nMembers = ((Long) eventRef.child("members").getChildrenCount()).intValue();
+                nMembers = ((Long) eventRef.child("users").getChildrenCount()).intValue();
                 maxMembers = ((Long) eventRef.child("max_members").getValue()).intValue();
                 int diff = maxMembers - nMembers;
 

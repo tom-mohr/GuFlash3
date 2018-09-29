@@ -1,3 +1,15 @@
+Änderungen vom 29.09.18 | 1.20.0 (G+T)
+-Im Chat wird nun der Name statt der Id angezeigt
+-Meine Events funktionieren wieder
+-Bug bei Teilnehmerzahl gefixt
+
+
+Änderungen vom 29.09.18 | 1.19.0 (T)
+-Popup um zu joinen und für Eventinfos hinzugefügt
+-Code aufgeräumt (Events ersetzt)
+-Bug gefixt beim Erstellen einer Gruppe
+
+
 Änderungen vom 13.09.18 | 1.18.0 (G)
 -Es gibt keine Gruppen mehr sondern nur Events (in der Datenbank heißen die events immer noch Gruppen)
 -Meine Events Activity hinzugefügt

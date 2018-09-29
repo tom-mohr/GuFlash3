@@ -181,6 +181,7 @@ public class NavigationActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_favorite_events) {
             startActivity(new Intent(NavigationActivity.this, MyEventActivity.class));
+            finish();
 
         } else if (id == R.id.nav_profile_settings) {
             startActivity(new Intent(NavigationActivity.this, ProfileActivity.class));

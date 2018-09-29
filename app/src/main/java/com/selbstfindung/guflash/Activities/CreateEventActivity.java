@@ -130,6 +130,7 @@ public class CreateEventActivity extends AppCompatActivity {
         return !name.equals("");
     }
     
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {

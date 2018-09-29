@@ -1,19 +1,19 @@
 Bugs:
 -Ort auf Google Maps wählen schließt sich manchmal direkt
--Wenn man auf Zeit festlegen geht gehen alle Daten, die man zuvor festgelegt hat verloren
--Man muss die Liste von Events neu aufrufen, damit Änderungen bei Teilnehmerzahlen sichtbar werden
 -Chat beginnt ganz oben, man muss immer komplett runterscrollen
+-Location beim Erstellen nochmal ändern
 
 
 ToDo:
--App Settings entfernen
--Zeit und Standort wählen und in datenbank abspeichern
--Bei Meine Events muss der fliegende Button weg
+-Location und Time in der Datenbank speichern
 
-== TS ==
-
-- Erklärungs-Activity
-- AppName überlegen
+-Das Joinen soll nur über ein popup möglich sein
+- bei klick auf gruppe soll popup aufgehen
+  -> hat elemente:
+     - Titel
+     - Beschreibung
+     - nochmal Teilnehmerzahl usw.
+     - zeit
 
 - durchsuchen erleichtern
     - sortieren nach:
@@ -25,13 +25,33 @@ ToDo:
       - suche
       - tags
 
--Das Joinen soll nur über ein popup möglich sein
-- bei klick auf gruppe soll popup aufgehen
-  -> hat elemente:
-     - Titel
-     - Beschreibung
-     - nochmal Teilnehmerzahl usw.
-     - zeit
-- location beim erstellen nochmal änderbar
+
+-App Settings entfernen
+- Erklärungs-Activity
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- AppName überlegen
+
+
+
 
 
