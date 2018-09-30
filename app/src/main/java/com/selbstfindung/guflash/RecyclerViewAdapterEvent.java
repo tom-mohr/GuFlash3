@@ -3,6 +3,7 @@ package com.selbstfindung.guflash;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,6 +26,8 @@ import com.selbstfindung.guflash.Activities.JoinPopupActivity;
 import com.selbstfindung.guflash.Activities.NavigationActivity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewAdapterEvent.ViewHolder>
 {
@@ -36,10 +39,14 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
     private String eventName;
     private int nMembers;
     private int maxMembers;
-    private ArrayList<String> memberIds = new ArrayList<>();
+    //private ArrayList<String> memberIds = new ArrayList<>();
+    Map<String,ArrayList<String>> memberIds;
+
+    boolean userVorhanden;
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
+    private DatabaseReference eventRef;
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
     private User user;
@@ -54,6 +61,8 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
 
         mEventIDs = eventIDs;
         mContext = context;
+
+        memberIds = new HashMap<>();
     }
 
 
@@ -86,7 +95,19 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
 
                 eventName = eventRef.child("name").getValue(String.class);
                 for (DataSnapshot child: eventRef.child("users").getChildren()) {
-                    memberIds.add(child.getKey());
+                    Log.d(TAG, "Füge " +mEventIDs.get(position)+" , "+child.getKey()+ " hinzu");
+                    if(memberIds.get(mEventIDs.get(position))==null) {
+                        ArrayList<String> tmp = new ArrayList<>();
+                        tmp.add(child.getKey());
+                        memberIds.put(mEventIDs.get(position),tmp);
+                    }
+                    else
+                    {
+                        ArrayList<String> tmp = memberIds.get(mEventIDs.get(position));
+                        tmp.add(child.getKey());
+                        memberIds.put(mEventIDs.get(position),tmp);
+                    }
+
                 }
                 nMembers = ((Long) eventRef.child("users").getChildrenCount()).intValue();
                 maxMembers = ((Long) eventRef.child("max_members").getValue()).intValue();
@@ -121,16 +142,33 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
             @Override
             public void onClick(View v)
             {
-                Log.d(TAG, "Gruppe " +mEventIDs.get(position)+ " wurde aufgerufen");
-                
+
+                userVorhanden = false;
+
+                ArrayList<String> tmp = memberIds.get(mEventIDs.get(position));
+                if(memberIds.get(mEventIDs.get(position))!=null) {
+                    for (String id : tmp) {
+                        Log.d(TAG, "User " + id + " wird überprüft");
+                        if (id.equals(user.getId())) {
+                            Log.d(TAG, "User " + user.getId() + " ist teil des Events");
+                            userVorhanden = true;
+                        }
+                    }
+                }
+
+                Log.d(TAG, "Boolean ist " +userVorhanden);
                 // bin ich bereits member in dieser gruppe?
-                if (isUserMember()) {
+                if (userVorhanden) {
                     //weiterleiten an den Chat
+                    Log.d(TAG, "User ist bereits teil des Events");
+
                     Intent intent = new Intent(mContext, ChatActivity.class);
                     intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
                     mContext.startActivity(intent);
                 } else {
                     // join-dialog öffnen
+                    Log.d(TAG, "User ist noch nicht teil des Events");
+
                     Intent intent = new Intent(mContext, JoinPopupActivity.class);
                     intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
                     mContext.startActivity(intent);
@@ -138,25 +176,6 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
             }
         });
 
-        holder.join_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                user.addEventID(mEventIDs.get(position));
-
-                Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
-                mContext.startActivity(intent);
-            }
-        });
-
-    }
-    
-    private boolean isUserMember() {
-        for (String id: memberIds)
-            if (id.equals(user.getId()))
-                return true;
-        return false;
     }
 
     @Override
@@ -170,7 +189,6 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
         TextView teilnehmer_differenz;
         TextView current_participants;
         TextView max_participants;
-        Button join_button;
         RelativeLayout event_layout;
 
         public ViewHolder(View itemView)
@@ -182,7 +200,6 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
             teilnehmer_differenz = itemView.findViewById(R.id.teilnehmer_differenz);
             current_participants = itemView.findViewById(R.id.current_participants);
             max_participants = itemView.findViewById(R.id.max_participants);
-            join_button = itemView.findViewById(R.id.join_button);
         }
     }
 }

@@ -7,7 +7,6 @@ Bugs:
 ToDo:
 -Location und Time in der Datenbank speichern
 
--Das Joinen soll nur über ein popup möglich sein
 - bei klick auf gruppe soll popup aufgehen
   -> hat elemente:
      - Titel

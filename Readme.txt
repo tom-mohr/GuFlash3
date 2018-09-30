@@ -1,3 +1,8 @@
+Änderungen vom 30.09.18 | 1.21.0 (G)
+-Popup funktioniert jetzt richtig und User und Event werden beide im Popup hinzugefügt
+    -Join Button beim Event-Layout entfernt
+
+
 Änderungen vom 29.09.18 | 1.20.0 (G+T)
 -Im Chat wird nun der Name statt der Id angezeigt
 -Meine Events funktionieren wieder

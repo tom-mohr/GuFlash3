@@ -105,39 +105,6 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        //Fügt User zum Event hinzu wenn er nicht eingetragen ist
-        groupRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getChildrenCount()!=0)
-                {
-                    boolean userVorhanden = false;
-
-                    for(DataSnapshot ds : dataSnapshot.getChildren())
-                    {
-                        if(ds.getValue().toString().equals(user.getId()))
-                        {
-                            userVorhanden = true;
-                        }
-                    }
-
-                    if(!userVorhanden)
-                    {
-                        groupRef.child("users").child(user.getId()).setValue(user.getId());
-                    }
-                }
-                else
-                {
-                    groupRef.child("users").child(user.getId()).setValue(user.getId());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
         // listen to database changes (new messages)
         groupRef.child("messages").addChildEventListener(new ChildEventListener() {
             @Override
