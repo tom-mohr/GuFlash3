@@ -81,6 +81,13 @@
                 android:value=".Activities.CreateEventActivity" />
         </activity>
         <activity
+            android:name=".Activities.DatePickingActivity"
+            android:theme="@style/MyActionBarTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.CreateEventActivity" />
+        </activity>
+        <activity
             android:name=".Activities.ConfigurationActivity"
             android:theme="@style/MyActionBarTheme">
             <meta-data

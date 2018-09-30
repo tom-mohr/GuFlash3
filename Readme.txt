@@ -1,3 +1,7 @@
+Änderungen vom 30.09.18 | 1.23.0 (G)
+-Zeit und Datum werden innerhalb von 2 Activities ausgewählt und dann auch gespeichert
+-Anfänge zur Ortsspeicherung, aber kann es nicht testen
+
 Änderungen vom 30.09.18 | 1.22.0 (T)
 - G's Code aufgeräumt
 - Teilnehmerzahlen werden im Popup angezeigt

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,10 +26,16 @@ public class CreateEventActivity extends AppCompatActivity {
     
     private static final String TAG = "MONTAG";
     private static final int PLACE_PICKER_REQUEST = 1;
+    private static final int TIME_PICKER_REQUEST = 2;
     
     private DatabaseReference mRef;
     private RelativeLayout layoutAddLocation;
     private RelativeLayout layoutSelectedLocation;
+
+    double lat;
+    double lng;
+    String adresse;
+    String dateAndTime;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +55,7 @@ public class CreateEventActivity extends AppCompatActivity {
         ((RelativeLayout) findViewById(R.id.create_event_set_time_layout)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(CreateEventActivity.this, TimePickingActivity.class));
+                startActivityForResult(new Intent(CreateEventActivity.this, DatePickingActivity.class),TIME_PICKER_REQUEST);
             }
         });
         
@@ -115,6 +122,10 @@ public class CreateEventActivity extends AppCompatActivity {
                     newGroupRef.child("description").setValue(descriptionString);
                     newGroupRef.child("users").setValue(userIDs);
                     newGroupRef.child("max_members").setValue(maxUsers);
+                    //newGroupRef.child("place").child("Latitude").setValue(lat);
+                    //newGroupRef.child("place").child("Longitude").setValue(lng);
+                    //newGroupRef.child("place").child("Adresse").setValue(adresse);
+                    newGroupRef.child("time").setValue(dateAndTime);
 
                     // zurück zur EventActivity
                     finish();
@@ -132,6 +143,7 @@ public class CreateEventActivity extends AppCompatActivity {
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "Erhalte Result "+requestCode+" "+resultCode);
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 
@@ -139,9 +151,25 @@ public class CreateEventActivity extends AppCompatActivity {
                 
                 ((TextView) findViewById(R.id.create_event_selected_location_name)).setText(place.getName());
                 ((TextView) findViewById(R.id.create_event_selected_location_address)).setText(place.getAddress());
+
+                lat = place.getLatLng().latitude;
+                lng = place.getLatLng().longitude;
+                adresse = place.getAddress().toString();
                 
                 layoutAddLocation.setVisibility(View.GONE);
                 layoutSelectedLocation.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                Log.d(TAG,"Hat nicht funktioniert "+resultCode);
+            }
+        }
+        if(requestCode == TIME_PICKER_REQUEST)
+        {
+            if(resultCode == RESULT_OK)
+            {
+                dateAndTime = data.getStringExtra("result");
+                Log.d(TAG, dateAndTime);
             }
         }
     }
