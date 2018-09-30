@@ -22,8 +22,7 @@ public class User {
     private String name;
     private String email;
     private ArrayList<String> eventIDs = new ArrayList<>();
-
-    private FirebaseDatabase mFirebaseDatabase;
+    
     private DatabaseReference userRef;
     
     public User() {
@@ -116,9 +115,9 @@ public class User {
 
         if(eventIDs==null) {
             Log.d(TAG, "Creating Eventlist with first element");
-            ArrayList<String> FirstEvent = new ArrayList<>();
-            FirstEvent.add(eventID);
-            setEventIDs(FirstEvent);
+            ArrayList<String> arr = new ArrayList<>();
+            arr.add(eventID);
+            setEventIDs(arr);
             updateEventIDs();
         }
         else if(!eventIDs.contains(eventID))

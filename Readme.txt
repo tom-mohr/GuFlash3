@@ -1,3 +1,8 @@
+Änderungen vom 30.09.18 | 1.22.0 (T)
+- G's Code aufgeräumt
+- Teilnehmerzahlen werden im Popup angezeigt
+- der join-button wird deaktiviert, sobald kein platz mehr in der gruppe ist
+
 Änderungen vom 30.09.18 | 1.21.0 (G)
 -Popup funktioniert jetzt richtig und User und Event werden beide im Popup hinzugefügt
     -Join Button beim Event-Layout entfernt

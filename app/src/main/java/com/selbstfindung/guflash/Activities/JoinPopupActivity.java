@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,22 +23,27 @@ import com.selbstfindung.guflash.R;
 import com.selbstfindung.guflash.RecyclerViewAdapterEvent;
 import com.selbstfindung.guflash.User;
 
+import org.w3c.dom.Text;
+
 public class JoinPopupActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
-
-    private String eventId;
-    DatabaseReference eventRef;
     
     // GUI
     TextView eventNameTextView;
     TextView eventDescriptionTextView;
-
+    TextView eventMembersAmountTextView;
+    TextView eventMaxMembersAmountTextView;
+    Button joinButton;
+    
+    // Firebase
+    private String eventId;
+    DatabaseReference eventRef;
     private User user;
-    private FirebaseUser firebaseUser;
-    private FirebaseAuth mAuth;
-    private DatabaseReference databaseRef;
-    private DatabaseReference groupRef;
+    
+    // info über das event
+    private long currentEventMemberCount;
+    private long currentMaxEventMemberCount;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,68 +59,76 @@ public class JoinPopupActivity extends AppCompatActivity {
         int height = (int) (0.8 * dm.heightPixels);
         
         getWindow().setLayout(width, height);
-
-        eventId = getIntent().getStringExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID);
-
-        mAuth = FirebaseAuth.getInstance();
-        firebaseUser = mAuth.getCurrentUser();
-        databaseRef = FirebaseDatabase.getInstance().getReference();
-        groupRef = databaseRef.child("events").child(eventId);
-
-        user = new User(firebaseUser.getUid(), new User.Callback() {
-            @Override
-            public void onProfileChanged() {}
-
-            @Override
-            public void onLoadingFailed() {}
-        });
         
         // initialize views
         eventNameTextView = (TextView) findViewById(R.id.join_popup_event_name);
         eventDescriptionTextView = (TextView) findViewById(R.id.join_popup_event_description);
+        eventMembersAmountTextView = (TextView) findViewById(R.id.join_popup_members_amount);
+        eventMaxMembersAmountTextView = (TextView) findViewById(R.id.join_popup_max_members_amount);
+        joinButton = (Button) findViewById(R.id.join_popup_join_button);
         
+        // von welcher gruppe soll das popup informationen anzeigen?
+        eventId = getIntent().getStringExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID);
+        
+        // Firebase stuff
+        eventRef = FirebaseDatabase.getInstance().getReference().child("events").child(eventId);
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        
+        user = new User(userId, null);
+        
+        // listen for changes
+        eventRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                
+                // fetch data
+                String eventName = (String) dataSnapshot.child("name").getValue();
+                String eventDescription = (String) dataSnapshot.child("description").getValue();
+                currentEventMemberCount = dataSnapshot.child("users").getChildrenCount();
+                currentMaxEventMemberCount = (long) dataSnapshot.child("max_members").getValue();
+                
+                // make it visible
+                eventNameTextView.setText(eventName);
+                eventDescriptionTextView.setText(eventDescription);
+                eventMembersAmountTextView.setText(String.valueOf(currentEventMemberCount));
+                eventMaxMembersAmountTextView.setText(String.valueOf(currentMaxEventMemberCount));
+                
+                
+                // wenn die maximale user anzahl erreicht wurde, deaktiviere den join-button
+                if (currentEventMemberCount >= currentMaxEventMemberCount)
+                    joinButton.setVisibility(View.INVISIBLE);
+                else
+                    joinButton.setVisibility(View.VISIBLE);// falls user wieder leaven, reaktiviere
+                
+            }
+    
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+        
+        // onclick listeners
         
         findViewById(R.id.join_popup_join_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                user.addEventID(eventId);
-
-                groupRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.getChildrenCount()!=0)
-                        {
-                            boolean userVorhanden = false;
-
-                            for(DataSnapshot ds : dataSnapshot.getChildren())
-                            {
-                                if(ds.getValue().toString().equals(user.getId()))
-                                {
-                                    userVorhanden = true;
-                                }
-                            }
-
-                            if(!userVorhanden)
-                            {
-                                groupRef.child("users").child(user.getId()).setValue(user.getId());
-                            }
-                        }
-                        else
-                        {
-                            groupRef.child("users").child(user.getId()).setValue(user.getId());
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-                Intent intent = new Intent(getBaseContext(), ChatActivity.class);
-                intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, eventId);
-                startActivity(intent);
+                
+                // user clicked "JOIN"
+                
+                // ist ein platz frei?
+                if (currentEventMemberCount < currentMaxEventMemberCount) {// diese daten werden ständing aktualisiert
+                    
+                    // add user to the "users" list of this event in the database
+                    eventRef.child("users").child(user.getId()).setValue(user.getId());
+    
+                    user.addEventID(eventId);// add event to "my events"
+    
+                    // open the chat (of that event) and finish this popup-activity
+                    Intent intent = new Intent(JoinPopupActivity.this, ChatActivity.class);
+                    intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, eventId);
+                    startActivity(intent);
+                    finish();// beende das popup (damit man es nicht wieder sieht wenn man den chat verlässt)
+                }
             
             }
         });
@@ -122,24 +136,6 @@ public class JoinPopupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
-            }
-        });
-        
-
-        eventRef = FirebaseDatabase.getInstance().getReference().child("events").child(eventId);
-        eventRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String eventName = (String) dataSnapshot.child("name").getValue();
-                String eventDescription = (String) dataSnapshot.child("description").getValue();
-                
-                eventNameTextView.setText(eventName);
-                eventDescriptionTextView.setText(eventDescription);
-            }
-    
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-        
             }
         });
     }

@@ -113,7 +113,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     // werte ausfüllen
                     newGroupRef.child("name").setValue(eventNameString);
                     newGroupRef.child("description").setValue(descriptionString);
-                    newGroupRef.child("members").setValue(userIDs);
+                    newGroupRef.child("users").setValue(userIDs);
                     newGroupRef.child("max_members").setValue(maxUsers);
 
                     // zurück zur EventActivity
