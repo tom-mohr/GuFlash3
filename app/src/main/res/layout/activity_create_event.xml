@@ -19,6 +19,8 @@
 
 
             <TextView
+                android:drawableStart="@drawable/ic_menu_edit"
+                android:drawablePadding="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="match_parent"
                 android:text="Was?"
@@ -51,62 +53,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="24dp" />
 
-
             <TextView
+                android:drawableStart="@drawable/ic_menu_location"
+                android:drawablePadding="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="match_parent"
                 android:text="Wo?"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"/>
 
-            <RelativeLayout
-                android:id="@+id/create_event_add_location_layout"
-                android:visibility="visible"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="12dp">
-
-                <TextView
-                    android:gravity="center_vertical"
-                    android:drawableStart="@drawable/ic_menu_add_location"
-                    android:text="Ort auf Google Maps wählen"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/create_event_selected_location_layout"
-                android:visibility="gone"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/create_event_selected_location_icon"
-                    android:layout_centerVertical="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:src="@drawable/ic_menu_location"/>
-
                 <LinearLayout
-                    android:layout_toEndOf="@id/create_event_selected_location_icon"
+                    android:visibility="gone"
+                    android:id="@+id/create_event_selected_location_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal">
 
                     <TextView
                         android:id="@+id/create_event_selected_location_name"
-                        android:layout_centerVertical="true"
-                        android:text="Name der Location"
+                        android:text="Ort ohne Namen"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
@@ -115,55 +81,82 @@
                         android:id="@+id/create_event_selected_location_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Adresse"
+                        android:text=""
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
 
                 </LinearLayout>
 
-            </RelativeLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-                <EditText
-                    android:id="@+id/create_event_location_name_edit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:hint="eigener Name der Location (optional)"/>
-            </android.support.design.widget.TextInputLayout>
+            <Button
+                android:id="@+id/create_event_place_picker_button"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Ort wählen" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="24dp" />
 
             <TextView
+                android:drawableStart="@drawable/ic_menu_clock"
+                android:drawablePadding="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="match_parent"
                 android:text="Wann?"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"/>
 
-            <RelativeLayout
-                android:id="@+id/create_event_set_time_layout"
-                android:visibility="visible"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:clickable="true"
-                android:focusable="true"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="12dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:gravity="center_vertical"
-                    android:drawableStart="@drawable/ic_menu_clock"
-                    android:text="Zeit festlegen"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            </RelativeLayout>
+                    <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/create_event_date_text_view"
+                        android:text=""
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:id="@+id/create_event_set_date_button"
+                        style="@style/Widget.AppCompat.Button.Colored"
+                        android:text="Datum wählen"
+                        android:layout_toRightOf="@id/create_event_date_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/create_event_time_text_view"
+                        android:text=""
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:id="@+id/create_event_set_time_button"
+                        style="@style/Widget.AppCompat.Button.Colored"
+                        android:text="Uhrzeit wählen"
+                        android:layout_toRightOf="@id/create_event_time_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
 
 
             <Space
@@ -171,6 +164,8 @@
                 android:layout_height="24dp" />
 
             <TextView
+                android:drawableStart="@drawable/ic_menu_group"
+                android:drawablePadding="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="match_parent"
                 android:text="Teilnehmer"

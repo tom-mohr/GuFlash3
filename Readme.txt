@@ -1,3 +1,12 @@
+Änderungen vom 01.10.18 | 1.24.0 (T)
+- createEventActivity:
+  - Layout verbessert (Icons bei headlines, Buttons etc.)
+  - G's Activities für Time- und Date-Picking wieder entfernt (sorry :/)
+    und durch Dialoge ersetzt -> ist viel einfacher so
+  - wenn die eingaben fehlerhaft sind, kann keine gruppe erstellt werden
+    und es wird ein individueller Hinweis angezeigt (Snackbar)
+    -> es wird allerdings noch nicht alles gecheckt
+
 Änderungen vom 30.09.18 | 1.23.0 (G)
 -Zeit und Datum werden innerhalb von 2 Activities ausgewählt und dann auch gespeichert
 -Anfänge zur Ortsspeicherung, aber kann es nicht testen
