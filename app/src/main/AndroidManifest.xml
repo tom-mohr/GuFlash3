@@ -74,7 +74,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Activities.ConfigurationActivity"
+            android:name=".Activities.NotificationActivity"
             android:theme="@style/MyActionBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -82,8 +82,7 @@
         </activity>
         <activity
             android:name=".Activities.JoinPopupActivity"
-            android:theme="@style/MyPopupTheme">
-        </activity>
+            android:theme="@style/MyPopupTheme"></activity>
     </application>
 
 </manifest>

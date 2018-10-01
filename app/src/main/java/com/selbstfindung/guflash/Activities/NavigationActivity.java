@@ -186,8 +186,8 @@ public class NavigationActivity extends AppCompatActivity
         } else if (id == R.id.nav_profile_settings) {
             startActivity(new Intent(NavigationActivity.this, ProfileActivity.class));
 
-        } else if (id == R.id.nav_app_settings) {
-            startActivity(new Intent(NavigationActivity.this, ConfigurationActivity.class));
+        } else if (id == R.id.nav_app_notifications) {
+            startActivity(new Intent(NavigationActivity.this, NotificationActivity.class));
 
         } else if (id == R.id.nav_logout) {
             

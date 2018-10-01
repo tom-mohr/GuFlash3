@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.selbstfindung.guflash.R;
 
-public class ConfigurationActivity extends AppCompatActivity
+public class NotificationActivity extends AppCompatActivity
 {
     private static final String TAG = "MONTAG";
 
@@ -37,7 +37,7 @@ public class ConfigurationActivity extends AppCompatActivity
         useless.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ConfigurationActivity.this, "Useless", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NotificationActivity.this, "Useless", Toast.LENGTH_SHORT).show();
             }
         });
     }

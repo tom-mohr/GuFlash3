@@ -114,7 +114,10 @@ public class CreateEventActivity extends AppCompatActivity {
                                 mDay = dayOfMonth;
                                 
                                 // show to user
-                                textViewDate.setText(dayOfMonth + "." + (monthOfYear + 1) + "." + year);
+                                if(dayOfMonth<10&&monthOfYear<10){textViewDate.setText("0"+dayOfMonth + ".0" + (monthOfYear + 1) + "." + year);}
+                                else if(dayOfMonth<10){textViewDate.setText("0"+dayOfMonth + "." + (monthOfYear + 1) + "." + year);}
+                                else if(monthOfYear<10){textViewDate.setText(dayOfMonth + ".0" + (monthOfYear + 1) + "." + year);}
+                                else{textViewDate.setText(dayOfMonth + "." + (monthOfYear + 1) + "." + year);}
                     
                             }
                         }, mYear, mMonth, mDay);
@@ -143,7 +146,10 @@ public class CreateEventActivity extends AppCompatActivity {
                                 mMinute = minute;
                                 
                                 // show to user
-                                textViewTime.setText(hourOfDay + ":" + minute);
+                                if(minute<10&&hourOfDay<10) {textViewTime.setText("0"+hourOfDay + ":0" + minute);}
+                                else if(minute<10) {textViewTime.setText(hourOfDay + ":0" + minute);}
+                                else if(hourOfDay<10) {textViewTime.setText("0"+hourOfDay + ":" + minute);}
+                                else {textViewTime.setText(hourOfDay + ":" + minute);}
                             }
                         }, mHour, mMinute, true);
                 timePickerDialog.show();
@@ -287,12 +293,12 @@ public class CreateEventActivity extends AppCompatActivity {
                 Place place = PlacePicker.getPlace(this, data);
                 CharSequence name = place.getName();
                 CharSequence addr = place.getAddress();
-                
+
                 // remember this
                 lat = place.getLatLng().latitude;
                 lng = place.getLatLng().longitude;
                 if (name != null) locationName = name.toString();
-                if (addr != null) locationName = addr.toString();
+                if (addr != null) locationAddress = addr.toString();
                 
                 // show to user
                 if (name!= null)

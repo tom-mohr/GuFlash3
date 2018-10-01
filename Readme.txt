@@ -1,3 +1,7 @@
+Änderungen vom 01.10.18 | 1.24.1 (G)
+-Zeit und Ort wird in der Eventinfo ausgegeben und kleiner Bugfix, da Name doppelt überschrieben wurde
+
+
 Änderungen vom 01.10.18 | 1.24.0 (T)
 - createEventActivity:
   - Layout verbessert (Icons bei headlines, Buttons etc.)

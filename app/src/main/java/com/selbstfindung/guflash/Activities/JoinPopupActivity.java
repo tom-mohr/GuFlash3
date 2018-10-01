@@ -30,10 +30,7 @@ public class JoinPopupActivity extends AppCompatActivity {
     private static final String TAG = "MONTAG";
     
     // GUI
-    TextView eventNameTextView;
-    TextView eventDescriptionTextView;
-    TextView eventMembersAmountTextView;
-    TextView eventMaxMembersAmountTextView;
+    TextView eventNameTextView, eventTimeTextView, eventDescriptionTextView, eventMembersAmountTextView, eventMaxMembersAmountTextView, eventPlaceNameTextView, eventAddressTextView;
     Button joinButton;
     
     // Firebase
@@ -63,6 +60,9 @@ public class JoinPopupActivity extends AppCompatActivity {
         // initialize views
         eventNameTextView = (TextView) findViewById(R.id.join_popup_event_name);
         eventDescriptionTextView = (TextView) findViewById(R.id.join_popup_event_description);
+        eventTimeTextView = (TextView) findViewById(R.id.join_popup_event_time);
+        eventPlaceNameTextView = (TextView) findViewById(R.id.join_popup_event_place_name);
+        eventAddressTextView = (TextView) findViewById(R.id.join_popup_event_place_address);
         eventMembersAmountTextView = (TextView) findViewById(R.id.join_popup_members_amount);
         eventMaxMembersAmountTextView = (TextView) findViewById(R.id.join_popup_max_members_amount);
         joinButton = (Button) findViewById(R.id.join_popup_join_button);
@@ -84,15 +84,22 @@ public class JoinPopupActivity extends AppCompatActivity {
                 // fetch data
                 String eventName = (String) dataSnapshot.child("name").getValue();
                 String eventDescription = (String) dataSnapshot.child("description").getValue();
+                String eventTime = ""+dataSnapshot.child("time").child("hour").getValue()+":"+dataSnapshot.child("time").child("minute").getValue()+" Uhr "+dataSnapshot.child("time").child("day").getValue()+"."+dataSnapshot.child("time").child("month").getValue()+"."+dataSnapshot.child("time").child("year").getValue();
+                String eventPlaceName = dataSnapshot.child("place").child("name").getValue(String.class);
+                String eventPlaceAddress = dataSnapshot.child("place").child("address").getValue(String.class);
                 currentEventMemberCount = dataSnapshot.child("users").getChildrenCount();
                 currentMaxEventMemberCount = (long) dataSnapshot.child("max_members").getValue();
-                
+
+
+
                 // make it visible
                 eventNameTextView.setText(eventName);
                 eventDescriptionTextView.setText(eventDescription);
                 eventMembersAmountTextView.setText(String.valueOf(currentEventMemberCount));
                 eventMaxMembersAmountTextView.setText(String.valueOf(currentMaxEventMemberCount));
-                
+                eventTimeTextView.setText(eventTime);
+                eventPlaceNameTextView.setText(eventPlaceName);
+                eventAddressTextView.setText(eventPlaceAddress);
                 
                 // wenn die maximale user anzahl erreicht wurde, deaktiviere den join-button
                 if (currentEventMemberCount >= currentMaxEventMemberCount)

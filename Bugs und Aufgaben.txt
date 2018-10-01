@@ -5,15 +5,8 @@ Bugs:
 
 
 ToDo:
--Location und Time in der Datenbank speichern
 
-- bei klick auf gruppe soll popup aufgehen
-  -> hat elemente:
-     - Titel
-     - Beschreibung
-     - nochmal Teilnehmerzahl usw.
-     - zeit
-
+-Popup für Filter-/Sortiereinstellungen (Standardmäßig sollte nach Entfernung sortiert werden)
 - durchsuchen erleichtern
     - sortieren nach:
       - entfernung
@@ -25,7 +18,7 @@ ToDo:
       - tags
 
 
--App Settings entfernen
+-Notifactions
 - Erklärungs-Activity
 
 

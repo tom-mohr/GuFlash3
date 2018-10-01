@@ -183,8 +183,8 @@ public class MyEventActivity extends AppCompatActivity
         } else if (id == R.id.nav_profile_settings) {
             startActivity(new Intent(MyEventActivity.this, ProfileActivity.class));
 
-        } else if (id == R.id.nav_app_settings) {
-            startActivity(new Intent(MyEventActivity.this, ConfigurationActivity.class));
+        } else if (id == R.id.nav_app_notifications) {
+            startActivity(new Intent(MyEventActivity.this, NotificationActivity.class));
 
         } else if (id == R.id.nav_logout) {
 
