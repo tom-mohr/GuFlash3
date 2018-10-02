@@ -1,3 +1,12 @@
+Änderungen vom 02.10.18 | 1.25.0 (T)
+- man ist beim Event-Erstellen gezwungen, Datum und Uhrzeit anzugeben
+  -> es gibt nur noch einen Button "Zeit wählen",
+     der beide Dialoge (datum und uhrzeit) hintereinander aufruft
+- Formatierung der Zeit vereinfacht
+  -> benutzt android.text.format.DateFormat
+  -> passt sich den lokalen standards an
+- Popup-Design verbessert
+
 Änderungen vom 01.10.18 | 1.24.1 (G)
 -Zeit und Ort wird in der Eventinfo ausgegeben und kleiner Bugfix, da Name doppelt überschrieben wurde
 

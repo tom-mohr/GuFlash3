@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -25,12 +26,22 @@ import com.selbstfindung.guflash.User;
 
 import org.w3c.dom.Text;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class JoinPopupActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
     
     // GUI
-    TextView eventNameTextView, eventTimeTextView, eventDescriptionTextView, eventMembersAmountTextView, eventMaxMembersAmountTextView, eventPlaceNameTextView, eventAddressTextView;
+    TextView eventNameTextView,
+            eventDateTextView,
+            eventTimeTextView,
+            eventDescriptionTextView,
+            eventMembersAmountTextView,
+            eventMaxMembersAmountTextView,
+            eventPlaceNameTextView,
+            eventAddressTextView;
     Button joinButton;
     
     // Firebase
@@ -60,6 +71,7 @@ public class JoinPopupActivity extends AppCompatActivity {
         // initialize views
         eventNameTextView = (TextView) findViewById(R.id.join_popup_event_name);
         eventDescriptionTextView = (TextView) findViewById(R.id.join_popup_event_description);
+        eventDateTextView = (TextView) findViewById(R.id.join_popup_event_date);
         eventTimeTextView = (TextView) findViewById(R.id.join_popup_event_time);
         eventPlaceNameTextView = (TextView) findViewById(R.id.join_popup_event_place_name);
         eventAddressTextView = (TextView) findViewById(R.id.join_popup_event_place_address);
@@ -79,16 +91,29 @@ public class JoinPopupActivity extends AppCompatActivity {
         // listen for changes
         eventRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot ds) {
                 
                 // fetch data
-                String eventName = (String) dataSnapshot.child("name").getValue();
-                String eventDescription = (String) dataSnapshot.child("description").getValue();
-                String eventTime = ""+dataSnapshot.child("time").child("hour").getValue()+":"+dataSnapshot.child("time").child("minute").getValue()+" Uhr "+dataSnapshot.child("time").child("day").getValue()+"."+dataSnapshot.child("time").child("month").getValue()+"."+dataSnapshot.child("time").child("year").getValue();
-                String eventPlaceName = dataSnapshot.child("place").child("name").getValue(String.class);
-                String eventPlaceAddress = dataSnapshot.child("place").child("address").getValue(String.class);
-                currentEventMemberCount = dataSnapshot.child("users").getChildrenCount();
-                currentMaxEventMemberCount = (long) dataSnapshot.child("max_members").getValue();
+                
+                String eventName = (String) ds.child("name").getValue();
+                String eventDescription = (String) ds.child("description").getValue();
+                
+                String eventPlaceName = ds.child("place").child("name").getValue(String.class);
+                String eventPlaceAddress = ds.child("place").child("address").getValue(String.class);
+                
+                currentEventMemberCount = ds.child("users").getChildrenCount();
+                currentMaxEventMemberCount = (long) ds.child("max_members").getValue();
+    
+                // time formatting
+                DataSnapshot timeRef = ds.child("time");
+                int year = ((Long) timeRef.child("year").getValue()).intValue();
+                int month = ((Long) timeRef.child("month").getValue()).intValue();
+                int day = ((Long) timeRef.child("day").getValue()).intValue();
+                int hour = ((Long) timeRef.child("hour").getValue()).intValue();
+                int minute = ((Long) timeRef.child("minute").getValue()).intValue();
+                Calendar calendar = new GregorianCalendar(year, month, day, hour, minute);
+                String dateString = DateUtils.formatDateTime(getApplicationContext(), calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_DATE);
+                String timeString = DateUtils.formatDateTime(getApplicationContext(), calendar.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME);
 
 
 
@@ -97,7 +122,8 @@ public class JoinPopupActivity extends AppCompatActivity {
                 eventDescriptionTextView.setText(eventDescription);
                 eventMembersAmountTextView.setText(String.valueOf(currentEventMemberCount));
                 eventMaxMembersAmountTextView.setText(String.valueOf(currentMaxEventMemberCount));
-                eventTimeTextView.setText(eventTime);
+                eventDateTextView.setText(dateString);
+                eventTimeTextView.setText(timeString);
                 eventPlaceNameTextView.setText(eventPlaceName);
                 eventAddressTextView.setText(eventPlaceAddress);
                 

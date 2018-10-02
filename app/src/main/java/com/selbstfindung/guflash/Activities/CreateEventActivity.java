@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,8 +28,11 @@ import com.selbstfindung.guflash.R;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class CreateEventActivity extends AppCompatActivity {
     
@@ -46,7 +50,6 @@ public class CreateEventActivity extends AppCompatActivity {
     private TextView textViewSelectedLocationName;
     private TextView textViewSelectedLocationAddress;
     private TextView textViewDate;
-    private Button buttonSetDate;
     private TextView textViewTime;
     private Button buttonSetTime;
     private EditText editTextMinUsers;
@@ -85,22 +88,25 @@ public class CreateEventActivity extends AppCompatActivity {
         layoutSelectedLocation = (LinearLayout) findViewById(R.id.create_event_selected_location_layout);
         textViewSelectedLocationName = (TextView) findViewById(R.id.create_event_selected_location_name);
         textViewSelectedLocationAddress = (TextView) findViewById(R.id.create_event_selected_location_address);
-        buttonSetDate = (Button) findViewById(R.id.create_event_set_date_button);
-        textViewDate = (TextView) findViewById(R.id.create_event_date_text_view);
         buttonSetTime = (Button) findViewById(R.id.create_event_set_time_button);
+        textViewDate = (TextView) findViewById(R.id.create_event_date_text_view);
         textViewTime = (TextView) findViewById(R.id.create_event_time_text_view);
         editTextMinUsers = (EditText) findViewById(R.id.create_event_min_users);
         editTextMaxUsers = (EditText) findViewById(R.id.create_event_max_users);
         
-        buttonSetDate.setOnClickListener(new View.OnClickListener() {
+        // Get Current Date and Time
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+        mMinute = c.get(Calendar.MINUTE);
+        
+        showDateAndTime();
+        
+        buttonSetTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-    
-                // Get Current Date
-                final Calendar c = Calendar.getInstance();
-                mYear = c.get(Calendar.YEAR);
-                mMonth = c.get(Calendar.MONTH);
-                mDay = c.get(Calendar.DAY_OF_MONTH);
     
                 DatePickerDialog datePickerDialog = new DatePickerDialog(CreateEventActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
@@ -112,48 +118,28 @@ public class CreateEventActivity extends AppCompatActivity {
                                 mYear = year;
                                 mMonth = monthOfYear;
                                 mDay = dayOfMonth;
-                                
-                                // show to user
-                                if(dayOfMonth<10&&monthOfYear<10){textViewDate.setText("0"+dayOfMonth + ".0" + (monthOfYear + 1) + "." + year);}
-                                else if(dayOfMonth<10){textViewDate.setText("0"+dayOfMonth + "." + (monthOfYear + 1) + "." + year);}
-                                else if(monthOfYear<10){textViewDate.setText(dayOfMonth + ".0" + (monthOfYear + 1) + "." + year);}
-                                else{textViewDate.setText(dayOfMonth + "." + (monthOfYear + 1) + "." + year);}
+    
+                                // now launch Time Picker Dialog
+                                TimePickerDialog timePickerDialog = new TimePickerDialog(CreateEventActivity.this,
+                                        new TimePickerDialog.OnTimeSetListener() {
+                
+                                            @Override
+                                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    
+                                                // remember this
+                                                mHour = hourOfDay;
+                                                mMinute = minute;
+                    
+                                                // show to user
+                                                showDateAndTime();
+                    
+                                            }
+                                        }, mHour, mMinute, true);
+                                timePickerDialog.show();
                     
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
-            }
-        });
-        
-        buttonSetTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                
-                // Get Current Time
-                final Calendar c = Calendar.getInstance();
-                mHour = c.get(Calendar.HOUR_OF_DAY);
-                mMinute = c.get(Calendar.MINUTE);
-    
-                // Launch Time Picker Dialog
-                TimePickerDialog timePickerDialog = new TimePickerDialog(CreateEventActivity.this,
-                        new TimePickerDialog.OnTimeSetListener() {
-                
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                
-                                // remember this
-                                mHour = hourOfDay;
-                                mMinute = minute;
-                                
-                                // show to user
-                                if(minute<10&&hourOfDay<10) {textViewTime.setText("0"+hourOfDay + ":0" + minute);}
-                                else if(minute<10) {textViewTime.setText(hourOfDay + ":0" + minute);}
-                                else if(hourOfDay<10) {textViewTime.setText("0"+hourOfDay + ":" + minute);}
-                                else {textViewTime.setText(hourOfDay + ":" + minute);}
-                            }
-                        }, mHour, mMinute, true);
-                timePickerDialog.show();
-            
             }
         });
         
@@ -196,9 +182,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 String minUsersString = editTextMinUsers.getText().toString();
                 String maxUsersString = editTextMaxUsers.getText().toString();
                 
-                if (
-                        checkEventName(eventNameString) &&
+                if (checkEventName(eventNameString) &&// mit dieser hierarchie wird der user über falsche daten informiert:
                         checkEventDescription(eventDescriptionString) &&
+                        checkLocation(lat, lng, locationName, locationAddress) &&
                         checkMinUsers(minUsersString) &&
                         checkMaxUsers(maxUsersString)
                         ) {
@@ -236,6 +222,34 @@ public class CreateEventActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    
+    private void showDateAndTime() {
+        
+        /*
+        
+        // Gustavs Version: (beängstigend)
+        
+        if(mDay<10&&mMonth<10){textViewDate.setText("0"+mDay + ".0" + (mMonth + 1) + "." + mYear);}
+        else if(mDay<10){textViewDate.setText("0"+mDay + "." + (mMonth + 1) + "." + mYear);}
+        else if(mMonth<10){textViewDate.setText(mDay + ".0" + (mMonth + 1) + "." + mYear);}
+        else{textViewDate.setText(mDay + "." + (mMonth + 1) + "." + mYear);}
+        
+        if(mMinute<10&&mHour<10) {textViewTime.setText("0"+mHour + ":0" + mMinute);}
+        else if(mMinute<10) {textViewTime.setText(mHour + ":0" + mMinute);}
+        else if(mHour<10) {textViewTime.setText("0"+mHour + ":" + mMinute);}
+        else {textViewTime.setText(mHour + ":" + mMinute);}
+        */
+        
+        Calendar calendar = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute);
+        String dateString = DateUtils.formatDateTime(getApplicationContext(), calendar.getTimeInMillis(),
+                DateUtils.FORMAT_SHOW_DATE);
+        String timeString = DateUtils.formatDateTime(getApplicationContext(), calendar.getTimeInMillis(),
+                DateUtils.FORMAT_SHOW_TIME);
+    
+        textViewDate.setText(dateString);
+        textViewTime.setText(timeString);
+        
     }
     
     private boolean checkEventName(String s) {
@@ -282,6 +296,15 @@ public class CreateEventActivity extends AppCompatActivity {
             }
             return true;
         }
+    }
+    
+    private boolean checkLocation(double lat, double lng, String locationName, String locationAddress) {
+        if (locationName == null || locationAddress == null) {// just basic check if placepicker returned anything
+            Snackbar.make(parentLayout, "Wähle einen Ort!", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+        // assuming that lat & lng have been set by the place picker (since even the strings have been set)
+        return true;
     }
     
     @Override
