@@ -4,6 +4,8 @@ package com.selbstfindung.guflash;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.selbstfindung.guflash.Activities.ChatActivity;
+import com.selbstfindung.guflash.Activities.ClosedChatActivity;
 import com.selbstfindung.guflash.Activities.JoinPopupActivity;
 import com.selbstfindung.guflash.Activities.NavigationActivity;
 
@@ -37,6 +40,7 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
     private Context mContext;
 
     private String eventName;
+    private int minMembers;
     private int nMembers;
     private int maxMembers;
     //private ArrayList<String> memberIds = new ArrayList<>();
@@ -46,7 +50,7 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
-    private DatabaseReference eventRef;
+    //private DatabaseReference eventRef;
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
     private User user;
@@ -109,6 +113,7 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
                     }
 
                 }
+                minMembers = ((Long) eventRef.child("min_members").getValue()).intValue();
                 nMembers = ((Long) eventRef.child("users").getChildrenCount()).intValue();
                 maxMembers = ((Long) eventRef.child("max_members").getValue()).intValue();
                 int diff = maxMembers - nMembers;
@@ -156,23 +161,55 @@ public class RecyclerViewAdapterEvent extends RecyclerView.Adapter<RecyclerViewA
                     }
                 }
 
-                Log.d(TAG, "Boolean ist " +userVorhanden);
-                // bin ich bereits member in dieser gruppe?
-                if (userVorhanden) {
-                    //weiterleiten an den Chat
-                    Log.d(TAG, "User ist bereits teil des Events");
 
-                    Intent intent = new Intent(mContext, ChatActivity.class);
-                    intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
-                    mContext.startActivity(intent);
-                } else {
-                    // join-dialog öffnen
-                    Log.d(TAG, "User ist noch nicht teil des Events");
+                mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    Intent intent = new Intent(mContext, JoinPopupActivity.class);
-                    intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
-                    mContext.startActivity(intent);
-                }
+                        DataSnapshot eventRef = dataSnapshot.child("events").child(mEventIDs.get(position));
+
+                        minMembers = ((Long) eventRef.child("min_members").getValue()).intValue();
+                        nMembers = ((Long) eventRef.child("users").getChildrenCount()).intValue();
+                        Log.d(TAG, "Momentane Member: "+nMembers+" Min Member: "+minMembers+" "+mEventIDs.get(position));
+
+                        Log.d(TAG, "Boolean ist " +userVorhanden);
+                        // bin ich bereits member in dieser gruppe?
+                        if (userVorhanden) {
+                            //weiterleiten an den Chat
+                            Log.d(TAG, "User ist bereits teil des Events "+nMembers+" "+minMembers);
+                            //checken ob die Mindestteilnehmerzahl schon erreicht ist
+                            if(nMembers<minMembers)
+                            {
+                                Intent intent = new Intent(mContext, ClosedChatActivity.class);
+                                intent.putExtra(ClosedChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
+                                intent.putExtra(ClosedChatActivity.EXTRA_MESSAGE_REASON, "Teilnehmer"+(minMembers-nMembers));
+                                mContext.startActivity(intent);
+                            }
+                            else
+                            {
+                                Intent intent = new Intent(mContext, ChatActivity.class);
+                                intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
+                                mContext.startActivity(intent);
+                            }
+                        } else {
+                            // join-dialog öffnen
+                            Log.d(TAG, "User ist noch nicht teil des Events");
+
+                            Intent intent = new Intent(mContext, JoinPopupActivity.class);
+                            intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, mEventIDs.get(position));
+                            intent.putExtra(JoinPopupActivity.EXTRA_MESSAGE_MIN_TEILNEHMER, ""+minMembers);
+                            mContext.startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
             }
         });
 

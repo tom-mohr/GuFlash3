@@ -59,7 +59,6 @@ public class ChatActivity extends AppCompatActivity {
 
         Log.d(TAG, "ChatActivity onCreate()");
 
-
         mAuth = FirebaseAuth.getInstance();
         firebaseUser = mAuth.getCurrentUser();
 

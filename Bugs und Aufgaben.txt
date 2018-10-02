@@ -2,16 +2,12 @@ Bugs:
 -Ort auf Google Maps wählen schließt sich manchmal direkt
 -Chat beginnt ganz oben, man muss immer komplett runterscrollen
 -Location beim Erstellen nochmal ändern
+-man kann keinen Text auswählen (zB zum kopieren)
 
 
 ToDo:
-- "JOIN" muss durch ein passenderes deutsches Wort ersetzt werden
-  -> Beispiele: "anmelden", "beitreten", ""dabei sein", "mitmachen", "Interesse"
-- Beim Erstellen: EditText für Beschreibung muss schon zu Beginn mehrere Zeilen haben
-- Beim Erstellen: Event-Name und Beschreibung sollten jeweils
-  eine maximale Zeichenlänge besitzen. (attribut maxLength="123" in xml layout)
 -Popup für Filter-/Sortiereinstellungen (Standardmäßig sollte nach Entfernung sortiert werden)
-- durchsuchen erleichtern
+-durchsuchen erleichtern
     - sortieren nach:
       - entfernung
       - teilnehmerzahl
@@ -21,12 +17,11 @@ ToDo:
       - suche
       - tags
 
-
 -Notifactions
-- Erklärungs-Activity
+-Erklärungs-Activity
 
 
-
+-Gruppenersteller sollte direkt zur Gruppe hinzugefügt werden (unpraktisch beim programmieren des Popups)
 
 
 

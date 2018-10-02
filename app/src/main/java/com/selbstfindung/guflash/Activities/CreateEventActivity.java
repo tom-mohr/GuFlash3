@@ -185,6 +185,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 if (checkEventName(eventNameString) &&// mit dieser hierarchie wird der user über falsche daten informiert:
                         checkEventDescription(eventDescriptionString) &&
                         checkLocation(lat, lng, locationName, locationAddress) &&
+                        checkTime(mYear, mMonth, mDay, mHour) &&
                         checkMinUsers(minUsersString) &&
                         checkMaxUsers(maxUsersString)
                         ) {
@@ -226,21 +227,6 @@ public class CreateEventActivity extends AppCompatActivity {
     
     private void showDateAndTime() {
         
-        /*
-        
-        // Gustavs Version: (beängstigend)
-        
-        if(mDay<10&&mMonth<10){textViewDate.setText("0"+mDay + ".0" + (mMonth + 1) + "." + mYear);}
-        else if(mDay<10){textViewDate.setText("0"+mDay + "." + (mMonth + 1) + "." + mYear);}
-        else if(mMonth<10){textViewDate.setText(mDay + ".0" + (mMonth + 1) + "." + mYear);}
-        else{textViewDate.setText(mDay + "." + (mMonth + 1) + "." + mYear);}
-        
-        if(mMinute<10&&mHour<10) {textViewTime.setText("0"+mHour + ":0" + mMinute);}
-        else if(mMinute<10) {textViewTime.setText(mHour + ":0" + mMinute);}
-        else if(mHour<10) {textViewTime.setText("0"+mHour + ":" + mMinute);}
-        else {textViewTime.setText(mHour + ":" + mMinute);}
-        */
-        
         Calendar calendar = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute);
         String dateString = DateUtils.formatDateTime(getApplicationContext(), calendar.getTimeInMillis(),
                 DateUtils.FORMAT_SHOW_DATE);
@@ -276,7 +262,7 @@ public class CreateEventActivity extends AppCompatActivity {
             try {
                 Integer.parseInt(s);
             } catch (NumberFormatException e) {
-                Snackbar.make(parentLayout, "Gib eine richtige Mindestanzahl von Teilnehmern ein!", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(parentLayout, "Gib eine gültige Mindestanzahl von Teilnehmern ein!", Snackbar.LENGTH_SHORT).show();
                 return false;
             }
             return true;
@@ -291,7 +277,7 @@ public class CreateEventActivity extends AppCompatActivity {
             try {
                 Integer.parseInt(s);
             } catch (NumberFormatException e) {
-                Snackbar.make(parentLayout, "Gib eine richtige Höchstzahl von Teilnehmern ein!", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(parentLayout, "Gib eine gültige Höchstzahl von Teilnehmern ein!", Snackbar.LENGTH_SHORT).show();
                 return false;
             }
             return true;
@@ -305,6 +291,28 @@ public class CreateEventActivity extends AppCompatActivity {
         }
         // assuming that lat & lng have been set by the place picker (since even the strings have been set)
         return true;
+    }
+
+    private boolean checkTime(int year, int month, int day, int hour)
+    {
+        final Calendar c = Calendar.getInstance();
+
+        if(year>=c.get(Calendar.YEAR))
+        {
+            if(month>=c.get(Calendar.MONTH))
+            {
+                if(day>=c.get(Calendar.DAY_OF_MONTH))
+                {
+                    if(hour>=c.get(Calendar.HOUR_OF_DAY))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        Snackbar.make(parentLayout, "Die gewählte Zeit liegt in der Vergangenheit!", Snackbar.LENGTH_SHORT).show();
+        return false;
     }
     
     @Override

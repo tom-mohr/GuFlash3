@@ -1,3 +1,8 @@
+Änderungen vom 02.10.18 | 1.26.0 (G)
+-ClosedChatActivity hinzugefügt, die geöffnet wird, wenn die Mindestteilnehmerzahl nicht erreicht wurde(manchmal buggy)
+-Events die in der Vergangenheit liegen werden nicht mehr angezeigt und können nicht erstellt werden
+-Änderungsvorschläge übernommen
+
 Änderungen vom 02.10.18 | 1.25.0 (T)
 - man ist beim Event-Erstellen gezwungen, Datum und Uhrzeit anzugeben
   -> es gibt nur noch einen Button "Zeit wählen",

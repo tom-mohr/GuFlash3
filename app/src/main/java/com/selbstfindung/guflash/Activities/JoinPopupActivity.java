@@ -32,6 +32,8 @@ import java.util.GregorianCalendar;
 public class JoinPopupActivity extends AppCompatActivity {
 
     private static final String TAG = "MONTAG";
+
+    public static final String EXTRA_MESSAGE_MIN_TEILNEHMER = "MIN_TEILNEHMER";
     
     // GUI
     TextView eventNameTextView,
@@ -50,6 +52,7 @@ public class JoinPopupActivity extends AppCompatActivity {
     private User user;
     
     // info über das event
+    private int minTeilnehmer;
     private long currentEventMemberCount;
     private long currentMaxEventMemberCount;
     
@@ -81,6 +84,7 @@ public class JoinPopupActivity extends AppCompatActivity {
         
         // von welcher gruppe soll das popup informationen anzeigen?
         eventId = getIntent().getStringExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID);
+        minTeilnehmer = Integer.parseInt(getIntent().getStringExtra(EXTRA_MESSAGE_MIN_TEILNEHMER));
         
         // Firebase stuff
         eventRef = FirebaseDatabase.getInstance().getReference().child("events").child(eventId);
@@ -142,7 +146,7 @@ public class JoinPopupActivity extends AppCompatActivity {
         
         // onclick listeners
         
-        findViewById(R.id.join_popup_join_button).setOnClickListener(new View.OnClickListener() {
+        joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 
@@ -157,9 +161,19 @@ public class JoinPopupActivity extends AppCompatActivity {
                     user.addEventID(eventId);// add event to "my events"
     
                     // open the chat (of that event) and finish this popup-activity
-                    Intent intent = new Intent(JoinPopupActivity.this, ChatActivity.class);
-                    intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, eventId);
-                    startActivity(intent);
+                    if(minTeilnehmer>currentEventMemberCount+1)
+                    {
+                        Intent intent = new Intent(JoinPopupActivity.this, ClosedChatActivity.class);
+                        intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, eventId);
+                        intent.putExtra(ClosedChatActivity.EXTRA_MESSAGE_REASON, "Teilnehmer"+(minTeilnehmer-currentEventMemberCount-1));
+                        startActivity(intent);
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(JoinPopupActivity.this, ChatActivity.class);
+                        intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, eventId);
+                        startActivity(intent);
+                    }
                     finish();// beende das popup (damit man es nicht wieder sieht wenn man den chat verlässt)
                 }
             

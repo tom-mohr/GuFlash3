@@ -4,17 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.ChatActivity"
+    tools:context=".Activities.ClosedChatActivity"
     android:background="@color/colorAccentDark">
 
-    <android.support.v7.widget.RecyclerView
-        android:paddingTop="?android:attr/actionBarSize"
-        android:paddingBottom="12dp"
-        android:clipToPadding="false"
-        android:id="@+id/chat_recycler_view"
+    <TextView
+        android:id="@+id/closing_information"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/chat_divider"/>
+        app:layout_constraintBottom_toTopOf="@+id/chat_divider"
+        android:textColor="#ffa500"
+        android:textAppearance="@style/TextAppearance.AppCompat.Tooltip"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="Hier steht warum der Chat geschlossen ist"
+        />
 
     <View
         android:id="@+id/chat_divider"
@@ -66,7 +69,5 @@
 
 
     </LinearLayout>
-
-
 
 </android.support.constraint.ConstraintLayout>

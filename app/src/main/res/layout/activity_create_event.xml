@@ -34,7 +34,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text|textCapSentences"
-                    android:hint="Event-Name"/>
+                    android:hint="Event-Name"
+                    android:maxLength="30"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -45,7 +46,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapSentences|textMultiLine"
-                    android:hint="Was wird passieren?" />
+                    android:hint="Was wird passieren?"
+                    android:lines="3"
+                    android:maxLines="3"
+                    android:maxLength="200"/>
             </android.support.design.widget.TextInputLayout>
 
             <Space

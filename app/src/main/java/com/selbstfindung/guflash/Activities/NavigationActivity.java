@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.solver.widgets.Snapshot;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +32,7 @@ import com.selbstfindung.guflash.RecyclerViewAdapterEvent;
 import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -104,13 +106,29 @@ public class NavigationActivity extends AppCompatActivity
 
                 String groupName = dataSnapshot.child("name").getValue(String.class);
 
-                groupIDs.add(groupID);
+                final Calendar c = Calendar.getInstance();
 
+                DataSnapshot timeSnapshot = dataSnapshot.child("time");
 
-                if (recyclerViewAdapterEvent != null) {
-                    int position = groupIDs.size() - 1;// last index
-                    recyclerViewAdapterEvent.notifyItemInserted(position);
+                Log.d(TAG, "Prüfe "+groupID);
+
+                //füge nur die Gruppe hinzu, wenn sie am selben Tag oder in der Zukunft stattfindet
+                if(((Long) timeSnapshot.child("year").getValue()).intValue()>=c.get(Calendar.YEAR))
+                {
+                    if (((Long) timeSnapshot.child("month").getValue()).intValue()>= c.get(Calendar.MONTH))
+                    {
+                        if(((Long) timeSnapshot.child("day").getValue()).intValue()>= c.get(Calendar.DAY_OF_MONTH))
+                        {
+                            groupIDs.add(groupID);
+
+                            if (recyclerViewAdapterEvent != null) {
+                                int position = groupIDs.size() - 1;// last index
+                                recyclerViewAdapterEvent.notifyItemInserted(position);
+                            }
+                        }
+                    }
                 }
+
             }
 
             @Override
