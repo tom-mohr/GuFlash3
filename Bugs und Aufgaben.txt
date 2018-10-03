@@ -1,8 +1,10 @@
 Bugs:
--Ort auf Google Maps wählen schließt sich manchmal direkt
--Chat beginnt ganz oben, man muss immer komplett runterscrollen
--Location beim Erstellen nochmal ändern
--man kann keinen Text auswählen (zB zum kopieren)
+- Ort auf Google Maps wählen schließt sich manchmal direkt
+- Chat beginnt ganz oben, man muss immer komplett runterscrollen
+- man kann keinen Text auswählen (zB zum kopieren)
+- In der ganzen App: hinzugefügte ValueEventListeners und ChildEventListeners bestehen anscheinend
+  auch nach dem finish() von der App weiter.
+  Vor allem beim entfernen von Events (wenn wir das mal implementieren) führt das später zu Problemen
 
 
 ToDo:

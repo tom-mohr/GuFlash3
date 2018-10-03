@@ -119,6 +119,9 @@ public class CreateEventActivity extends AppCompatActivity {
                                 mMonth = monthOfYear;
                                 mDay = dayOfMonth;
     
+                                // show to user
+                                showDateAndTime();
+    
                                 // now launch Time Picker Dialog
                                 TimePickerDialog timePickerDialog = new TimePickerDialog(CreateEventActivity.this,
                                         new TimePickerDialog.OnTimeSetListener() {
@@ -191,31 +194,36 @@ public class CreateEventActivity extends AppCompatActivity {
                         ) {
 
                     // neue gruppe in datenbank anlegen
-                    DatabaseReference newGroupRef = mRef.child("events").push();
+                    DatabaseReference newEventRef = mRef.child("events").push();
     
                     // userIDs:
                     ArrayList<String> userIDs = new ArrayList<>();
 
                     // werte ausfüllen
                     
-                    newGroupRef.child("name").setValue(eventNameString);
-                    newGroupRef.child("description").setValue(eventDescriptionString);
-                    newGroupRef.child("users").setValue(userIDs);
-                    newGroupRef.child("min_members").setValue(Integer.parseInt(minUsersString));
-                    newGroupRef.child("max_members").setValue(Integer.parseInt(maxUsersString));
+                    newEventRef.child("name").setValue(eventNameString);
+                    newEventRef.child("description").setValue(eventDescriptionString);
+                    newEventRef.child("users").setValue(userIDs);
+                    newEventRef.child("min_members").setValue(Integer.parseInt(minUsersString));
+                    newEventRef.child("max_members").setValue(Integer.parseInt(maxUsersString));
                     
-                    DatabaseReference placeRef = newGroupRef.child("place");
+                    DatabaseReference placeRef = newEventRef.child("place");
                     placeRef.child("latitude").setValue(lat);
                     placeRef.child("longitude").setValue(lng);
                     placeRef.child("name").setValue(locationName);
                     placeRef.child("address").setValue(locationAddress);
                     
-                    DatabaseReference timeRef = newGroupRef.child("time");
+                    DatabaseReference timeRef = newEventRef.child("time");
                     timeRef.child("year").setValue(mYear);
                     timeRef.child("month").setValue(mMonth);
                     timeRef.child("day").setValue(mDay);
                     timeRef.child("hour").setValue(mHour);
                     timeRef.child("minute").setValue(mMinute);
+                    
+                    // als letztes: READY-child adden!
+                    // -> erst wenn dieses child da ist, darf es verarbeitet werden
+                    newEventRef.child("READY").setValue("READY");
+                    
 
                     // zurück zur EventActivity
                     finish();

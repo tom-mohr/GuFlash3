@@ -1,3 +1,28 @@
+Änderungen vom 03.10.18 | 1.28.0 (T)
+- Bugfix: recyclerviewadapterEvent aktualisiert nicht, wenn ein neues Event geadded wurde
+  -> DAS HIER WAR MEGA DER BUG.. hab 3 stunden bebraucht:
+     Problem war folgendes:
+       Wenn man ein neues event in der datenbank added, setzt man ja nacheinander die
+       verschiedenen attribute (name, beschreibung, ...).
+       Sobald man aber das erste attribut setzt, wird schon bei dem ChildEventListener die
+       onChildAdded-Methode getriggered. Zu dem Zeitpunkt sind aber die anderen attribute noch
+       gar nicht in der Datenbank. Dadurch hat der DataSnapshot nur ein einziges Child ("name").
+     Lösung:
+       Nachdem alle attribute hinzugefügt wurden, wir ein letztes attribut geadded, mit dem namen
+       "READY" -> erst wenn dieses READY-child da ist, darf es verarbeitet werden
+- alte Klassen "Event" und "EventLocation" entfernt
+- neue Klasse "EventInfo" -> einfacher alle informationen zu einem event übergeben
+- Code in NaviationActivity und EventRecyclerViewAdapter teilweise völlig neu geschrieben
+- Die MyEventActivity ist vorübergehend nutzlos (die neuen Änderungen haben zu errors geführt)
+- Bugifx / zukünftige Errors vermeiden:
+  Wenn in der Datenbank nicht alle Zeit-Daten zum Event gegeben sind: ignoriere es
+- Bugfix beim abbrechen der Zeitauswahl
+- RecyclerViewAdapterEvent umbenannt in EventRecyclerViewAdapter -> verständlicher
+- code für substring bei langem event-namen entfernt
+  -> hätte in dieser form zu error führen können
+  -> sollte später aber wieder eingeführt werden
+- Überschrift beim "abmelden"-Dialog wird jetzt auch kleingeschrieben
+
 Änderungen vom 03.10.18 | 1.27.0 (T)
 - Create Event:
   - Funktion "checkTime" von G vereinfacht

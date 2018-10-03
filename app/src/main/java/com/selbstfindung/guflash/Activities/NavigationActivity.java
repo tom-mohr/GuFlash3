@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.solver.widgets.Snapshot;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,10 +24,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.selbstfindung.guflash.EventInfo;
 import com.selbstfindung.guflash.R;
-import com.selbstfindung.guflash.RecyclerViewAdapterEvent;
+import com.selbstfindung.guflash.EventRecyclerViewAdapter;
 import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
@@ -39,16 +41,9 @@ public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MONTAG";
-
-    private ArrayList<String> groupIDs = new ArrayList<>();
-    private RecyclerViewAdapterEvent recyclerViewAdapterEvent;
-
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mRef;
-
-    private User user;
+    
+    private ArrayList<EventInfo> eventInfos;
+    private EventRecyclerViewAdapter eventRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,46 +78,72 @@ public class NavigationActivity extends AppCompatActivity
 
 
         // eigener Code:
-
-
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mRef = mFirebaseDatabase.getReference();
-        mAuth = FirebaseAuth.getInstance();
-
-        init();
-    }
-
-    private void init() {
-
+    
         setTitle("Events");
+    
+        eventInfos = new ArrayList<>();
+    
+        RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
+        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(eventInfos, this);
+        recyclerView.setAdapter(eventRecyclerViewAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // listen for changes to the "events" child
-        mRef.child("events").addChildEventListener(new ChildEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("events").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                // new group added
-
-                String groupID = dataSnapshot.getKey();
-
-                String groupName = dataSnapshot.child("name").getValue(String.class);
-    
-                //füge nur die Gruppe hinzu, in der Zukunft stattfindet oder vor weniger als 12 stunden gestartet hat
-                int deltaMillis = getHoursTillEvent(dataSnapshot.child("time"));
-                int deltaHours = deltaMillis / (1000*60*60);// so viele millisekunden hat eine stunde
+                // new event added
                 
-                if (deltaHours > -12) {
-                    groupIDs.add(groupID);
+                EventInfo eventInfo = checkEventInfo(dataSnapshot);
+                    
+                if (eventInfo != null) {
     
-                    if (recyclerViewAdapterEvent != null) {
-                        int position = groupIDs.size() - 1;// last index
-                        recyclerViewAdapterEvent.notifyItemInserted(position);
-                    }
+                    eventInfos.add(eventInfo);
+                    eventRecyclerViewAdapter.notifyItemInserted(eventInfos.size() - 1);
+    
+                    Log.d(TAG, "Event zur Liste hinzugefügt: " + eventInfo.name);
                 }
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                
+                EventInfo eventInfo = checkEventInfo(dataSnapshot);
+                
+                if (eventInfo != null) {
+    
+                    boolean isInList = false;
+                    int index = 0;
+                    for (EventInfo otherEventInfo : eventInfos) {
+                        if (eventInfo.id.equals(otherEventInfo.id)) {
+                            isInList = true;
+                            break;
+                        }
+                        index++;
+                    }
+    
+                    // wenn event in liste ist, aktualisiere es
+                    if (isInList) {
+    
+                        // -> ersetze durch neue EventInfo
+                        eventInfos.set(index, eventInfo);
+                        eventRecyclerViewAdapter.notifyItemChanged(index);
+    
+                        Log.d(TAG, "Event aktualisiert: " + eventInfo.name);
+    
+                    } else {
+                        // wahrscheinlich wurde erst jetzt das "READY"-child hinzugefügt
+    
+                        // -> füge eventInfo zu liste hinzu
+                        eventInfos.add(eventInfo);
+                        eventRecyclerViewAdapter.notifyItemInserted(eventInfos.size() - 1);
+    
+                        Log.d(TAG, "Event zur Liste hinzugefügt (warten auf READY): " + eventInfo.name);
+                    }
+    
+                }
+            }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
@@ -133,38 +154,35 @@ public class NavigationActivity extends AppCompatActivity
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
-
-
-        initRecyclerView();
     }
     
-    private int getHoursTillEvent(DataSnapshot timeSnapshot) {
-        // returns time from now to event in milliseconds
-        
-        // timeSnapshot is child("events").child(eventID).child("time")
-        
-        int year = ((Long) timeSnapshot.child("year").getValue()).intValue();
-        int month = ((Long) timeSnapshot.child("month").getValue()).intValue();
-        int day = ((Long) timeSnapshot.child("day").getValue()).intValue();
-        int hour = ((Long) timeSnapshot.child("hour").getValue()).intValue();
-        int minute = ((Long) timeSnapshot.child("minute").getValue()).intValue();
+    private EventInfo checkEventInfo(DataSnapshot ds) {
+        // returns EventInfo if everything is alright
     
-        Calendar now = Calendar.getInstance();
-        Calendar eventTime = new GregorianCalendar();
-        eventTime.set(year, month, day, hour, minute);
+        // hat dieses event schon das "READY"-child?
+        // -> nur dann darf es verarbeitet werden
+        if (ds.child("READY").getValue() != null) {
     
-        int deltaMillis = eventTime.compareTo(now);// returns time from now to event in milliseconds
+            EventInfo eventInfo = null;
+            try {
+                eventInfo = new EventInfo(ds);
+    
+            } catch (Exception e) {// NullPointerException oder DatabaseException
+                // füge Event mit fehlerhaften Daten nicht hinzu
+    
+                Log.w(TAG, "Event-Daten sind fehlerhaft. Event-ID: " + ds.getKey() + "; Fehlermeldung: " + e.getMessage());
+            }
+    
+            if (eventInfo != null) {
         
-        return deltaMillis;
-    }
-
-    private void initRecyclerView() {
-        Log.d(TAG, "initialisiere RecyclerView für Gruppen");
-
-        RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
-        recyclerViewAdapterEvent = new RecyclerViewAdapterEvent(groupIDs, this);
-        recyclerView.setAdapter(recyclerViewAdapterEvent);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                // das event muss in der Zukunft stattfinden oder
+                // vor weniger als 12 stunden gestartet sein
+                if (eventInfo.getHoursTillEvent() > -12) {
+                    return eventInfo;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -245,7 +263,7 @@ public class NavigationActivity extends AppCompatActivity
     
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -268,13 +286,13 @@ public class NavigationActivity extends AppCompatActivity
             
             
             AlertDialog.Builder b = new AlertDialog.Builder(this);
-            b.setTitle("Abmelden").setMessage("Willst du dich wirklich abmelden?");
+            b.setTitle("abmelden").setMessage("Willst du dich wirklich abmelden?");
             b.setIcon(R.drawable.ic_menu_lock);
             b.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
     
                     // sign out from firebase
-                    mAuth.signOut();
+                    FirebaseAuth.getInstance().signOut();
                     
                     ///TODO: listener für erfolgreiches signout
                     ///  ->  https://developers.google.com/android/reference/com/google/firebase/auth/FirebaseAuth.IdTokenListener#onIdTokenChanged(com.google.firebase.auth.FirebaseAuth)

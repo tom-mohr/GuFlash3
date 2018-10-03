@@ -9,7 +9,7 @@
         <menu>
 
             <item
-                android:title="Filter:"
+                android:title="Filter"
                 android:icon="@drawable/ic_menu_filter_dark"
                 app:showAsAction="never"
                 />

@@ -26,8 +26,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.selbstfindung.guflash.EventInfo;
 import com.selbstfindung.guflash.R;
-import com.selbstfindung.guflash.RecyclerViewAdapterEvent;
+import com.selbstfindung.guflash.EventRecyclerViewAdapter;
 import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
@@ -36,15 +37,13 @@ public class MyEventActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "MONTAG";
 
-    private ArrayList<String> eventIDs = new ArrayList<>();
-    private RecyclerViewAdapterEvent recyclerViewAdapterEvent;
+    private ArrayList<EventInfo> eventInfos = new ArrayList<>();
+    private EventRecyclerViewAdapter eventRecyclerViewAdapter;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
-
-    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,59 +83,15 @@ public class MyEventActivity extends AppCompatActivity
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference();
         mAuth = FirebaseAuth.getInstance();
-
-        init();
-    }
-
-    private void init() {
-
-        setTitle("My Events");
-
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        // listen for changes to the "events" child
-        mRef.child("users").child(userID).child("events").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                // new group added
-
-                String eventID = dataSnapshot.getValue(String.class);
-
-                eventIDs.add(eventID);
-
-
-                if (recyclerViewAdapterEvent != null) {
-                    int position = eventIDs.size() - 1;// last index
-                    recyclerViewAdapterEvent.notifyItemInserted(position);
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });
-
-
-        initRecyclerView();
-    }
-
-
-
-    private  void initRecyclerView() {
-        Log.d(TAG, "initialisiere RecyclerView für Gruppen");
+        
+        
+        setTitle("Meine Events");
+        
+        eventInfos = new ArrayList<>();
 
         RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
-        recyclerViewAdapterEvent = new RecyclerViewAdapterEvent(eventIDs, this);
-        recyclerView.setAdapter(recyclerViewAdapterEvent);
+        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(eventInfos, this);
+        recyclerView.setAdapter(eventRecyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
