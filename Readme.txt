@@ -1,4 +1,7 @@
-Änderungen vom 03.10.18 | 1.28.0 (T)
+Änderungen vom 04.10.18 | 1.28.1 (T)
+- winziger Bugfix, nicht der Rede wert...
+
+Änderungen vom 04.10.18 | 1.28.0 (T)
 - Bugfix: recyclerviewadapterEvent aktualisiert nicht, wenn ein neues Event geadded wurde
   -> DAS HIER WAR MEGA DER BUG.. hab 3 stunden bebraucht:
      Problem war folgendes:

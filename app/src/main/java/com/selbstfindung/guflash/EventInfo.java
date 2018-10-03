@@ -33,9 +33,12 @@ public class EventInfo {
     ArrayList<String> userIds;
     
     public EventInfo(DataSnapshot ds) throws NullPointerException, DatabaseException {
-        Log.d(TAG, "EventInfo: children count: "+ds.getChildrenCount());
+        
         id = ds.getKey();
         name = ds.child("name").getValue(String.class);
+    
+        Log.d(TAG, "EventInfo: " + name + " has " + ds.getChildrenCount() + " children");
+        
         description = ds.child("description").getValue(String.class);
         placeName = ds.child("place").child("name").getValue(String.class);
         placeAddress = ds.child("place").child("address").getValue(String.class);

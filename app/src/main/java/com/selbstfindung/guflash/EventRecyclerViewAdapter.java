@@ -126,7 +126,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     
                     Intent intent = new Intent(mContext, ClosedChatActivity.class);
                     intent.putExtra(ClosedChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, eventInfo.id);
-                    intent.putExtra(ClosedChatActivity.EXTRA_MESSAGE_REASON, "Teilnehmer " + (eventInfo.minMembers-eventInfo.userIds.size()));
+                    intent.putExtra(ClosedChatActivity.EXTRA_MESSAGE_REASON, "Teilnehmer" + (eventInfo.minMembers-eventInfo.userIds.size()));
                     mContext.startActivity(intent);
                     
                 } else {
