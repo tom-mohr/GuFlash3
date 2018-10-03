@@ -1,3 +1,16 @@
+Änderungen vom 03.10.18 | 1.27.0 (T)
+- Create Event:
+  - Funktion "checkTime" von G vereinfacht
+  - Überschrift "Teilnehmer" zu "Wie viele?" geändert
+    -> konsequent mit den Überschriften als Fragen
+    -> Man könnte sonst meinen, das Alter der Teilnehmer sei gemeint
+  - Mindestanzahl von Teilnehmern muss mindestens 3 betragen
+  - Höchstzahl muss größer/gleich Mindestanzahl sein
+- alte events werden noch angezeigt, wenn sie weniger als 12 stunden
+  in der vergangenheit liegen
+- farben in navigation activity und popup geändert -> bessere lesbarkeit
+- Filter-Menü hinzugefügt, aber noch keine Filter-Funktionen implementiert
+
 Änderungen vom 02.10.18 | 1.26.0 (G)
 -ClosedChatActivity hinzugefügt, die geöffnet wird, wenn die Mindestteilnehmerzahl nicht erreicht wurde(manchmal buggy)
 -Events die in der Vergangenheit liegen werden nicht mehr angezeigt und können nicht erstellt werden

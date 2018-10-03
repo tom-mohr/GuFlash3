@@ -33,6 +33,7 @@ import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -105,30 +106,19 @@ public class NavigationActivity extends AppCompatActivity
                 String groupID = dataSnapshot.getKey();
 
                 String groupName = dataSnapshot.child("name").getValue(String.class);
-
-                final Calendar c = Calendar.getInstance();
-
-                DataSnapshot timeSnapshot = dataSnapshot.child("time");
-
-                Log.d(TAG, "Prüfe "+groupID);
-
-                //füge nur die Gruppe hinzu, wenn sie am selben Tag oder in der Zukunft stattfindet
-                if(((Long) timeSnapshot.child("year").getValue()).intValue()>=c.get(Calendar.YEAR))
-                {
-                    if (((Long) timeSnapshot.child("month").getValue()).intValue()>= c.get(Calendar.MONTH))
-                    {
-                        if(((Long) timeSnapshot.child("day").getValue()).intValue()>= c.get(Calendar.DAY_OF_MONTH))
-                        {
-                            groupIDs.add(groupID);
-
-                            if (recyclerViewAdapterEvent != null) {
-                                int position = groupIDs.size() - 1;// last index
-                                recyclerViewAdapterEvent.notifyItemInserted(position);
-                            }
-                        }
+    
+                //füge nur die Gruppe hinzu, in der Zukunft stattfindet oder vor weniger als 12 stunden gestartet hat
+                int deltaMillis = getHoursTillEvent(dataSnapshot.child("time"));
+                int deltaHours = deltaMillis / (1000*60*60);// so viele millisekunden hat eine stunde
+                
+                if (deltaHours > -12) {
+                    groupIDs.add(groupID);
+    
+                    if (recyclerViewAdapterEvent != null) {
+                        int position = groupIDs.size() - 1;// last index
+                        recyclerViewAdapterEvent.notifyItemInserted(position);
                     }
                 }
-
             }
 
             @Override
@@ -147,8 +137,28 @@ public class NavigationActivity extends AppCompatActivity
 
         initRecyclerView();
     }
+    
+    private int getHoursTillEvent(DataSnapshot timeSnapshot) {
+        // returns time from now to event in milliseconds
+        
+        // timeSnapshot is child("events").child(eventID).child("time")
+        
+        int year = ((Long) timeSnapshot.child("year").getValue()).intValue();
+        int month = ((Long) timeSnapshot.child("month").getValue()).intValue();
+        int day = ((Long) timeSnapshot.child("day").getValue()).intValue();
+        int hour = ((Long) timeSnapshot.child("hour").getValue()).intValue();
+        int minute = ((Long) timeSnapshot.child("minute").getValue()).intValue();
+    
+        Calendar now = Calendar.getInstance();
+        Calendar eventTime = new GregorianCalendar();
+        eventTime.set(year, month, day, hour, minute);
+    
+        int deltaMillis = eventTime.compareTo(now);// returns time from now to event in milliseconds
+        
+        return deltaMillis;
+    }
 
-    private  void initRecyclerView() {
+    private void initRecyclerView() {
         Log.d(TAG, "initialisiere RecyclerView für Gruppen");
 
         RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
@@ -157,6 +167,61 @@ public class NavigationActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.filter_sort_distance:
+                if (item.isChecked()) {
+                    // ignore
+                } else {
+                    // check
+                    item.setChecked(true);
+                    
+                    // apply this filter function
+                }
+                return true;
+            case R.id.filter_sort_time:
+                if (item.isChecked()) {
+                    // ignore
+                } else {
+                    // check
+                    item.setChecked(true);
+            
+                    // apply this filter function
+                }
+                return true;
+            case R.id.filter_ignore_distance:
+                if (item.isChecked()) {
+                    // uncheck
+                    item.setChecked(false);
+                    
+                    // remove this filter option
+                    // ... noch nicht implementiert
+                } else {
+                    // check
+                    item.setChecked(true);
+    
+                    // apply this filter function
+                }
+                return true;
+            case R.id.filter_ignore_time:
+                if (item.isChecked()) {
+                    // uncheck
+                    item.setChecked(false);
+            
+                    // remove this filter option
+                    // ... noch nicht implementiert
+                } else {
+                    // check
+                    item.setChecked(true);
+    
+                    // apply this filter function
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
     // AUTO-GENERIERTE FUNKTIONEN FÜR NAVIGATION DRAWER:
@@ -176,16 +241,6 @@ public class NavigationActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.navigation, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        
-        return super.onOptionsItemSelected(item);
     }
     
     @SuppressWarnings("StatementWithEmptyBody")

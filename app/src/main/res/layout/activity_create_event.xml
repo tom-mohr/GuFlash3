@@ -151,7 +151,7 @@
                 android:drawablePadding="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="match_parent"
-                android:text="Teilnehmer"
+                android:text="Wie viele?"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"/>
 

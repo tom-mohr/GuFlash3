@@ -185,9 +185,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 if (checkEventName(eventNameString) &&// mit dieser hierarchie wird der user über falsche daten informiert:
                         checkEventDescription(eventDescriptionString) &&
                         checkLocation(lat, lng, locationName, locationAddress) &&
-                        checkTime(mYear, mMonth, mDay, mHour) &&
+                        checkTime(mYear, mMonth, mDay, mHour, mMinute) &&
                         checkMinUsers(minUsersString) &&
-                        checkMaxUsers(maxUsersString)
+                        checkMaxUsers(maxUsersString, minUsersString)
                         ) {
 
                     // neue gruppe in datenbank anlegen
@@ -260,7 +260,13 @@ public class CreateEventActivity extends AppCompatActivity {
             return false;
         } else {
             try {
-                Integer.parseInt(s);
+                int n = Integer.parseInt(s);
+                
+                if (n<3){
+                    Snackbar.make(parentLayout, "Es müssen mindestens 3 Teilnehmer sein!", Snackbar.LENGTH_SHORT).show();
+                    return false;
+                }
+                
             } catch (NumberFormatException e) {
                 Snackbar.make(parentLayout, "Gib eine gültige Mindestanzahl von Teilnehmern ein!", Snackbar.LENGTH_SHORT).show();
                 return false;
@@ -269,13 +275,20 @@ public class CreateEventActivity extends AppCompatActivity {
         }
     }
     
-    private boolean checkMaxUsers(String s) {
+    private boolean checkMaxUsers(String s, String minUsersString) {
         if (s.equals("")) {
             Snackbar.make(parentLayout, "Gib eine Höchstzahl von Teilnehmern ein!", Snackbar.LENGTH_SHORT).show();
             return false;
         } else {
             try {
-                Integer.parseInt(s);
+                int nMax = Integer.parseInt(s);
+                int nMin = Integer.parseInt(minUsersString);
+                
+                if (nMax<nMin) {
+                    Snackbar.make(parentLayout, "Gib eine gültige Höchstzahl von Teilnehmern ein!", Snackbar.LENGTH_SHORT).show();
+                    return false;
+                }
+                
             } catch (NumberFormatException e) {
                 Snackbar.make(parentLayout, "Gib eine gültige Höchstzahl von Teilnehmern ein!", Snackbar.LENGTH_SHORT).show();
                 return false;
@@ -293,24 +306,15 @@ public class CreateEventActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean checkTime(int year, int month, int day, int hour)
-    {
-        final Calendar c = Calendar.getInstance();
-
-        if(year>=c.get(Calendar.YEAR))
-        {
-            if(month>=c.get(Calendar.MONTH))
-            {
-                if(day>=c.get(Calendar.DAY_OF_MONTH))
-                {
-                    if(hour>=c.get(Calendar.HOUR_OF_DAY))
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-
+    private boolean checkTime(int year, int month, int day, int hour, int minute) {
+        
+        Calendar now = Calendar.getInstance();
+        Calendar eventTime = new GregorianCalendar();
+        eventTime.set(year, month, day, hour, minute);
+        
+        if (now.before(eventTime))
+            return true;
+        
         Snackbar.make(parentLayout, "Die gewählte Zeit liegt in der Vergangenheit!", Snackbar.LENGTH_SHORT).show();
         return false;
     }
