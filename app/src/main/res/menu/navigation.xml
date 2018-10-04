@@ -33,7 +33,7 @@
                 <item
                     android:id="@+id/filter_ignore_distance"
                     android:icon="@drawable/ic_menu_location"
-                    android:title="nicht weiter als 10km"
+                    android:title="nicht weiter als 10 km"
                     app:showAsAction="never" />
                 <item
                     android:id="@+id/filter_ignore_time"

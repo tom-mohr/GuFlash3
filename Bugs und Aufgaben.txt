@@ -8,6 +8,9 @@ Bugs:
 
 
 ToDo:
+-maximale Teilnehmerzahl begrenzen? (1000 User in einem Chat ist sinnlos und wahrscheinlich sehr anstrengend für die app)
+-Das Filtermenu sollte speichern nach was sortiert wird (beim neuladen geht die Info verloren [Ansätze über Firebase haben bei nicht funktioniert])
+
 -Popup für Filter-/Sortiereinstellungen (Standardmäßig sollte nach Entfernung sortiert werden)
 -durchsuchen erleichtern
     - sortieren nach:

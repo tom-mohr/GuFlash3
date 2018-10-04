@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -41,9 +42,18 @@ public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MONTAG";
-    
+
+    public static final String EXTRA_MESSAGE_SORT_TYPE = "SORT_TYPE";
+    public static final String EXTRA_MESSAGE_FILTER_TIME = "FILTER_TIME";
+    public static final String EXTRA_MESSAGE_FILTER_DISTANCE = "FILTER_DISTANCE";
+
     private ArrayList<EventInfo> eventInfos;
     private EventRecyclerViewAdapter eventRecyclerViewAdapter;
+
+    String userId;
+    String sortType;
+    String filterTime;
+    String filterDistance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +90,20 @@ public class NavigationActivity extends AppCompatActivity
         // eigener Code:
     
         setTitle("Events");
-    
+
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        sortType = getIntent().getStringExtra(NavigationActivity.EXTRA_MESSAGE_SORT_TYPE);
+        //filterTime = getIntent().getStringExtra(NavigationActivity.EXTRA_MESSAGE_FILTER_TIME);
+        //filterDistance = getIntent().getStringExtra(NavigationActivity.EXTRA_MESSAGE_FILTER_DISTANCE);
+
+        if(sortType==null)
+        {
+            sortType = "Distance";
+        }
+
+        Log.d(TAG, "Es soll nach " +sortType+" sortiert werden");
+
         eventInfos = new ArrayList<>();
     
         RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
@@ -98,11 +121,48 @@ public class NavigationActivity extends AppCompatActivity
                 EventInfo eventInfo = checkEventInfo(dataSnapshot);
                     
                 if (eventInfo != null) {
-    
-                    eventInfos.add(eventInfo);
-                    eventRecyclerViewAdapter.notifyItemInserted(eventInfos.size() - 1);
-    
-                    Log.d(TAG, "Event zur Liste hinzugefügt: " + eventInfo.name);
+                    if(sortType.equals("Time"))
+                    {
+                        boolean kleinerAlsElement = false;
+                        int counter =0;
+                        if(eventInfos.size()==0)
+                        {
+                            Log.d(TAG, ""+eventInfos.size());
+                            eventInfos.add(eventInfo);
+                            eventRecyclerViewAdapter.notifyItemInserted(0);
+                        }
+                        else
+                        {
+                            while (!kleinerAlsElement && counter < eventInfos.size())
+                            {
+                                if(eventInfos.get(counter).getMillisTillEvent()>=eventInfo.getMillisTillEvent())
+                                {
+                                    eventInfos.add(counter, eventInfo);
+                                    eventRecyclerViewAdapter.notifyItemInserted(counter);
+                                    Log.d(TAG, "Event zur Liste an der Stelle "+(counter)+" hinzugefügt: " + eventInfo.name);
+                                    kleinerAlsElement=true;
+                                }
+                                else
+                                {
+                                    counter++;
+                                }
+                            }
+                            if(!kleinerAlsElement)
+                            {
+                                eventInfos.add(counter-1, eventInfo);
+                                eventRecyclerViewAdapter.notifyItemInserted(counter-1);
+                                Log.d(TAG, "Event zur Liste an der Stelle "+(counter-1)+" hinzugefügt: " + eventInfo.name);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        eventInfos.add(eventInfo);
+                        eventRecyclerViewAdapter.notifyItemInserted(eventInfos.size() - 1);
+                        Log.d(TAG, "Event zur Liste an der Stelle "+(eventInfos.size()-1)+" hinzugefügt: " + eventInfo.name);
+                    }
+
                 }
             }
 
@@ -185,6 +245,40 @@ public class NavigationActivity extends AppCompatActivity
         return null;
     }
 
+    private void getSortType()
+    {
+
+        FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                sortType = dataSnapshot.getValue(String.class);
+                Log.d(TAG, sortType);
+
+                if(sortType!= null) {
+                    if (sortType.equals("Time")) {
+                        Log.d(TAG, "Es soll nach Zeit sortiert werden");
+                    } else {
+                        Log.d(TAG, "Es soll nach Entfernung sortiert werden");
+                    }
+                }
+                else
+                {
+                    Log.d(TAG, "sortType ist null");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        //sortType = getIntent().getStringExtra(EventRecyclerViewAdapter.EXTRA_MESSAGE_SORT_TYPE);
+
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -196,6 +290,14 @@ public class NavigationActivity extends AppCompatActivity
                     item.setChecked(true);
                     
                     // apply this filter function
+
+                    FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").setValue("Distance");
+
+                    Intent restartIntent = new Intent(NavigationActivity.this, NavigationActivity.class);
+                    restartIntent.putExtra(NavigationActivity.EXTRA_MESSAGE_SORT_TYPE, "Distance");
+                    finish();
+                    startActivity(restartIntent);
+
                 }
                 return true;
             case R.id.filter_sort_time:
@@ -206,6 +308,13 @@ public class NavigationActivity extends AppCompatActivity
                     item.setChecked(true);
             
                     // apply this filter function
+
+                    FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").setValue("Time");
+
+                    Intent restartIntent = new Intent(NavigationActivity.this, NavigationActivity.class);
+                    restartIntent.putExtra(NavigationActivity.EXTRA_MESSAGE_SORT_TYPE, "Time");
+                    finish();
+                    startActivity(restartIntent);
                 }
                 return true;
             case R.id.filter_ignore_distance:

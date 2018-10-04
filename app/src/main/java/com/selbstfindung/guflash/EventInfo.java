@@ -51,7 +51,7 @@ public class EventInfo {
         timeMinute = ds.child("time").child("minute").getValue(Integer.class);
         minMembers = ds.child("min_members").getValue(Integer.class);
         maxMembers = ds.child("max_members").getValue(Integer.class);
-        
+
         userIds = new ArrayList<>();
         
         for (DataSnapshot userChild: ds.child("users").getChildren()) {
@@ -75,5 +75,17 @@ public class EventInfo {
     
     public int getHoursTillEvent() {
         return getMillisTillEvent() / (1000 * 60 * 60);// so viele millisekunden hat eine stunde
+    }
+
+    public boolean containsUserID(String userID)
+    {
+        for(String ID: userIds)
+        {
+            if(ID.equals(userID))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

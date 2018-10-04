@@ -40,10 +40,14 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     
     private DatabaseReference eventsRef;
     private String userId;
+    private String sortType;
 
     public EventRecyclerViewAdapter(ArrayList<EventInfo> eventInfos, Context context) {
         this.eventInfos = eventInfos;
         mContext = context;
+        this.sortType = sortType;
+
+
         
         eventsRef = FirebaseDatabase.getInstance().getReference().child("events");
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -61,17 +65,34 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
         holder.eventName.setText(eventInfo.name);
         holder.currentMemberCount.setText(String.valueOf(eventInfo.userIds.size()));
         holder.maxMembers.setText(String.valueOf(eventInfo.maxMembers));
-    
+
+        //Unterschiedlicher Output je nach Teilnehmerzahl
         int diff = eventInfo.maxMembers - eventInfo.userIds.size();
+        int diff2 = eventInfo.minMembers - eventInfo.userIds.size();
         String nMembersInfoString;
-        if (diff > 0)
-            nMembersInfoString = "Noch " + diff + " von "+ eventInfo.maxMembers + " Plätzen frei";
-        else
-            nMembersInfoString = "alle " + eventInfo.maxMembers + " Plätze belegt";
-        holder.membersDifference.setText(nMembersInfoString);
-        
-        // make item clickable
-        holder.eventLayout.setOnClickListener(new MyOnClickListener(holder));
+        if(diff2>0)
+        {
+            nMembersInfoString = "Noch " + diff2 + " Teilnehmer benötigt bis zur Eröffnung des Chats";
+        }
+        else {
+            if(diff == 1)
+            {
+                nMembersInfoString = "Nur noch " + diff + " Platz frei";
+            }
+            else if (diff > 3)
+                nMembersInfoString = "Noch " + diff + " Plätze frei";
+            else if(diff > 0)
+            {
+                nMembersInfoString = "Nur noch " + diff + " Plätze frei";
+            }
+            else
+                nMembersInfoString = "alle " + eventInfo.maxMembers + " Plätze belegt";
+        }
+            holder.membersDifference.setText(nMembersInfoString);
+
+            // make item clickable
+            holder.eventLayout.setOnClickListener(new MyOnClickListener(holder));
+
     }
 
     @Override

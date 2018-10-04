@@ -1,3 +1,9 @@
+Änderungen vom 04.10.18 | 1.29.0 (G)
+-Unterschiedlicher Differenzinfo je nach Teilnehmerzahl erreicht wurde (farbliche Kodierung?)
+-MyEventActivity gefixt
+-Wenn man auf sortiere nach Zeit drückt, wird die Activity neu geladen und richtig sortiert
+
+
 Änderungen vom 04.10.18 | 1.28.1 (T)
 - winziger Bugfix, nicht der Rede wert...
 
