@@ -1,3 +1,18 @@
+Änderungen vom 06.10.18 | 1.30.0 (T)
+- Info-String zur Teilnehmerzahl des Events lassen sich über eine Methode des EventInfo-Strings generieren
+  (einfach den Code von EventRecyclerViewAdapter ausgelagert)
+- Sortierung wird jetzt fast ausschließlich vom EventRecyclerViewAdapter verwaltet
+  -> es wird keine neue Activity gestartet wie bisher,
+     sondern einfach nur der Inhalt der Liste geändert
+- Design für die Elemente der Event-Liste erweitert:
+  -> Zeit bis zum Stattfinden wird angezeigt
+- Bugfix bei EventInfo.getMillisTillEvent
+  -> funktioniert jetzt wirklich
+- Zeit-Icon geändert
+- Die Event-Liste (RecyclerView) hat jetzt unten ein Padding, sodass der "Floating Action Button" (FAB)
+  nicht mehr das letzte Element verdecken kann.
+- Simplicity: FAB-Icon ersetzt durch einfaches Plus
+
 Änderungen vom 04.10.18 | 1.29.0 (G)
 -Unterschiedlicher Differenzinfo je nach Teilnehmerzahl erreicht wurde (farbliche Kodierung?)
 -MyEventActivity gefixt

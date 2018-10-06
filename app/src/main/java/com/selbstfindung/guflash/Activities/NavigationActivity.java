@@ -93,21 +93,10 @@ public class NavigationActivity extends AppCompatActivity
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        sortType = getIntent().getStringExtra(NavigationActivity.EXTRA_MESSAGE_SORT_TYPE);
-        //filterTime = getIntent().getStringExtra(NavigationActivity.EXTRA_MESSAGE_FILTER_TIME);
-        //filterDistance = getIntent().getStringExtra(NavigationActivity.EXTRA_MESSAGE_FILTER_DISTANCE);
-
-        if(sortType==null)
-        {
-            sortType = "Distance";
-        }
-
-        Log.d(TAG, "Es soll nach " +sortType+" sortiert werden");
-
         eventInfos = new ArrayList<>();
     
         RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
-        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(eventInfos, this);
+        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(this, eventInfos);
         recyclerView.setAdapter(eventRecyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -121,6 +110,10 @@ public class NavigationActivity extends AppCompatActivity
                 EventInfo eventInfo = checkEventInfo(dataSnapshot);
                     
                 if (eventInfo != null) {
+                    
+                    eventRecyclerViewAdapter.addEvent(eventInfo);
+                    
+                    /*
                     if(sortType.equals("Time"))
                     {
                         boolean kleinerAlsElement = false;
@@ -162,7 +155,7 @@ public class NavigationActivity extends AppCompatActivity
                         eventRecyclerViewAdapter.notifyItemInserted(eventInfos.size() - 1);
                         Log.d(TAG, "Event zur Liste an der Stelle "+(eventInfos.size()-1)+" hinzugefügt: " + eventInfo.name);
                     }
-
+                    */
                 }
             }
 
@@ -172,36 +165,8 @@ public class NavigationActivity extends AppCompatActivity
                 EventInfo eventInfo = checkEventInfo(dataSnapshot);
                 
                 if (eventInfo != null) {
-    
-                    boolean isInList = false;
-                    int index = 0;
-                    for (EventInfo otherEventInfo : eventInfos) {
-                        if (eventInfo.id.equals(otherEventInfo.id)) {
-                            isInList = true;
-                            break;
-                        }
-                        index++;
-                    }
-    
-                    // wenn event in liste ist, aktualisiere es
-                    if (isInList) {
-    
-                        // -> ersetze durch neue EventInfo
-                        eventInfos.set(index, eventInfo);
-                        eventRecyclerViewAdapter.notifyItemChanged(index);
-    
-                        Log.d(TAG, "Event aktualisiert: " + eventInfo.name);
-    
-                    } else {
-                        // wahrscheinlich wurde erst jetzt das "READY"-child hinzugefügt
-    
-                        // -> füge eventInfo zu liste hinzu
-                        eventInfos.add(eventInfo);
-                        eventRecyclerViewAdapter.notifyItemInserted(eventInfos.size() - 1);
-    
-                        Log.d(TAG, "Event zur Liste hinzugefügt (warten auf READY): " + eventInfo.name);
-                    }
-    
+                    
+                    eventRecyclerViewAdapter.eventChanged(eventInfo);
                 }
             }
 
@@ -218,6 +183,7 @@ public class NavigationActivity extends AppCompatActivity
     
     private EventInfo checkEventInfo(DataSnapshot ds) {
         // returns EventInfo if everything is alright
+        // returns null if something was wrong
     
         // hat dieses event schon das "READY"-child?
         // -> nur dann darf es verarbeitet werden
@@ -245,8 +211,7 @@ public class NavigationActivity extends AppCompatActivity
         return null;
     }
 
-    private void getSortType()
-    {
+    private void getSortType() {
 
         FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -282,6 +247,7 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            
             case R.id.filter_sort_distance:
                 if (item.isChecked()) {
                     // ignore
@@ -291,15 +257,13 @@ public class NavigationActivity extends AppCompatActivity
                     
                     // apply this filter function
 
-                    FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").setValue("Distance");
+                    FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").setValue("Distance");///?
 
-                    Intent restartIntent = new Intent(NavigationActivity.this, NavigationActivity.class);
-                    restartIntent.putExtra(NavigationActivity.EXTRA_MESSAGE_SORT_TYPE, "Distance");
-                    finish();
-                    startActivity(restartIntent);
+                    eventRecyclerViewAdapter.setSortType(EventRecyclerViewAdapter.SORT_TYPE_DISTANCE);
 
                 }
                 return true;
+                
             case R.id.filter_sort_time:
                 if (item.isChecked()) {
                     // ignore
@@ -309,40 +273,43 @@ public class NavigationActivity extends AppCompatActivity
             
                     // apply this filter function
 
-                    FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").setValue("Time");
-
-                    Intent restartIntent = new Intent(NavigationActivity.this, NavigationActivity.class);
-                    restartIntent.putExtra(NavigationActivity.EXTRA_MESSAGE_SORT_TYPE, "Time");
-                    finish();
-                    startActivity(restartIntent);
+                    FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").setValue("Time");///?
+    
+                    eventRecyclerViewAdapter.setSortType(EventRecyclerViewAdapter.SORT_TYPE_TIME);
                 }
                 return true;
+                
             case R.id.filter_ignore_distance:
                 if (item.isChecked()) {
                     // uncheck
                     item.setChecked(false);
                     
                     // remove this filter option
-                    // ... noch nicht implementiert
+                    eventRecyclerViewAdapter.setExcludeDistance(false);
+                    
                 } else {
                     // check
                     item.setChecked(true);
     
                     // apply this filter function
+                    eventRecyclerViewAdapter.setExcludeDistance(true);
                 }
                 return true;
+                
             case R.id.filter_ignore_time:
                 if (item.isChecked()) {
                     // uncheck
                     item.setChecked(false);
             
                     // remove this filter option
-                    // ... noch nicht implementiert
+                    eventRecyclerViewAdapter.setExcludeTime(false);
+                    
                 } else {
                     // check
                     item.setChecked(true);
     
                     // apply this filter function
+                    eventRecyclerViewAdapter.setExcludeTime(true);
                 }
                 return true;
             default:

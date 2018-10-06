@@ -105,7 +105,7 @@ public class MyEventActivity extends AppCompatActivity
         eventInfos = new ArrayList<>();
 
         RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
-        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(eventInfos, this);
+        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(this, eventInfos);
         recyclerView.setAdapter(eventRecyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 

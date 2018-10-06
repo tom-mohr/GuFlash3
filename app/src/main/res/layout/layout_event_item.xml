@@ -36,7 +36,7 @@
                 android:id="@+id/group_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Gruppenname"
+                android:text=""
                 android:padding="6sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
                 />
@@ -44,7 +44,7 @@
                 android:id="@+id/teilnehmer_differenz"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Tooltip"
+                android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
                 android:layout_below="@+id/group_name"
                 android:layout_alignStart="@+id/group_name"
                 android:padding="6sp"
@@ -55,7 +55,7 @@
         <LinearLayout
             android:layout_weight="0"
             android:layout_width="wrap_content"
-            android:minWidth="70sp"
+            android:minWidth="100sp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="6dp"
@@ -81,6 +81,16 @@
                     android:layout_height="wrap_content"
                     />
             </LinearLayout>
+
+            <TextView
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+                android:id="@+id/event_list_delta_time"
+                android:drawableStart="@drawable/ic_menu_clock"
+                android:maxWidth="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
