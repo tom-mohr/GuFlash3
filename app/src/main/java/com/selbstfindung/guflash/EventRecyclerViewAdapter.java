@@ -48,6 +48,8 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     private int excludeDistanceKilometers = 10;
     private boolean excludeTime;
     private int excludeTimeDays = 14;
+    private boolean excludeUser;
+    private String excludeUserID;
     
     private static Comparator<EventInfo> TIME_COMPARATOR = new Comparator<EventInfo>() {
         @Override
@@ -80,7 +82,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
         filterInfoManager = fim;
         
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        
+        excludeUserID = userId;
+
+        excludeUser = false;
         excludeDistance = false;
         excludeTime = false;
         setSortType(SORT_TYPE_DISTANCE);
@@ -109,14 +113,22 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
             makeSortedList();
         }
     }
-    
+
+    public void setExcludeUser(boolean excludeUser) {
+        if (this.excludeUser != excludeUser) {
+            this.excludeUser = excludeUser;
+            makeSortedList();
+        }
+    }
+
     private void makeSortedList() {
         eventInfosSorted = new ArrayList<>();
         
         // nur die items übernehmen, die den boolean-kriterien standhalten
         for (EventInfo eventInfo: eventInfosRaw) {
             if ((!excludeDistance || eventInfo.distance / 1000 <= excludeDistanceKilometers) &&
-                    (!excludeTime || eventInfo.getDaysTillEvent() <= excludeTimeDays))
+                    (!excludeTime || eventInfo.getDaysTillEvent() <= excludeTimeDays) &&
+                    (!excludeUser || eventInfo.containsUserId(excludeUserID)))
                 eventInfosSorted.add(eventInfo);
         }
         
@@ -273,7 +285,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                     // chat ist noch gesperrt -> öffne ClosedChatActivity
     
                     Intent intent = new Intent(mContext, ClosedChatActivity.class);
-                    intent.putExtra(ClosedChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, eventInfo.id);
+                    intent.putExtra(ClosedChatActivity.EXTRA_MESSAGE_EVENT_ID, eventInfo.id);
                     intent.putExtra(ClosedChatActivity.EXTRA_MESSAGE_REASON, "Teilnehmer" + (eventInfo.minMembers-eventInfo.userIds.size()));
                     mContext.startActivity(intent);
                     

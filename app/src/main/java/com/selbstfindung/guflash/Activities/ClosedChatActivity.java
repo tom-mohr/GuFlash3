@@ -22,10 +22,10 @@ public class ClosedChatActivity extends AppCompatActivity
 
     private static final String TAG = "MONTAG";
 
-    public static final String EXTRA_MESSAGE_GRUPPEN_ID = "GRUPPEN_ID";
+    public static final String EXTRA_MESSAGE_EVENT_ID = "EVENT_ID";
     public static final String EXTRA_MESSAGE_REASON = "REASON";
 
-    private String groupID;
+    private String eventID;
     private String reason;
 
     private EditText chatTextInput;
@@ -33,7 +33,7 @@ public class ClosedChatActivity extends AppCompatActivity
 
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseRef;
-    private DatabaseReference groupRef;
+    private DatabaseReference eventRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class ClosedChatActivity extends AppCompatActivity
 
 
         Intent intent = getIntent();
-        groupID = intent.getStringExtra(EXTRA_MESSAGE_GRUPPEN_ID);
+        eventID = intent.getStringExtra(EXTRA_MESSAGE_EVENT_ID);
         reason = intent.getStringExtra(EXTRA_MESSAGE_REASON);
 
         init();
@@ -58,27 +58,44 @@ public class ClosedChatActivity extends AppCompatActivity
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
         // create reference for this group
-        groupRef = databaseRef.child("events").child(groupID);
+        eventRef = databaseRef.child("events").child(eventID);
 
 
         chatTextInput.setFocusable(false);
-        int fehlendeTeilnehmer = Integer.parseInt(reason.substring(10));
+        /*
+        final int fehlendeTeilnehmer = Integer.parseInt(reason.substring(10));
         if(fehlendeTeilnehmer>1) {
             closingInfo.setText("Die Gruppe hat noch nicht die Mindestteilnehmerzahl erreicht, es fehlen noch "+fehlendeTeilnehmer+" Teilnehmer");
         }else{
             closingInfo.setText("Die Gruppe hat noch nicht die Mindestteilnehmerzahl erreicht, es fehlt noch "+fehlendeTeilnehmer+" Teilnehmer");
         }
+           */
 
-
-        groupRef.child("name").addValueEventListener(new ValueEventListener() {
+        eventRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String newGroupName = dataSnapshot.getValue(String.class);
+                String newGroupName = dataSnapshot.child("name").getValue(String.class);
 
                 setTitle(newGroupName);// set group name as title in action bar
 
                 Log.d(TAG, "group name changed to "+newGroupName);
 
+                int minTeilnehmer = ((Long) dataSnapshot.child("min_members").getValue()).intValue();
+                int currentTeilnehmer = (int) dataSnapshot.child("users").getChildrenCount();
+
+                int fehlendeTeilnehmer = minTeilnehmer-currentTeilnehmer;
+
+                if(fehlendeTeilnehmer>1) {
+                    closingInfo.setText("Die Gruppe hat noch nicht die Mindestteilnehmerzahl erreicht, es fehlen noch "+fehlendeTeilnehmer+" Teilnehmer");
+                }else if(fehlendeTeilnehmer==1){
+                    closingInfo.setText("Die Gruppe hat noch nicht die Mindestteilnehmerzahl erreicht, es fehlt noch "+fehlendeTeilnehmer+" Teilnehmer");
+                }else{
+                    Intent intent = new Intent(ClosedChatActivity.this, ChatActivity.class);
+                    intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, eventID);
+                    startActivity(intent);
+                    finish();
+
+                }
             }
 
             @Override

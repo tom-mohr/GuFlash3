@@ -134,50 +134,6 @@ public class NavigationActivity extends AppCompatActivity
                 if (eventInfo != null) {
                     
                     eventRecyclerViewAdapter.addEvent(eventInfo);
-                    
-                    /*
-                    if(sortType.equals("Time"))
-                    {
-                        boolean kleinerAlsElement = false;
-                        int counter =0;
-                        if(eventInfos.size()==0)
-                        {
-                            Log.d(TAG, ""+eventInfos.size());
-                            eventInfos.add(eventInfo);
-                            eventRecyclerViewAdapter.notifyItemInserted(0);
-                        }
-                        else
-                        {
-                            while (!kleinerAlsElement && counter < eventInfos.size())
-                            {
-                                if(eventInfos.get(counter).getMillisTillEvent()>=eventInfo.getMillisTillEvent())
-                                {
-                                    eventInfos.add(counter, eventInfo);
-                                    eventRecyclerViewAdapter.notifyItemInserted(counter);
-                                    Log.d(TAG, "Event zur Liste an der Stelle "+(counter)+" hinzugefügt: " + eventInfo.name);
-                                    kleinerAlsElement=true;
-                                }
-                                else
-                                {
-                                    counter++;
-                                }
-                            }
-                            if(!kleinerAlsElement)
-                            {
-                                eventInfos.add(counter-1, eventInfo);
-                                eventRecyclerViewAdapter.notifyItemInserted(counter-1);
-                                Log.d(TAG, "Event zur Liste an der Stelle "+(counter-1)+" hinzugefügt: " + eventInfo.name);
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        eventInfos.add(eventInfo);
-                        eventRecyclerViewAdapter.notifyItemInserted(eventInfos.size() - 1);
-                        Log.d(TAG, "Event zur Liste an der Stelle "+(eventInfos.size()-1)+" hinzugefügt: " + eventInfo.name);
-                    }
-                    */
                 }
             }
 
@@ -433,11 +389,10 @@ public class NavigationActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_events) {
-            startActivity(new Intent(NavigationActivity.this, NavigationActivity.class));
+            eventRecyclerViewAdapter.setExcludeUser(false);
 
         } else if (id == R.id.nav_favorite_events) {
-            startActivity(new Intent(NavigationActivity.this, MyEventActivity.class));
-            finish();
+            eventRecyclerViewAdapter.setExcludeUser(true);
 
         } else if (id == R.id.nav_profile_settings) {
             startActivity(new Intent(NavigationActivity.this, ProfileActivity.class));

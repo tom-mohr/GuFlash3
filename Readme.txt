@@ -1,3 +1,9 @@
+Änderungen vom 07.10.18 | 1.32.0 (G)
+- getDeltaTimeInfoString grammatikalisch angepasst und es wird ein Datum angezeigt
+- MyEventActivity ist useless geworden, beim klicken auf meine Events wird ein weiterer Filter aktiviert
+- EventInformationActivity hinzugefügt, die bei dem Chat und ClosedChat geöffnet werden soll
+- ClosedChat passt fehlende Teilnehmerzahl an und leitet an den Chat weiter
+
 Änderungen vom 06.10.18 | 1.31.0 (T)
 - Standort eingeführt:
   Die NavigationActivity fragt beim Start genau einmal den Standort des Geräts ab und merkt ihn sich.

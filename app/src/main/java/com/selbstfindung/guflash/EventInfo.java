@@ -103,18 +103,27 @@ public class EventInfo {
             long weeks = Math.round(getWeeksTillEvent());
             if (weeks > 2) {
                 
-                return "in ca. " + String.valueOf(weeks) + " Wochen";
+                return timeDay + "." + timeMonth + "." + timeYear;
             
             } else {
                 
                 int days = (int) Math.floor(getDaysTillEvent());
-                if (days > 0) {
+                if (days > 1) {
                 
                     return "in " + String.valueOf(days) + " Tagen";
                 
                 } else {
     
                     int hours = (int) Math.floor(getHoursTillEvent());
+                    if(hours<1)
+                    {
+                        return "weniger als 1 Stunde";
+                    }
+                    if(hours==1)
+                    {
+                        return "nur noch 1 Stunde";
+                    }
+
                     return "in " + String.valueOf(hours) + " Stunden";
                 }
             }

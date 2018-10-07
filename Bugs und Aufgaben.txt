@@ -1,6 +1,5 @@
 Bugs:
 - Ort auf Google Maps wählen schließt sich manchmal direkt
-- Chat beginnt ganz oben, man muss immer komplett runterscrollen
 - man kann keinen Text auswählen (zB zum kopieren)
 - In der ganzen App: hinzugefügte ValueEventListeners und ChildEventListeners bestehen anscheinend
   auch nach dem finish() von der App weiter.
@@ -11,18 +10,8 @@ Bugs:
 
 ToDo:
 -maximale Teilnehmerzahl begrenzen? (1000 User in einem Chat ist sinnlos und wahrscheinlich sehr anstrengend für die app)
--Das Filtermenu sollte speichern nach was sortiert wird (beim neuladen geht die Info verloren [Ansätze über Firebase haben bei nicht funktioniert])
-
--Popup für Filter-/Sortiereinstellungen (Standardmäßig sollte nach Entfernung sortiert werden)
--durchsuchen erleichtern
-    - sortieren nach:
-      - entfernung
-      - teilnehmerzahl
-      - dauer bis zum stattfinden
-
-    - filter:
-      - suche
-      - tags
+-MyEventActivity löschen
+-Verbindung zur EventInformationActivity und Teilnehmerliste sollte ausgegeben werden
 
 -Notifactions
 -Erklärungs-Activity
@@ -47,7 +36,7 @@ ToDo:
 
 
 
-- AppName überlegen
+- AppName überlegen (IndieEvent/IndiEvent)
 
 
 

@@ -49,7 +49,7 @@ public class ChatActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseRef;
-    private DatabaseReference groupRef;
+    private DatabaseReference eventRef;
 
     private com.selbstfindung.guflash.User user;
 
@@ -91,7 +91,7 @@ public class ChatActivity extends AppCompatActivity {
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
         // create reference for this group
-        groupRef = databaseRef.child("events").child(groupID);
+        eventRef = databaseRef.child("events").child(groupID);
 
         user = new User(firebaseUser.getUid(), new User.Callback() {
             @Override
@@ -106,7 +106,7 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         // listen to database changes (new messages)
-        groupRef.child("messages").addChildEventListener(new ChildEventListener() {
+        eventRef.child("messages").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Message msg = dataSnapshot.getValue(Message.class);
@@ -123,7 +123,7 @@ public class ChatActivity extends AppCompatActivity {
                     int position = messageList.size() - 1;// last index in list
                     recyclerViewAdapter.notifyItemInserted(position);
                     
-                    recyclerView.scrollToPosition(position);
+                    recyclerView.smoothScrollToPosition(position);
                 }
             }
 
@@ -142,7 +142,7 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         // listen to database changes (groupname)
-        groupRef.child("name").addValueEventListener(new ValueEventListener() {
+        eventRef.child("name").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String newGroupName = dataSnapshot.getValue(String.class);
@@ -199,7 +199,7 @@ public class ChatActivity extends AppCompatActivity {
         String senderUserID = user.getId();
         long time = new GregorianCalendar().getTime().getTime();
         
-        DatabaseReference newMessageRef = groupRef.child("messages").push();
+        DatabaseReference newMessageRef = eventRef.child("messages").push();
         newMessageRef.setValue(new Message(senderUserID, text, time));
     }
 
