@@ -62,7 +62,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.NavigationActivity" />
         </activity>
-        <activity android:name=".Activities.MyEventActivity" />
         <activity
             android:name=".Activities.NavigationActivity"
             android:label="@string/title_activity_navigation"

@@ -1,3 +1,13 @@
+Änderungen vom 07.10.18 | 1.33.0 (T)
+- Im Side-Drawer ist "Alle Events" am Anfang SICHTBAR ausgewählt
+- GUI-Feedback:
+  Wenn "Meine Events" aktiviert wird: Ändere Titel zu "Meine Events"
+  Wenn "Alle Events" aktiviert wird: Ändere Titel zu "Events"
+- MyEventActivity gelöscht
+- Standort verbessert: Auch wenn der User erst nachträglich GPS aktiviert,
+  werden die Entfernungen noch berechnet (nach spätestens 1 min)
+  -> ist aber immer noch buggy... Funktioniert manchmal gar nicht :(
+
 Änderungen vom 07.10.18 | 1.32.0 (G)
 - getDeltaTimeInfoString grammatikalisch angepasst und es wird ein Datum angezeigt
 - MyEventActivity ist useless geworden, beim klicken auf meine Events wird ein weiterer Filter aktiviert

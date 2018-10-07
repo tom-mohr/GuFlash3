@@ -1,7 +1,6 @@
 package com.selbstfindung.guflash.Activities;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,7 +16,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -29,49 +27,41 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.selbstfindung.guflash.EventInfo;
 import com.selbstfindung.guflash.R;
 import com.selbstfindung.guflash.EventRecyclerViewAdapter;
-import com.selbstfindung.guflash.User;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MONTAG";
 
-    public static final String EXTRA_MESSAGE_SORT_TYPE = "SORT_TYPE";
-    public static final String EXTRA_MESSAGE_FILTER_TIME = "FILTER_TIME";
-    public static final String EXTRA_MESSAGE_FILTER_DISTANCE = "FILTER_DISTANCE";
-
     private ArrayList<EventInfo> eventInfos;
     private EventRecyclerViewAdapter eventRecyclerViewAdapter;
 
     String userId;
     
-    private FusedLocationProviderClient fusedLocationClient;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
+    private LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +97,7 @@ public class NavigationActivity extends AppCompatActivity
 
         // eigener Code:
     
-        setTitle("Events");
+        setTitle(R.string.title_eventlist_all);
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -159,8 +149,39 @@ public class NavigationActivity extends AppCompatActivity
         });
         
         // get my location
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        updateMyLocation();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);// request "block" level accuracy
+        mLocationRequest.setInterval(1000*60);// get location once every 60 seconds
+        mLocationRequest.setFastestInterval(1000*20);// if available, get location up to once every 20 seconds
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    Log.w(TAG, "LocationCallback: Location is null");
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // Update UI with location data
+                    
+                    eventRecyclerViewAdapter.myLocationChanged(location);
+                }
+            };
+        };
+        getLocationOnce();
+        startLocationUpdates();
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLocationUpdates();
     }
     
     public class FilterInformationManager {
@@ -229,9 +250,9 @@ public class NavigationActivity extends AppCompatActivity
         }
     }
     
-    private void updateMyLocation() {
+    private void getLocationOnce() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
                     // Got last known location. In some rare situations this can be null.
@@ -249,6 +270,18 @@ public class NavigationActivity extends AppCompatActivity
         } else {
             Log.w(TAG, "Permission ACCESS_COARSE_LOCATION not granted");
         }
+    }
+    
+    private void startLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback,
+                    null);
+        }
+    }
+    
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
     
     private EventInfo checkEventInfo(DataSnapshot ds) {
@@ -390,9 +423,11 @@ public class NavigationActivity extends AppCompatActivity
 
         if (id == R.id.nav_events) {
             eventRecyclerViewAdapter.setExcludeUser(false);
+            setTitle(R.string.title_eventlist_all);
 
         } else if (id == R.id.nav_favorite_events) {
             eventRecyclerViewAdapter.setExcludeUser(true);
+            setTitle(R.string.title_eventlist_my);
 
         } else if (id == R.id.nav_profile_settings) {
             startActivity(new Intent(NavigationActivity.this, ProfileActivity.class));
