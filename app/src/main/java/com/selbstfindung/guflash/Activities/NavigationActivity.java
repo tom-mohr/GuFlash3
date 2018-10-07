@@ -63,6 +63,12 @@ public class NavigationActivity extends AppCompatActivity
     private LocationCallback mLocationCallback;
     private LocationRequest mLocationRequest;
 
+    private boolean excludeTime = false;
+    private boolean excludeDistance = false;
+    private boolean excludeUser;
+
+    private int sortType2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -224,6 +230,7 @@ public class NavigationActivity extends AppCompatActivity
         public void setSortType(int newSortType) {
             if (newSortType != sortType) {
                 sortType = newSortType;
+                sortType2 = newSortType;
                 
                 switch (sortType) {
                     case EventRecyclerViewAdapter.SORT_TYPE_DISTANCE:
@@ -363,6 +370,7 @@ public class NavigationActivity extends AppCompatActivity
                     item.setChecked(false);
                     
                     // remove this filter option
+                    excludeDistance = false;
                     eventRecyclerViewAdapter.setExcludeDistance(false);
                     
                 } else {
@@ -370,6 +378,7 @@ public class NavigationActivity extends AppCompatActivity
                     item.setChecked(true);
     
                     // apply this filter function
+                    excludeDistance = true;
                     eventRecyclerViewAdapter.setExcludeDistance(true);
                 }
                 return true;
@@ -380,6 +389,7 @@ public class NavigationActivity extends AppCompatActivity
                     item.setChecked(false);
             
                     // remove this filter option
+                    excludeTime = false;
                     eventRecyclerViewAdapter.setExcludeTime(false);
                     
                 } else {
@@ -387,6 +397,7 @@ public class NavigationActivity extends AppCompatActivity
                     item.setChecked(true);
     
                     // apply this filter function
+                    excludeTime = true;
                     eventRecyclerViewAdapter.setExcludeTime(true);
                 }
                 return true;
@@ -422,10 +433,12 @@ public class NavigationActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_events) {
+            excludeUser = false;
             eventRecyclerViewAdapter.setExcludeUser(false);
             setTitle(R.string.title_eventlist_all);
 
         } else if (id == R.id.nav_favorite_events) {
+            excludeUser = true;
             eventRecyclerViewAdapter.setExcludeUser(true);
             setTitle(R.string.title_eventlist_my);
 
@@ -466,5 +479,52 @@ public class NavigationActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        outState.putInt("savedSortType", sortType2);
+        outState.putBoolean("savedFilterDistance", excludeDistance);
+        outState.putBoolean("savedFilterTime", excludeTime);
+        outState.putBoolean("savedFilterUser", excludeUser);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        eventRecyclerViewAdapter.setSortType(savedInstanceState.getInt("savedSortType"));
+
+        excludeDistance = savedInstanceState.getBoolean("savedFilterDistance");
+        excludeTime = savedInstanceState.getBoolean("savedFilterTime");
+        excludeUser = savedInstanceState.getBoolean("savedFilterUser");
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem d = menu.findItem(R.id.filter_ignore_distance);
+        MenuItem t = menu.findItem(R.id.filter_ignore_time);
+
+        if(excludeDistance)
+        {
+            d.setChecked(true);
+        }
+        else
+        {
+            d.setChecked(false);
+        }
+        if(excludeTime)
+        {
+            t.setChecked(true);
+        }
+        else
+        {
+            d.setChecked(false);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
     }
 }

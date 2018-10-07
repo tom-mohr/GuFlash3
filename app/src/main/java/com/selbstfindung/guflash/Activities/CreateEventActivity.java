@@ -22,6 +22,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.selbstfindung.guflash.R;
@@ -199,6 +200,8 @@ public class CreateEventActivity extends AppCompatActivity {
                     // userIDs:
                     ArrayList<String> userIDs = new ArrayList<>();
 
+                    userIDs.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
                     // werte ausfüllen
                     
                     newEventRef.child("name").setValue(eventNameString);
@@ -352,5 +355,62 @@ public class CreateEventActivity extends AppCompatActivity {
                 
             }
         }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        //save easy ones
+        outState.putString("savedeventNameString", editTextEventName.getText().toString());
+        outState.putString("savedeventDescriptionString", editTextEventDescription.getText().toString());
+        outState.putString("savedminUsersString", editTextMinUsers.getText().toString());
+        outState.putString("savedmaxUsersString", editTextMaxUsers.getText().toString());
+
+        //save time
+        outState.putInt("savedYear", mYear);
+        outState.putInt("savedMonth", mMonth);
+        outState.putInt("savedDay", mDay);
+        outState.putInt("savedHour", mHour);
+        outState.putInt("savedMinute", mMinute);
+
+        //save place
+        outState.putDouble("savedlat", lat);
+        outState.putDouble("savedlng", lng);
+        outState.putString("savedlocationName", locationName);
+        outState.putString("savedlocationAddress", locationAddress);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        editTextEventName.setText(savedInstanceState.getString("savedeventNameString"));
+        editTextEventDescription.setText(savedInstanceState.getString("savedeventDescriptionString"));
+        editTextMinUsers.setText(savedInstanceState.getString("savedminUsersString"));
+        editTextMaxUsers.setText(savedInstanceState.getString("savedmaxUsersString"));
+
+        mYear = savedInstanceState.getInt("savedYear");
+        mMonth = savedInstanceState.getInt("savedMonth");
+        mDay = savedInstanceState.getInt("savedDay");
+        mHour = savedInstanceState.getInt("savedHour");
+        mMinute = savedInstanceState.getInt("savedMinute");
+
+        showDateAndTime();
+
+        lat = savedInstanceState.getDouble("savedlat");
+        lng = savedInstanceState.getDouble("savedlng");
+        locationName = savedInstanceState.getString("savedlocationName");
+        locationAddress = savedInstanceState.getString("savedlocationAddress");
+
+        if(locationName!=null) {
+
+            textViewSelectedLocationName.setText(locationName);
+            textViewSelectedLocationAddress.setText(locationAddress);
+            layoutSelectedLocation.setVisibility(View.VISIBLE);
+        }
+
     }
 }
