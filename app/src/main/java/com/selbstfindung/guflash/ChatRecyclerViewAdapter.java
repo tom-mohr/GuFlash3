@@ -36,8 +36,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
     
     private DateFormat timeFormatter;
-
-    private Context mContext;
+    
     private List<Message> messageList;
     String ownUserID;
     Map<String, String> userNames;
@@ -45,7 +44,6 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
     DatabaseReference allUsersRef;
 
     public ChatRecyclerViewAdapter(Context context, List<Message> messageList, String ownUserID) {
-        this.mContext = context;
         this.messageList = messageList;
         this.ownUserID = ownUserID;
         

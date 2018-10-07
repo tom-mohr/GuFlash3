@@ -9,11 +9,35 @@
     tools:showIn="@layout/app_bar_navigation"
     android:background="@color/colorAccentDark">
 
+    <LinearLayout
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/colorAccent"
+        android:id="@+id/content_navigation_filter_information_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextSwitcher
+            android:visibility="gone"
+            android:id="@+id/content_navigation_filter_information_line1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </TextSwitcher>
+
+        <TextSwitcher
+            android:visibility="gone"
+            android:id="@+id/content_navigation_filter_information_line2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
+        app:layout_constraintTop_toBottomOf="@id/content_navigation_filter_information_layout"
         android:id="@+id/events_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingBottom="80dp" />
+        android:paddingBottom="120dp" />
 
 </android.support.constraint.ConstraintLayout>

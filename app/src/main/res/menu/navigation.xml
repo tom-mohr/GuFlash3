@@ -7,38 +7,34 @@
         android:title="Filter"
         app:showAsAction="always">
         <menu>
-
-            <item
-                android:title="Filter"
-                android:icon="@drawable/ic_menu_filter_dark"
-                app:showAsAction="never"
-                />
-
             <group
                 android:checkableBehavior="single">
-
                 <item
                     android:checked="true"
                     android:id="@+id/filter_sort_distance"
+                    android:icon="@drawable/ic_menu_distance"
                     android:title="sortiere nach Entfernung"
                     app:showAsAction="never" />
                 <item
                     android:id="@+id/filter_sort_time"
+                    android:icon="@drawable/ic_menu_clock"
                     android:title="sortiere nach Zeit"
                     app:showAsAction="never" />
+                <item
+                    android:id="@+id/filter_sort_alphabetically"
+                    android:icon="@drawable/ic_menu_sort_alphabetically"
+                    android:title="sortiere alphabetisch"
+                    app:showAsAction="never" />
             </group>
-
             <group
                 android:checkableBehavior="all">
                 <item
                     android:id="@+id/filter_ignore_distance"
-                    android:icon="@drawable/ic_menu_location"
                     android:title="nicht weiter als 10 km"
                     app:showAsAction="never" />
                 <item
                     android:id="@+id/filter_ignore_time"
-                    android:icon="@drawable/ic_menu_clock"
-                    android:title="nicht länger als 10 Tage"
+                    android:title="nicht später als 10 Tage"
                     app:showAsAction="never" />
 
             </group>

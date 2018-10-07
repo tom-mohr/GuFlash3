@@ -105,7 +105,7 @@ public class MyEventActivity extends AppCompatActivity
         eventInfos = new ArrayList<>();
 
         RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
-        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(this, eventInfos);
+        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(this, eventInfos, null);
         recyclerView.setAdapter(eventRecyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -119,7 +119,7 @@ public class MyEventActivity extends AppCompatActivity
                 EventInfo eventInfo = checkEventInfo(dataSnapshot);
 
 
-                if(eventInfo.containsUserID(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                if(eventInfo.containsUserId(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     if (eventInfo != null) {
                         if (sortType.equals("Time")) {
                             boolean kleinerAlsElement = false;
@@ -161,7 +161,7 @@ public class MyEventActivity extends AppCompatActivity
 
                 EventInfo eventInfo = checkEventInfo(dataSnapshot);
 
-                if(eventInfo.containsUserID(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                if(eventInfo.containsUserId(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                 {
                     if (eventInfo != null) {
 

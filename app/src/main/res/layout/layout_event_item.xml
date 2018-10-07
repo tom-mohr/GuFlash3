@@ -5,26 +5,16 @@
     android:layout_height="wrap_content"
     android:id="@+id/group_layout"
     android:background="@color/colorWhite"
-    android:layout_marginLeft="6dp"
-    android:layout_marginRight="6dp"
-    android:layout_marginTop="6dp"
-    android:layout_marginBottom="0dp" >
+    style="@style/Widget.AppCompat.Button"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="12dp">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <ImageView
-            android:layout_weight="0"
-            android:id="@+id/group_symbol"
-            android:layout_width="56dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="12dp"
-            app:srcCompat="@drawable/ic_menu_group_outline" />
-
 
         <LinearLayout
             android:layout_weight="1"
@@ -34,61 +24,50 @@
 
             <TextView
                 android:id="@+id/group_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
                 android:padding="6sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
                 />
+
             <TextView
-                android:id="@+id/teilnehmer_differenz"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
                 android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
-                android:layout_below="@+id/group_name"
-                android:layout_alignStart="@+id/group_name"
-                android:padding="6sp"
-                />
+                android:id="@+id/event_list_members"
+                android:drawableStart="@drawable/ic_menu_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_weight="0"
-            android:layout_width="wrap_content"
-            android:minWidth="100sp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="6dp"
             android:gravity="center_horizontal">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/current_participants"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="/"
-                    />
-                <TextView
-                    android:id="@+id/max_participants"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
-            </LinearLayout>
-
             <TextView
-                android:drawablePadding="8dp"
+                android:layout_gravity="start"
+                android:drawablePadding="6dp"
                 android:gravity="center_vertical"
                 android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
                 android:id="@+id/event_list_delta_time"
                 android:drawableStart="@drawable/ic_menu_clock"
-                android:maxWidth="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_gravity="start"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+                android:id="@+id/event_list_distance"
+                android:drawableStart="@drawable/ic_menu_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

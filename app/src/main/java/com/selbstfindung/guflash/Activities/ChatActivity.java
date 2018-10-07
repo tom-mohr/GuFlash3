@@ -42,6 +42,7 @@ public class ChatActivity extends AppCompatActivity {
     private EditText chatTextInput;
 
     private List<Message> messageList;
+    RecyclerView recyclerView;
     ChatRecyclerViewAdapter recyclerViewAdapter;// need instance for newly added messages
 
     private FirebaseAuth mAuth;
@@ -121,6 +122,8 @@ public class ChatActivity extends AppCompatActivity {
 
                     int position = messageList.size() - 1;// last index in list
                     recyclerViewAdapter.notifyItemInserted(position);
+                    
+                    recyclerView.scrollToPosition(position);
                 }
             }
 
@@ -182,7 +185,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
 
-        RecyclerView recyclerView = findViewById(R.id.chat_recycler_view);
+        recyclerView = findViewById(R.id.chat_recycler_view);
 
         recyclerViewAdapter = new ChatRecyclerViewAdapter(this, messageList, user.getId());
 

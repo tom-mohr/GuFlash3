@@ -1,3 +1,19 @@
+Änderungen vom 06.10.18 | 1.31.0 (T)
+- Standort eingeführt:
+  Die NavigationActivity fragt beim Start genau einmal den Standort des Geräts ab und merkt ihn sich.
+  Dann wird das Attribut "distance" von jeder EventInfo neu berechnet und die Liste neu sortiert.
+- die Häkchen im Filtermenü funktionieren jetzt ("nicht weiter / später als ...")
+- Alphabetische Sortierung eingeführt
+- Ein Feld unter der ActionBar zeigt die aktiven Filteroptionen an
+- Menü-Icons verändert
+- Item-Divider bei der Event-Liste (RecyclerView) hinzugefügt
+- Simplicity: G's Funktion zur Teilnehmerzahl noch mehr verkürzt,
+  wird in jedem Listen-Item unter dem Event-Namen angezeigt
+- Neue Farb-Palette für die App (die alte hat genervt) und viele kleine Verbesserungen am Design
+- Layout vom EditText für Event-Beschreibung verbessert
+- Chat: RecyclerViewAdapter scrollt automatisch nach unten, sobald eine neue Nachricht geladen wird
+  (also auch beim Öffnen den Chats)
+
 Änderungen vom 06.10.18 | 1.30.0 (T)
 - Info-String zur Teilnehmerzahl des Events lassen sich über eine Methode des EventInfo-Strings generieren
   (einfach den Code von EventRecyclerViewAdapter ausgelagert)

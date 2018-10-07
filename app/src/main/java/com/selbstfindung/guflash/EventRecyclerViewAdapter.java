@@ -1,21 +1,28 @@
 package com.selbstfindung.guflash;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.selbstfindung.guflash.Activities.ChatActivity;
 import com.selbstfindung.guflash.Activities.ClosedChatActivity;
 import com.selbstfindung.guflash.Activities.JoinPopupActivity;
+import com.selbstfindung.guflash.Activities.NavigationActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,11 +37,13 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     private Context mContext;
     private String userId;
     
-    // sorting
+    // sorting criteria
     private int sortType;
+    public static final int NO_SORT_TYPE = -1;
     public static final int SORT_TYPE_DISTANCE = 1;
     public static final int SORT_TYPE_TIME = 2;
-    public static final int SORT_TYPE_MEMBERS = 3;
+    public static final int SORT_TYPE_ALPHABETICALLY = 3;
+    public static final int SORT_TYPE_MEMBERS = 4;
     private boolean excludeDistance;
     private int excludeDistanceKilometers = 10;
     private boolean excludeTime;
@@ -46,12 +55,31 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
             return e1.getEventTime().compareTo(e2.getEventTime());
         }
     };
+    private static Comparator<EventInfo> DISTANCE_COMPARATOR = new Comparator<EventInfo>() {
+        @Override
+        public int compare(EventInfo e1, EventInfo e2) {
+            return (int) Math.floor(e1.distance - e2.distance);
+        }
+    };
+    private static Comparator<EventInfo> ALPHABETICAL_COMPARATOR = new Comparator<EventInfo>() {
+        @Override
+        public int compare(EventInfo e1, EventInfo e2) {
+            return e1.name.compareTo(e2.name);
+        }
+    };
     
-    public EventRecyclerViewAdapter(Context context, ArrayList<EventInfo> eventInfos) {
+    Location myLocation;
+    
+    // views for information header
+    private NavigationActivity.FilterInformationManager filterInfoManager;
+    
+    
+    public EventRecyclerViewAdapter(Context context, ArrayList<EventInfo> eventInfos, NavigationActivity.FilterInformationManager fim) {
         mContext = context;
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    
         eventInfosRaw = eventInfos;
+        filterInfoManager = fim;
+        
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         
         excludeDistance = false;
         excludeTime = false;
@@ -61,6 +89,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     public void setSortType(int newSortType) {
         if (newSortType != sortType) {
             sortType = newSortType;
+    
+            filterInfoManager.setSortType(sortType);
+            
             makeSortedList();
         }
     }
@@ -80,25 +111,48 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     }
     
     private void makeSortedList() {
-        eventInfosSorted = new ArrayList<>(eventInfosRaw);
+        eventInfosSorted = new ArrayList<>();
+        
+        // nur die items übernehmen, die den boolean-kriterien standhalten
+        for (EventInfo eventInfo: eventInfosRaw) {
+            if ((!excludeDistance || eventInfo.distance / 1000 <= excludeDistanceKilometers) &&
+                    (!excludeTime || eventInfo.getDaysTillEvent() <= excludeTimeDays))
+                eventInfosSorted.add(eventInfo);
+        }
+        
         switch (sortType) {
             case SORT_TYPE_DISTANCE:
+                Collections.sort(eventInfosSorted, DISTANCE_COMPARATOR);
                 break;
             case SORT_TYPE_TIME:
                 Collections.sort(eventInfosSorted, TIME_COMPARATOR);
                 break;
+            case SORT_TYPE_ALPHABETICALLY:
+                Collections.sort(eventInfosSorted, ALPHABETICAL_COMPARATOR);
+                break;
         }
         
         notifyDataSetChanged();
+    
+        Log.i(TAG, "sorted list");
     }
     
     public void addEvent(EventInfo eventInfo) {
+        
+        if (myLocation != null)
+            eventInfo.calcDistanceTo(myLocation);
+        
         eventInfosRaw.add(eventInfo);
+        
         makeSortedList();
         notifyDataSetChanged();
     }
     
     public void eventChanged(EventInfo eventInfo) {
+    
+        // calculate distance
+        if (myLocation != null)
+            eventInfo.calcDistanceTo(myLocation);
     
         // wo befindet sich das event in der UNSORTIERTEN liste?
         int indexRaw = EventInfo.findIndexWithSameId(eventInfosRaw, eventInfo);
@@ -112,7 +166,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
             int indexSorted = EventInfo.findIndexWithSameId(eventInfosSorted, eventInfo);
             
             if (indexSorted != -1) {
-                // aktualisiere die Event-Datens
+                // aktualisiere die Event-Daten
                 eventInfosSorted.set(indexSorted, eventInfo);
                 // -> berechne die sortierte liste neu, falls sich Daten geändert haben,
                 //    sodass sich die Position in der Liste verschiebt
@@ -139,6 +193,19 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
         }
     }
     
+    public void myLocationChanged(@NonNull Location myLocation) {
+        
+        this.myLocation = myLocation;
+    
+        Log.i(TAG, "Location changed");
+        for (EventInfo eventInfo: eventInfosRaw) {
+            
+            eventInfo.calcDistanceTo(myLocation);
+        }
+        
+        makeSortedList();
+    }
+    
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         
@@ -147,10 +214,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
         EventInfo eventInfo = eventInfosSorted.get(position);
         
         holder.eventName.setText(eventInfo.name);
-        holder.currentMemberCount.setText(String.valueOf(eventInfo.userIds.size()));
-        holder.maxMembers.setText(String.valueOf(eventInfo.maxMembers));
-        holder.membersDifference.setText(eventInfo.getMembersInfoString());
+        holder.membersInfo.setText(eventInfo.getMembersInfoString());
         holder.deltaTime.setText(eventInfo.getDeltaTimeInfoString());
+        holder.distance.setText(eventInfo.getDistanceInfoString());
 
         // make item clickable
         holder.eventLayout.setOnClickListener(new MyOnClickListener(holder));
@@ -171,10 +237,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
     
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView eventName;
-        TextView currentMemberCount;
-        TextView maxMembers;
-        TextView membersDifference;
+        TextView membersInfo;
         TextView deltaTime;
+        TextView distance;
         RelativeLayout eventLayout;
 
         MyViewHolder(View itemView) {
@@ -182,10 +247,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
             eventName = itemView.findViewById(R.id.group_name);
             eventLayout = itemView.findViewById(R.id.group_layout);
-            membersDifference = itemView.findViewById(R.id.teilnehmer_differenz);
-            currentMemberCount = itemView.findViewById(R.id.current_participants);
+            membersInfo = itemView.findViewById(R.id.event_list_members);
             deltaTime = itemView.findViewById(R.id.event_list_delta_time);
-            maxMembers = itemView.findViewById(R.id.max_participants);
+            distance = itemView.findViewById(R.id.event_list_distance);
         }
     }
     

@@ -1,6 +1,8 @@
 package com.selbstfindung.guflash;
 
+import android.location.Location;
 import android.provider.ContactsContract;
+import android.text.Html;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,9 +24,9 @@ public class EventInfo {
             description,
             placeName,
             placeAddress;
-    public int placeLat,
-            placeLng,
-            timeYear,
+    public double placeLat,
+            placeLng;
+    public int timeYear,
             timeMonth,
             timeDay,
             timeHour,
@@ -33,18 +35,19 @@ public class EventInfo {
             maxMembers;
     ArrayList<String> userIds;
     
+    // runtime variables:
+    public float distance = -1;// in meters
+    
     public EventInfo(DataSnapshot ds) throws NullPointerException, DatabaseException {
         
         id = ds.getKey();
         name = ds.child("name").getValue(String.class);
-    
-        Log.d(TAG, "EventInfo: " + name + " has " + ds.getChildrenCount() + " children");
         
         description = ds.child("description").getValue(String.class);
         placeName = ds.child("place").child("name").getValue(String.class);
         placeAddress = ds.child("place").child("address").getValue(String.class);
-        placeLat = ds.child("place").child("latitude").getValue(Integer.class);
-        placeLng = ds.child("place").child("longitude").getValue(Integer.class);
+        placeLat = ds.child("place").child("latitude").getValue(Double.class);
+        placeLng = ds.child("place").child("longitude").getValue(Double.class);
         timeYear = ds.child("time").child("year").getValue(Integer.class);
         timeMonth = ds.child("time").child("month").getValue(Integer.class);
         timeDay = ds.child("time").child("day").getValue(Integer.class);
@@ -118,12 +121,9 @@ public class EventInfo {
         }
     }
 
-    public boolean containsUserID(String userID)
-    {
-        for(String ID: userIds)
-        {
-            if(ID.equals(userID))
-            {
+    public boolean containsUserId(String userId) {
+        for(String ID: userIds) {
+            if(ID.equals(userId)) {
                 return true;
             }
         }
@@ -131,27 +131,65 @@ public class EventInfo {
     }
     
     public String getMembersInfoString() {
-        //Unterschiedlicher Output je nach Teilnehmerzahl
-        int diff = maxMembers - userIds.size();
-        int diff2 = minMembers - userIds.size();
-        String nMembersInfoString;
-        if(diff2>0) {
-            nMembersInfoString = "Noch " + diff2 + " Teilnehmer benötigt bis zur Eröffnung des Chats";
+        // Unterschiedlicher Output je nach Teilnehmerzahl
+        /*
+        - immer: wie viele sind schon?
+        - ist das event schon gestartet?
+        -> wenn nein: wie viele braucht es noch? | "braucht noch ..."
+        -> wenn ja: wie viele dürfen noch | "noch 3 frei"
+         */
+        int n = userIds.size();
+        String start = n + "  (";
+        String end = ")";
+        if (n < minMembers) {
+            // Event noch nicht geöffnet
+            int diff = minMembers - n;// wie viele braucht es noch bis zur mindestanzahl?
+            return start + "braucht noch " + diff + end;
+        } else if (n < maxMembers) {
+            // Event schon eröffnet und noch Plätze frei
+            int diff = maxMembers - n;// wie viele sind noch frei bis zur höchstanzahl?
+            return start + "noch " + diff + " frei" + end;
         } else {
-            if(diff == 1)
-            {
-                nMembersInfoString = "Nur noch " + diff + " Platz frei";
-            }
-            else if (diff > 3)
-                nMembersInfoString = "Noch " + diff + " Plätze frei";
-            else if(diff > 0)
-            {
-                nMembersInfoString = "Nur noch " + diff + " Plätze frei";
-            }
-            else
-                nMembersInfoString = "alle " + maxMembers + " Plätze belegt";
+            // Event schon voll
+            return start + "voll" + end;
         }
-        return nMembersInfoString;
+    }
+    
+    public void calcDistanceTo(Location location) {
+        Location eventLocation = new Location("dummyprovider");
+        eventLocation.setLatitude(placeLat);
+        eventLocation.setLongitude(placeLng);
+        
+        distance = location.distanceTo(eventLocation);// in meters
+    }
+    
+    public String getDistanceInfoString() {
+        
+        if (distance < 0) {
+            
+            return "";
+            
+        } else if (distance < 1000) {
+            // Meter auf 10 Meter gerunded anzeigen
+            int metersRounded = Math.round(distance / 10) * 10;
+            
+            return String.valueOf(metersRounded) + " Meter";
+            
+        } else {
+    
+            double kilometers = distance / 1000;
+            
+            if (kilometers < 10) {
+                // auf 1 Stelle runden
+                double kilometersRounded = ((double) Math.round(kilometers * 10)) / 10;
+                return String.valueOf(kilometersRounded) + " km";
+                
+            } else {
+                // auf ganze Zahl runden
+                long kilometersRounded = Math.round(kilometers);
+                return String.valueOf(kilometersRounded) + " km";
+            }
+        }
     }
     
     public static int findIndexWithSameId(List<EventInfo> list, EventInfo eventInfo) {

@@ -1,15 +1,23 @@
 package com.selbstfindung.guflash.Activities;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,8 +27,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.widget.LinearLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -51,9 +70,8 @@ public class NavigationActivity extends AppCompatActivity
     private EventRecyclerViewAdapter eventRecyclerViewAdapter;
 
     String userId;
-    String sortType;
-    String filterTime;
-    String filterDistance;
+    
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,10 +113,14 @@ public class NavigationActivity extends AppCompatActivity
 
         eventInfos = new ArrayList<>();
     
-        RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
-        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(this, eventInfos);
+        final RecyclerView recyclerView = findViewById(R.id.events_recycler_view);
+        eventRecyclerViewAdapter = new EventRecyclerViewAdapter(this, eventInfos, new FilterInformationManager());
         recyclerView.setAdapter(eventRecyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        
+        // set divider for recycler view
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(dividerItemDecoration);
 
         // listen for changes to the "events" child
         FirebaseDatabase.getInstance().getReference().child("events").addChildEventListener(new ChildEventListener() {
@@ -179,6 +201,98 @@ public class NavigationActivity extends AppCompatActivity
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
+        
+        // get my location
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        updateMyLocation();
+    }
+    
+    public class FilterInformationManager {
+        private LinearLayout layout;
+        private TextSwitcher line1;
+        private TextSwitcher line2;
+        
+        private int sortType = EventRecyclerViewAdapter.NO_SORT_TYPE;
+    
+        FilterInformationManager() {
+            
+            layout = findViewById(R.id.content_navigation_filter_information_layout);
+            line1 = findViewById(R.id.content_navigation_filter_information_line1);
+            line2 = findViewById(R.id.content_navigation_filter_information_line2);
+    
+            // set in- and out-Animation for TextSwitchers
+            Animation inAnim1 = AnimationUtils.loadAnimation(NavigationActivity.this, android.R.anim.slide_in_left);
+            Animation outAnim1 = AnimationUtils.loadAnimation(NavigationActivity.this, android.R.anim.slide_out_right);
+            Animation inAnim2 = AnimationUtils.loadAnimation(NavigationActivity.this, android.R.anim.fade_in);
+            Animation outAnim2 = AnimationUtils.loadAnimation(NavigationActivity.this, android.R.anim.fade_out);
+            line1.setInAnimation(inAnim1);
+            line1.setOutAnimation(outAnim1);
+            line2.setInAnimation(inAnim2);
+            line2.setOutAnimation(outAnim2);
+            
+            // set ViewFactory for TextSwitchers
+            ViewSwitcher.ViewFactory vf = new ViewSwitcher.ViewFactory() {
+                @Override
+                public View makeView() {
+                    TextView t = new TextView(NavigationActivity.this);
+                    TextViewCompat.setTextAppearance(t, R.style.TextAppearance_AppCompat_Widget_ActionBar_Subtitle_Inverse);// support lower APIs
+                    t.setPadding(10,10,10,10);
+                    return t;
+                }
+            };
+            line1.setFactory(vf);
+            line2.setFactory(vf);
+        }
+        
+        public void setSortType(int newSortType) {
+            if (newSortType != sortType) {
+                sortType = newSortType;
+                
+                switch (sortType) {
+                    case EventRecyclerViewAdapter.SORT_TYPE_DISTANCE:
+                        line1.setVisibility(View.VISIBLE);
+                        line1.setText("sortiert nach Entfernung");
+                        break;
+                        
+                    case EventRecyclerViewAdapter.SORT_TYPE_TIME:
+                        line1.setVisibility(View.VISIBLE);
+                        line1.setText("sortiert nach Zeit");
+                        break;
+                        
+                    case EventRecyclerViewAdapter.SORT_TYPE_ALPHABETICALLY:
+                        line1.setVisibility(View.VISIBLE);
+                        line1.setText("sortiert alphabetisch");
+                        break;
+                        
+                    case EventRecyclerViewAdapter.NO_SORT_TYPE:
+                        line1.setText("");
+                        line1.setVisibility(View.GONE);
+                        break;
+                }
+            }
+        }
+    }
+    
+    private void updateMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    // Got last known location. In some rare situations this can be null.
+                    if (location != null) {
+                    
+                        Log.i(TAG, "got Location: Lat " + location.getLatitude() + " | Long " + location.getLongitude());
+                    
+                        eventRecyclerViewAdapter.myLocationChanged(location);
+                    
+                    } else {
+                        Log.w(TAG, "Location is null");
+                    }
+                }
+            });
+        } else {
+            Log.w(TAG, "Permission ACCESS_COARSE_LOCATION not granted");
+        }
     }
     
     private EventInfo checkEventInfo(DataSnapshot ds) {
@@ -211,39 +325,6 @@ public class NavigationActivity extends AppCompatActivity
         return null;
     }
 
-    private void getSortType() {
-
-        FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                sortType = dataSnapshot.getValue(String.class);
-                Log.d(TAG, sortType);
-
-                if(sortType!= null) {
-                    if (sortType.equals("Time")) {
-                        Log.d(TAG, "Es soll nach Zeit sortiert werden");
-                    } else {
-                        Log.d(TAG, "Es soll nach Entfernung sortiert werden");
-                    }
-                }
-                else
-                {
-                    Log.d(TAG, "sortType ist null");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        //sortType = getIntent().getStringExtra(EventRecyclerViewAdapter.EXTRA_MESSAGE_SORT_TYPE);
-
-
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -257,10 +338,7 @@ public class NavigationActivity extends AppCompatActivity
                     
                     // apply this filter function
 
-                    FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").setValue("Distance");///?
-
                     eventRecyclerViewAdapter.setSortType(EventRecyclerViewAdapter.SORT_TYPE_DISTANCE);
-
                 }
                 return true;
                 
@@ -272,10 +350,21 @@ public class NavigationActivity extends AppCompatActivity
                     item.setChecked(true);
             
                     // apply this filter function
-
-                    FirebaseDatabase.getInstance().getReference().child("users").child(userId).child("sort").setValue("Time");///?
     
                     eventRecyclerViewAdapter.setSortType(EventRecyclerViewAdapter.SORT_TYPE_TIME);
+                }
+                return true;
+            
+            case R.id.filter_sort_alphabetically:
+                if (item.isChecked()) {
+                    // ignore
+                } else {
+                    // check
+                    item.setChecked(true);
+                    
+                    // apply this filter function
+                    
+                    eventRecyclerViewAdapter.setSortType(EventRecyclerViewAdapter.SORT_TYPE_ALPHABETICALLY);
                 }
                 return true;
                 
@@ -312,11 +401,11 @@ public class NavigationActivity extends AppCompatActivity
                     eventRecyclerViewAdapter.setExcludeTime(true);
                 }
                 return true;
+                
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
     // AUTO-GENERIERTE FUNKTIONEN FÜR NAVIGATION DRAWER:
 

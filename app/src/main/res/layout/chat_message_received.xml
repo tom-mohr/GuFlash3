@@ -35,10 +35,10 @@
                 android:id="@+id/chat_message_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nachrichtaskdfjhlkasjflkasdhfkljashdfklhaskdfhaklsdjfhklashdfklhaslkdfjhaklshdfklajdsfkljadsf"
                 android:minWidth="100dp"
                 android:maxWidth="220dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?android:attr/textColorPrimary"
                 />
 
             <Space

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.CreateEventActivity">
+    tools:context=".Activities.CreateEventActivity"
+    android:background="@color/colorWhite">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -42,14 +43,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
+                    android:gravity="start|top"
                     android:id="@+id/create_group_description_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapSentences|textMultiLine"
-                    android:hint="Was wird passieren?"
-                    android:lines="3"
-                    android:maxLines="3"
-                    android:maxLength="200"/>
+                    android:hint="Beschreibung"
+                    android:minLines="4"
+                    android:maxLength="200"
+                    android:scrollbars="vertical"
+                    android:overScrollMode="always"
+                    android:scrollbarStyle="insideInset" />
             </android.support.design.widget.TextInputLayout>
 
             <Space
