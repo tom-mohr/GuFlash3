@@ -2,7 +2,7 @@ Bugs:
 - Ort auf Google Maps wählen schließt sich manchmal direkt
 - man kann keinen Text auswählen (zB zum kopieren)
 - In der ganzen App: hinzugefügte ValueEventListeners und ChildEventListeners bestehen anscheinend
-  auch nach dem finish() von der App weiter.                                                            (Hab nichts dazu gefunden)
+  auch nach dem finish() von der App weiter.
   Vor allem beim entfernen von Events (wenn wir das mal implementieren) führt das später zu Problemen
 - Bei der ChatActivity und der ChatClosedActivity müssen die Event-Informationen angezeigt werden
   -> z.B. über Tippen auf ActionBar o.a.
