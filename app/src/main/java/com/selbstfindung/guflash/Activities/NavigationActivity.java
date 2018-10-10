@@ -49,6 +49,10 @@ import com.selbstfindung.guflash.EventRecyclerViewAdapter;
 
 import java.util.ArrayList;
 
+import static com.selbstfindung.guflash.EventRecyclerViewAdapter.SORT_TYPE_ALPHABETICALLY;
+import static com.selbstfindung.guflash.EventRecyclerViewAdapter.SORT_TYPE_DISTANCE;
+import static com.selbstfindung.guflash.EventRecyclerViewAdapter.SORT_TYPE_TIME;
+
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -233,7 +237,7 @@ public class NavigationActivity extends AppCompatActivity
                 sortType2 = newSortType;
                 
                 switch (sortType) {
-                    case EventRecyclerViewAdapter.SORT_TYPE_DISTANCE:
+                    case SORT_TYPE_DISTANCE:
                         line1.setVisibility(View.VISIBLE);
                         line1.setText("sortiert nach Entfernung");
                         break;
@@ -334,7 +338,7 @@ public class NavigationActivity extends AppCompatActivity
                     
                     // apply this filter function
 
-                    eventRecyclerViewAdapter.setSortType(EventRecyclerViewAdapter.SORT_TYPE_DISTANCE);
+                    eventRecyclerViewAdapter.setSortType(SORT_TYPE_DISTANCE);
                 }
                 return true;
                 
@@ -371,7 +375,7 @@ public class NavigationActivity extends AppCompatActivity
                     
                     // remove this filter option
                     excludeDistance = false;
-                    eventRecyclerViewAdapter.setExcludeDistance(false);
+                    eventRecyclerViewAdapter.setExcludeDistance(excludeDistance);
                     
                 } else {
                     // check
@@ -379,7 +383,7 @@ public class NavigationActivity extends AppCompatActivity
     
                     // apply this filter function
                     excludeDistance = true;
-                    eventRecyclerViewAdapter.setExcludeDistance(true);
+                    eventRecyclerViewAdapter.setExcludeDistance(excludeDistance);
                 }
                 return true;
                 
@@ -390,7 +394,7 @@ public class NavigationActivity extends AppCompatActivity
             
                     // remove this filter option
                     excludeTime = false;
-                    eventRecyclerViewAdapter.setExcludeTime(false);
+                    eventRecyclerViewAdapter.setExcludeTime(excludeTime);
                     
                 } else {
                     // check
@@ -398,7 +402,7 @@ public class NavigationActivity extends AppCompatActivity
     
                     // apply this filter function
                     excludeTime = true;
-                    eventRecyclerViewAdapter.setExcludeTime(true);
+                    eventRecyclerViewAdapter.setExcludeTime(excludeTime);
                 }
                 return true;
                 
@@ -422,7 +426,45 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
+        Log.d(TAG, "Menu wird erstellt");
+
         getMenuInflater().inflate(R.menu.navigation, menu);
+
+        Log.d(TAG, ""+excludeUser+" "+excludeDistance+ " " + excludeTime);
+
+        MenuItem d = menu.findItem(R.id.filter_ignore_distance);
+        MenuItem t = menu.findItem(R.id.filter_ignore_time);
+
+        eventRecyclerViewAdapter.setExcludeUser(excludeUser);
+        eventRecyclerViewAdapter.setExcludeTime(excludeTime);
+        eventRecyclerViewAdapter.setExcludeDistance(excludeDistance);
+
+        if(excludeDistance)
+        {
+            d.setChecked(true);
+        }
+        else
+        {
+            d.setChecked(false);
+        }
+        if(excludeTime)
+        {
+            t.setChecked(true);
+        }
+        else
+        {
+            d.setChecked(false);
+        }
+
+        if(sortType2==SORT_TYPE_DISTANCE)
+            menu.findItem(R.id.filter_sort_distance).setChecked(true);
+        else if(sortType2==SORT_TYPE_TIME)
+            menu.findItem(R.id.filter_sort_time).setChecked(true);
+        else if(sortType2==SORT_TYPE_ALPHABETICALLY)
+            menu.findItem(R.id.filter_sort_alphabetically).setChecked(true);
+
+
         return true;
     }
     
@@ -434,12 +476,12 @@ public class NavigationActivity extends AppCompatActivity
 
         if (id == R.id.nav_events) {
             excludeUser = false;
-            eventRecyclerViewAdapter.setExcludeUser(false);
+            eventRecyclerViewAdapter.setExcludeUser(excludeUser);
             setTitle(R.string.title_eventlist_all);
 
         } else if (id == R.id.nav_favorite_events) {
             excludeUser = true;
-            eventRecyclerViewAdapter.setExcludeUser(true);
+            eventRecyclerViewAdapter.setExcludeUser(excludeUser);
             setTitle(R.string.title_eventlist_my);
 
         } else if (id == R.id.nav_profile_settings) {
@@ -484,6 +526,8 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
+        Log.d(TAG, "Daten werden gespeichert");
+
         outState.putInt("savedSortType", sortType2);
         outState.putBoolean("savedFilterDistance", excludeDistance);
         outState.putBoolean("savedFilterTime", excludeTime);
@@ -496,15 +540,33 @@ public class NavigationActivity extends AppCompatActivity
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        eventRecyclerViewAdapter.setSortType(savedInstanceState.getInt("savedSortType"));
+        Log.d(TAG, "Daten werden aufgerufen");
 
         excludeDistance = savedInstanceState.getBoolean("savedFilterDistance");
         excludeTime = savedInstanceState.getBoolean("savedFilterTime");
         excludeUser = savedInstanceState.getBoolean("savedFilterUser");
+
+        eventRecyclerViewAdapter.setSortType(savedInstanceState.getInt("savedSortType"));
+        //eventRecyclerViewAdapter.setExcludeUser(excludeUser);
+        //eventRecyclerViewAdapter.setExcludeTime(excludeTime);
+        //eventRecyclerViewAdapter.setExcludeDistance(excludeDistance);
+        if(excludeUser)
+        {
+            setTitle(R.string.title_eventlist_my);
+        }
+        else
+        {
+            setTitle(R.string.title_eventlist_all);
+        }
     }
 
+
+    /*
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+
+        Log.d(TAG, "Menu wird aktualisiert");
+
         MenuItem d = menu.findItem(R.id.filter_ignore_distance);
         MenuItem t = menu.findItem(R.id.filter_ignore_time);
 
@@ -527,4 +589,5 @@ public class NavigationActivity extends AppCompatActivity
 
         return super.onPrepareOptionsMenu(menu);
     }
+    */
 }

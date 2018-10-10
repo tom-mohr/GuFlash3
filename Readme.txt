@@ -1,8 +1,10 @@
+Änderungen vom 10.10.18 | 1.34.1 (G)
+-Navigation behält die Sortier-/Filteroptionen beim drehen und öffnen anderer Activities
+
 Änderungen vom 07.10.18 | 1.34.0 (G)
 - Eventersteller wird automatisch zum Event hinzugefügt
 - CreateEvent behält Daten, selbst wenn man den Bildschirm rotiert
 - Navigation liest nur sortType aus savedInstance richtig aus
-
 
 Änderungen vom 07.10.18 | 1.33.0 (T)
 - Im Side-Drawer ist "Alle Events" am Anfang SICHTBAR ausgewählt

@@ -12,10 +12,10 @@ Bugs:
 
 ToDo:
 - maximale Teilnehmerzahl begrenzen? (1000 User in einem Chat ist sinnlos und wahrscheinlich sehr anstrengend für die app)
-- Verbindung zur EventInformationActivity und Teilnehmerliste sollte ausgegeben werden
+- Klickbare Leiste im Chat und ClosedChat die zur EventInformation führt
+- In der EventInformationActivity sollte eine Teilnehmerliste ausgegeben werden
 - In der Filter-Info sollte bei deaktiviertem Standort ein Hinweis gegeben werden,
   dass die Entfernungen nicht berechnet werden können
-- Wenn der Bildschirm gedreht wird, wird die NavigationActivity neu gestartet.
 
 - Beim Tippen auf das Location-Feld in der JoinPopupActivity sollte GoogleMaps geöffnet werden,
   mit einem Marker bei Lat/Lng von diesem Event (Ist das nötig?/zählt das als unnötige GoogleMaps abfrage, die schnell viel kosten kann)
