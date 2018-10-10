@@ -1,0 +1,49 @@
+Bugs:
+- Ort auf Google Maps wählen schließt sich manchmal direkt
+- man kann keinen Text auswählen (zB zum kopieren)
+- In der ganzen App: hinzugefügte ValueEventListeners und ChildEventListeners bestehen anscheinend
+  auch nach dem finish() von der App weiter.                                                            (Hab nichts dazu gefunden)
+  Vor allem beim entfernen von Events (wenn wir das mal implementieren) führt das später zu Problemen
+- Bei der ChatActivity und der ChatClosedActivity müssen die Event-Informationen angezeigt werden
+  -> z.B. über Tippen auf ActionBar o.a.
+- getLocationOnce funktioniert noch nicht richtig:
+  wenn der Standort zu Beginn nicht schnell genug abgefragt wird, is die Location null.
+
+
+ToDo:
+- maximale Teilnehmerzahl begrenzen? (1000 User in einem Chat ist sinnlos und wahrscheinlich sehr anstrengend für die app)
+- Klickbare Leiste im Chat und ClosedChat die zur EventInformation führt
+- In der EventInformationActivity sollte eine Teilnehmerliste ausgegeben werden
+- In der Filter-Info sollte bei deaktiviertem Standort ein Hinweis gegeben werden,
+  dass die Entfernungen nicht berechnet werden können
+
+- Beim Tippen auf das Location-Feld in der JoinPopupActivity sollte GoogleMaps geöffnet werden,
+  mit einem Marker bei Lat/Lng von diesem Event (Ist das nötig?/zählt das als unnötige GoogleMaps abfrage, die schnell viel kosten kann)
+
+- Notifactions
+- Erklärungs-Activity
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- AppName überlegen (IndieEvent/IndiEvent)
+
+
+
+
+

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_chat_message_received"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/chat_message_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Benutzername"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small.Inverse"/>
+
+        <LinearLayout
+            android:layout_below="@id/chat_message_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp"
+            android:background="@drawable/rounded_rectangle_normal"
+            android:layout_marginTop="4dp"
+            >
+
+            <TextView
+                android:id="@+id/chat_message_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100dp"
+                android:maxWidth="220dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?android:attr/textColorPrimary"
+                />
+
+            <Space
+                android:layout_width="12sp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_gravity="bottom"
+                android:id="@+id/chat_message_timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textSize="11dp"
+                android:text="10:56"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
