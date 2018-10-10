@@ -1,5 +1,8 @@
+Änderungen vom 10.10.18 | 1.35.0 (G)
+- EventInformation besitzt jetzt eine Teilnehmerliste und wird geöffnet sobald man im ClosedChat auf senden drückt (Activity fehlt im Manifest)
+
 Änderungen vom 10.10.18 | 1.34.1 (G)
--Navigation behält die Sortier-/Filteroptionen beim drehen und öffnen anderer Activities
+- Navigation behält die Sortier-/Filteroptionen beim drehen und öffnen anderer Activities
 
 Änderungen vom 07.10.18 | 1.34.0 (G)
 - Eventersteller wird automatisch zum Event hinzugefügt

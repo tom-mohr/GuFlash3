@@ -11,6 +11,7 @@ Bugs:
 
 
 ToDo:
+- EventInformationActivity zum Manifest hinzufügen
 - maximale Teilnehmerzahl begrenzen? (1000 User in einem Chat ist sinnlos und wahrscheinlich sehr anstrengend für die app)
 - Klickbare Leiste im Chat und ClosedChat die zur EventInformation führt
 - In der EventInformationActivity sollte eine Teilnehmerliste ausgegeben werden

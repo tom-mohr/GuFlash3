@@ -66,6 +66,11 @@ public class EventInfo {
     
     
     // Utility-Methoden:
+
+    public ArrayList<String> getUserIds()
+    {
+        return userIds;
+    }
     
     public long getMillisTillEvent() {
         // returns time from now to event in milliseconds

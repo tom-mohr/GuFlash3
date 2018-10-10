@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,9 +21,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.selbstfindung.guflash.EventInfo;
+import com.selbstfindung.guflash.MemberRecyclerViewAdapter;
 import com.selbstfindung.guflash.R;
 import com.selbstfindung.guflash.User;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -43,6 +47,7 @@ public class EventInformationActivity extends AppCompatActivity {
     private String eventId;
     DatabaseReference eventRef;
     private User user;
+    ArrayList<String> userIDs;
 
     // info über das event
     private long currentEventMemberCount;
@@ -85,6 +90,10 @@ public class EventInformationActivity extends AppCompatActivity {
 
                 EventInfo eventInfo = new EventInfo(ds);
 
+                userIDs = eventInfo.getUserIds();
+
+                initRecyclerView();
+
                 String eventName = (String) ds.child("name").getValue();
                 String eventDescription = (String) ds.child("description").getValue();
 
@@ -123,5 +132,12 @@ public class EventInformationActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
+
+    private void initRecyclerView(){
+        RecyclerView recyclerView = findViewById(R.id.member_recycler_view);
+        MemberRecyclerViewAdapter adapter = new MemberRecyclerViewAdapter(this, userIDs);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 }
