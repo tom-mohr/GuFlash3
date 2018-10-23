@@ -8,6 +8,7 @@ Bugs:
   -> z.B. über Tippen auf ActionBar o.a.
 - getLocationOnce funktioniert noch nicht richtig:
   wenn der Standort zu Beginn nicht schnell genug abgefragt wird, is die Location null.
+- Event-Datum in der Liste: Monat eins zu niedrig! (11. wenn Dezember)
 
 
 ToDo:
@@ -22,33 +23,20 @@ ToDo:
      siehe z.B.: https://developer.android.com/training/location/receive-location-updates#save-state
 - Beim Tippen auf das Location-Feld in der JoinPopupActivity sollte GoogleMaps geöffnet werden,
   mit einem Marker bei Lat/Lng von diesem Event
+- andere methode, standard username zu vergeben (nicht mehr einfach ersten teil der email)
 
 -Notifactions
 -Erklärungs-Activity
 
-
 -Gruppenersteller sollte direkt zur Gruppe hinzugefügt werden (unpraktisch beim programmieren des Popups)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 - AppName überlegen (IndieEvent/IndiEvent)
 
 
 
 
-
+ToDo für Jan:
+- brauchen wir AGBs oder sowas?
+- wer ist für Schäden bei Events verantwortlich?
+  -> müssen wir irgendwie erklären dass wir keine Haftung übernehmen?
+- brauchen wir ein Unternehmen?
