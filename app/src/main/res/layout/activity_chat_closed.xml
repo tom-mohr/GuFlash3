@@ -57,7 +57,7 @@
             android:maxLines="6"/>
 
         <Button
-            android:id="@+id/chat_send_button"
+            android:id="@+id/closed_chat_send_button"
             android:text="SENDEN"
             android:textSize="14sp"
             android:background="?attr/selectableItemBackground"

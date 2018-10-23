@@ -12,23 +12,40 @@ Bugs:
 
 
 ToDo:
--maximale Teilnehmerzahl begrenzen? (1000 User in einem Chat ist sinnlos und wahrscheinlich sehr anstrengend für die app)
--Verbindung zur EventInformationActivity und Teilnehmerliste sollte ausgegeben werden
+- EventInformationActivity zum Manifest hinzufügen
+- maximale Teilnehmerzahl begrenzen? (1000 User in einem Chat ist sinnlos und wahrscheinlich sehr anstrengend für die app)
+- Klickbare Leiste im Chat und ClosedChat die zur EventInformation führt
+- In der EventInformationActivity sollte eine Teilnehmerliste ausgegeben werden
 - In der Filter-Info sollte bei deaktiviertem Standort ein Hinweis gegeben werden,
   dass die Entfernungen nicht berechnet werden können
-- Wenn der Bildschirm gedreht wird, wird die Activity neu gestartet.
-  Vor allem bei NavigationActivity und bei der CreateEventActivity ist das unpraktisch,
-  da Filteroptionen, gewählte Zeiten usw. zurückgesetzt werden.
-  -> Am besten lässt sich das mit einem "Bundle"-Objekt lösen,
-     siehe z.B.: https://developer.android.com/training/location/receive-location-updates#save-state
+
 - Beim Tippen auf das Location-Feld in der JoinPopupActivity sollte GoogleMaps geöffnet werden,
   mit einem Marker bei Lat/Lng von diesem Event
 - andere methode, standard username zu vergeben (nicht mehr einfach ersten teil der email)
+  mit einem Marker bei Lat/Lng von diesem Event (Ist das nötig?/zählt das als unnötige GoogleMaps abfrage, die schnell viel kosten kann)
 
--Notifactions
--Erklärungs-Activity
+- Notifactions
+- Erklärungs-Activity
 
 -Gruppenersteller sollte direkt zur Gruppe hinzugefügt werden (unpraktisch beim programmieren des Popups)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 - AppName überlegen (IndieEvent/IndiEvent)
 

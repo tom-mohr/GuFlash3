@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -70,6 +72,18 @@ public class ClosedChatActivity extends AppCompatActivity
             closingInfo.setText("Die Gruppe hat noch nicht die Mindestteilnehmerzahl erreicht, es fehlt noch "+fehlendeTeilnehmer+" Teilnehmer");
         }
            */
+
+        Button info = (Button) findViewById(R.id.closed_chat_send_button);
+
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ClosedChatActivity.this, EventInformationActivity.class);
+                intent.putExtra(ChatActivity.EXTRA_MESSAGE_GRUPPEN_ID, eventID);
+                startActivity(intent);
+            }
+        });
+
 
         eventRef.addValueEventListener(new ValueEventListener() {
             @Override

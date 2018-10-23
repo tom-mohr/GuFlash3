@@ -49,6 +49,10 @@ import com.selbstfindung.guflash.EventRecyclerViewAdapter;
 
 import java.util.ArrayList;
 
+import static com.selbstfindung.guflash.EventRecyclerViewAdapter.SORT_TYPE_ALPHABETICALLY;
+import static com.selbstfindung.guflash.EventRecyclerViewAdapter.SORT_TYPE_DISTANCE;
+import static com.selbstfindung.guflash.EventRecyclerViewAdapter.SORT_TYPE_TIME;
+
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -62,6 +66,12 @@ public class NavigationActivity extends AppCompatActivity
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
     private LocationRequest mLocationRequest;
+
+    private boolean excludeTime = false;
+    private boolean excludeDistance = false;
+    private boolean excludeUser;
+
+    private int sortType2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,9 +234,10 @@ public class NavigationActivity extends AppCompatActivity
         public void setSortType(int newSortType) {
             if (newSortType != sortType) {
                 sortType = newSortType;
+                sortType2 = newSortType;
                 
                 switch (sortType) {
-                    case EventRecyclerViewAdapter.SORT_TYPE_DISTANCE:
+                    case SORT_TYPE_DISTANCE:
                         line1.setVisibility(View.VISIBLE);
                         line1.setText("sortiert nach Entfernung");
                         break;
@@ -327,7 +338,7 @@ public class NavigationActivity extends AppCompatActivity
                     
                     // apply this filter function
 
-                    eventRecyclerViewAdapter.setSortType(EventRecyclerViewAdapter.SORT_TYPE_DISTANCE);
+                    eventRecyclerViewAdapter.setSortType(SORT_TYPE_DISTANCE);
                 }
                 return true;
                 
@@ -363,14 +374,16 @@ public class NavigationActivity extends AppCompatActivity
                     item.setChecked(false);
                     
                     // remove this filter option
-                    eventRecyclerViewAdapter.setExcludeDistance(false);
+                    excludeDistance = false;
+                    eventRecyclerViewAdapter.setExcludeDistance(excludeDistance);
                     
                 } else {
                     // check
                     item.setChecked(true);
     
                     // apply this filter function
-                    eventRecyclerViewAdapter.setExcludeDistance(true);
+                    excludeDistance = true;
+                    eventRecyclerViewAdapter.setExcludeDistance(excludeDistance);
                 }
                 return true;
                 
@@ -380,14 +393,16 @@ public class NavigationActivity extends AppCompatActivity
                     item.setChecked(false);
             
                     // remove this filter option
-                    eventRecyclerViewAdapter.setExcludeTime(false);
+                    excludeTime = false;
+                    eventRecyclerViewAdapter.setExcludeTime(excludeTime);
                     
                 } else {
                     // check
                     item.setChecked(true);
     
                     // apply this filter function
-                    eventRecyclerViewAdapter.setExcludeTime(true);
+                    excludeTime = true;
+                    eventRecyclerViewAdapter.setExcludeTime(excludeTime);
                 }
                 return true;
                 
@@ -411,7 +426,45 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
+        Log.d(TAG, "Menu wird erstellt");
+
         getMenuInflater().inflate(R.menu.navigation, menu);
+
+        Log.d(TAG, ""+excludeUser+" "+excludeDistance+ " " + excludeTime);
+
+        MenuItem d = menu.findItem(R.id.filter_ignore_distance);
+        MenuItem t = menu.findItem(R.id.filter_ignore_time);
+
+        eventRecyclerViewAdapter.setExcludeUser(excludeUser);
+        eventRecyclerViewAdapter.setExcludeTime(excludeTime);
+        eventRecyclerViewAdapter.setExcludeDistance(excludeDistance);
+
+        if(excludeDistance)
+        {
+            d.setChecked(true);
+        }
+        else
+        {
+            d.setChecked(false);
+        }
+        if(excludeTime)
+        {
+            t.setChecked(true);
+        }
+        else
+        {
+            d.setChecked(false);
+        }
+
+        if(sortType2==SORT_TYPE_DISTANCE)
+            menu.findItem(R.id.filter_sort_distance).setChecked(true);
+        else if(sortType2==SORT_TYPE_TIME)
+            menu.findItem(R.id.filter_sort_time).setChecked(true);
+        else if(sortType2==SORT_TYPE_ALPHABETICALLY)
+            menu.findItem(R.id.filter_sort_alphabetically).setChecked(true);
+
+
         return true;
     }
     
@@ -422,11 +475,13 @@ public class NavigationActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_events) {
-            eventRecyclerViewAdapter.setExcludeUser(false);
+            excludeUser = false;
+            eventRecyclerViewAdapter.setExcludeUser(excludeUser);
             setTitle(R.string.title_eventlist_all);
 
         } else if (id == R.id.nav_favorite_events) {
-            eventRecyclerViewAdapter.setExcludeUser(true);
+            excludeUser = true;
+            eventRecyclerViewAdapter.setExcludeUser(excludeUser);
             setTitle(R.string.title_eventlist_my);
 
         } else if (id == R.id.nav_profile_settings) {
@@ -467,4 +522,72 @@ public class NavigationActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        Log.d(TAG, "Daten werden gespeichert");
+
+        outState.putInt("savedSortType", sortType2);
+        outState.putBoolean("savedFilterDistance", excludeDistance);
+        outState.putBoolean("savedFilterTime", excludeTime);
+        outState.putBoolean("savedFilterUser", excludeUser);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Log.d(TAG, "Daten werden aufgerufen");
+
+        excludeDistance = savedInstanceState.getBoolean("savedFilterDistance");
+        excludeTime = savedInstanceState.getBoolean("savedFilterTime");
+        excludeUser = savedInstanceState.getBoolean("savedFilterUser");
+
+        eventRecyclerViewAdapter.setSortType(savedInstanceState.getInt("savedSortType"));
+        //eventRecyclerViewAdapter.setExcludeUser(excludeUser);
+        //eventRecyclerViewAdapter.setExcludeTime(excludeTime);
+        //eventRecyclerViewAdapter.setExcludeDistance(excludeDistance);
+        if(excludeUser)
+        {
+            setTitle(R.string.title_eventlist_my);
+        }
+        else
+        {
+            setTitle(R.string.title_eventlist_all);
+        }
+    }
+
+
+    /*
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        Log.d(TAG, "Menu wird aktualisiert");
+
+        MenuItem d = menu.findItem(R.id.filter_ignore_distance);
+        MenuItem t = menu.findItem(R.id.filter_ignore_time);
+
+        if(excludeDistance)
+        {
+            d.setChecked(true);
+        }
+        else
+        {
+            d.setChecked(false);
+        }
+        if(excludeTime)
+        {
+            t.setChecked(true);
+        }
+        else
+        {
+            d.setChecked(false);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+    */
 }
