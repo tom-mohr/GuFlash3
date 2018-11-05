@@ -108,7 +108,7 @@ public class EventInfo {
             long weeks = Math.round(getWeeksTillEvent());
             if (weeks > 2) {
                 
-                return timeDay + "." + timeMonth + "." + timeYear;
+                return timeDay + "." + (timeMonth+1) + "." + timeYear;
             
             } else {
                 

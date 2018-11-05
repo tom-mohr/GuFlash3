@@ -1,3 +1,10 @@
+Änderungen vom 05.11.18 | 1.36.0 (G)
+- EventInfo sollte jetzt eine Liste der MemberNamen ausgeben
+- minimale andere Änderungen
+
+Änderungen vom 23.10.18 | 1.35.1 (G+T)
+- Teambesprechung, Änderungen unbekannt
+
 Änderungen vom 10.10.18 | 1.35.0 (G)
 - EventInformation besitzt jetzt eine Teilnehmerliste und wird geöffnet sobald man im ClosedChat auf senden drückt (Activity fehlt im Manifest)
 
