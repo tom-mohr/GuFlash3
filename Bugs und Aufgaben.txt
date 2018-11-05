@@ -1,5 +1,4 @@
 Bugs:
-- Ort auf Google Maps wählen schließt sich manchmal direkt
 - man kann keinen Text auswählen (zB zum kopieren)
 - In der ganzen App: hinzugefügte ValueEventListeners und ChildEventListeners bestehen anscheinend
   auch nach dem finish() von der App weiter.
@@ -12,20 +11,19 @@ Bugs:
 
 
 ToDo:
-- EventInformationActivity zum Manifest hinzufügen
-- maximale Teilnehmerzahl begrenzen? (1000 User in einem Chat ist sinnlos und wahrscheinlich sehr anstrengend für die app)
 - Klickbare Leiste im Chat und ClosedChat die zur EventInformation führt
-- In der EventInformationActivity sollte eine Teilnehmerliste ausgegeben werden
+- EventInformation soll Usernamen ausgeben statt Ids
 - In der Filter-Info sollte bei deaktiviertem Standort ein Hinweis gegeben werden,
   dass die Entfernungen nicht berechnet werden können
+- Notifactions
+- Erklärungs-Activity
+
 
 - Beim Tippen auf das Location-Feld in der JoinPopupActivity sollte GoogleMaps geöffnet werden,
   mit einem Marker bei Lat/Lng von diesem Event
 - andere methode, standard username zu vergeben (nicht mehr einfach ersten teil der email)
   mit einem Marker bei Lat/Lng von diesem Event (Ist das nötig?/zählt das als unnötige GoogleMaps abfrage, die schnell viel kosten kann)
 
-- Notifactions
-- Erklärungs-Activity
 
 -Gruppenersteller sollte direkt zur Gruppe hinzugefügt werden (unpraktisch beim programmieren des Popups)
 
