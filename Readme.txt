@@ -1,3 +1,7 @@
+Änderungen vom 05.11.18 | 1.36.1 (T)
+- Die Änderungen von der Teambesprechung hinzugefügt
+  (-> ungetestet; es kann sein, dass es immer noch nicht funktioniert)
+
 Änderungen vom 05.11.18 | 1.36.0 (G)
 - EventInfo sollte jetzt eine Liste der MemberNamen ausgeben
 - minimale andere Änderungen
