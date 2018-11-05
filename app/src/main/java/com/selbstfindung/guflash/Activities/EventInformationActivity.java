@@ -57,7 +57,7 @@ public class EventInformationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_join_popup);
+        setContentView(R.layout.activity_event_information);
 
         Log.d(TAG, "Popup aufgerufen");
 

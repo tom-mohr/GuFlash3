@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -83,6 +84,8 @@ public class ClosedChatActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+        
+        // ToDo: add onclick to action bar
 
 
         eventRef.addValueEventListener(new ValueEventListener() {

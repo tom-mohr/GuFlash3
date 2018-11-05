@@ -90,6 +90,9 @@
         <activity
             android:name=".Activities.JoinPopupActivity"
             android:theme="@style/MyPopupTheme"></activity>
+        <activity
+            android:name=".Activities.EventInformationActivity"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
